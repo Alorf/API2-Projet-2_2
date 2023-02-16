@@ -1,0 +1,1 @@
+typeSearchIndex = [{"p":"locationTaxi","l":"Adresse"},{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"locationTaxi","l":"Client"},{"p":"locationTaxi","l":"Facturation"},{"p":"locationTaxi","l":"Location"},{"p":"locationTaxi","l":"Taxi"}];updateSearchResults();

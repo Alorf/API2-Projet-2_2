@@ -1,14 +1,48 @@
 package locationTaxi;
 
+import java.time.LocalDate;
+
+/**
+ * Classe Location de la société de Taxi
+ * @Author Lorfèvre Arthur
+ * @Version 1.0
+ */
 public class Location {
+    /**
+     * Identifiant de la location
+     */
     private int id;
-    private String date;
+    /**
+     * Date de la location
+     */
+    private LocalDate date;
+    /**
+     * Kilomètres total parcouru
+     */
     private int kmTotal;
+    /**
+     * Client de la location
+     */
     private Client client;
+    /**
+     * Adresse de départ de la location
+     */
     private Adresse adrDepart;
+    /**
+     * Facture de la location
+     */
     private Facturation facturation;
 
-    public Location(int id, String date, int kmTotal, Client client, Adresse adrDepart, Facturation facturation) {
+    /**
+     * Constructeur de la location
+     * @param id Identifiant de la location
+     * @param date Date de la location
+     * @param kmTotal Kilomètres total parcouru
+     * @param client Client de la location
+     * @param adrDepart Adresse de départ de la location
+     * @param facturation Facture de la location
+     */
+    public Location(int id, LocalDate date, int kmTotal, Client client, Adresse adrDepart, Facturation facturation) {
         this.id = id;
         this.date = date;
         this.kmTotal = kmTotal;
@@ -17,50 +51,98 @@ public class Location {
         this.facturation = facturation;
     }
 
+    /**
+     * Getter identifiant
+     * @return Identifiant de la location
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Setter identifiant
+     * @param id Nouvel identifiant de la location
+     */
     public void setId(int id) {
         this.id = id;
     }
 
-    public String getDate() {
+    /**
+     * Getter date
+     * @return Date de la location
+     */
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    /**
+     * Setter date
+     * @param date Nouvelle date de location
+     */
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
+    /**
+     * Getter kilomètres total
+     * @return Kilomètres total parcouru lors de la location
+     */
     public int getKmTotal() {
         return kmTotal;
     }
 
+    /**
+     * Setter kilomètre total
+     * @param kmTotal Nouvelle distance parcourue de la location
+     */
     public void setKmTotal(int kmTotal) {
         this.kmTotal = kmTotal;
     }
 
+    /**
+     * Getter client
+     * @return Client de la location
+     */
     public Client getClient() {
         return client;
     }
 
+    /**
+     * Setter client
+     * @param client Nouveau client de la location
+     */
     public void setClient(Client client) {
         this.client = client;
     }
 
+    /**
+     * Getter adresse
+     * @return Adresse de départ de la location
+     */
     public Adresse getAdrDepart() {
         return adrDepart;
     }
 
+    /**
+     * Setter adresse de départ
+     * @param adrDepart Nouvelle adresse de départ de la location
+     */
     public void setAdrDepart(Adresse adrDepart) {
         this.adrDepart = adrDepart;
     }
 
+    /**
+     * Getter facture
+     * @return Facture de la location
+     */
     public Facturation getFacturation() {
         return facturation;
     }
 
+    /**
+     * Setter facture
+     * @param facturation Nouvelle facture de la location
+     */
     public void setFacturation(Facturation facturation) {
         this.facturation = facturation;
     }
