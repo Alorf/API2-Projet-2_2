@@ -15,10 +15,9 @@ public class Client {
      */
     private int id;
     /**
-     * Mail du client
+     * Mail unique du client
      */
     private String mail;
-    // Unique
     /**
      * Nom du client
      */
@@ -35,24 +34,22 @@ public class Client {
     /**
      * Liste des locations du client
      */
-    private ArrayList<Location> locations;
+    private List<Location> locations = new ArrayList<>();
 
     /**
-     * Constructeur du client
-     * @param id Identifiant du client (unique)
-     * @param mail Mail du client (unique)
+     * Constructeur paramétré de locations du client
+     * @param id Identifiant unique du client
+     * @param mail Mail unique du client
      * @param nom Nom du client
      * @param prenom Prénom du client
      * @param tel Numéro de téléphone du client
-     * @param locations Liste des locations du client
      */
-    public Client(int id, String mail, String nom, String prenom, String tel, ArrayList<Location> locations) {
+    public Client(int id, String mail, String nom, String prenom, String tel) {
         this.id = id;
         this.mail = mail;
         this.nom = nom;
         this.prenom = prenom;
         this.tel = tel;
-        this.locations = locations;
     }
 
     /**
@@ -139,7 +136,7 @@ public class Client {
      * Getter liste de locations
      * @return Liste des locations du client
      */
-    public ArrayList<Location> getLocations() {
+    public List<Location> getLocations() {
         return locations;
     }
 
@@ -147,7 +144,7 @@ public class Client {
      * Setter liste de locations
      * @param locations Nouvelle liste de locations du client
      */
-    public void setLocations(ArrayList<Location> locations) {
+    public void setLocations(List<Location> locations) {
         this.locations = locations;
     }
 

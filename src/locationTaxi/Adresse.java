@@ -30,7 +30,7 @@ public class Adresse {
     private String num;
 
     /**
-     * Constructeur de l'adresse
+     * Constructeur paramétré de l'adresse
      * @param id Identifiant de l'adresse
      * @param cp Code postal de l'adresse
      * @param localite Localité de l'adresse

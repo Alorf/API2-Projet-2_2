@@ -7,22 +7,22 @@ package locationTaxi;
  */
 public class Facturation {
     /**
-     * Cout de facturation
+     * Cout de facturation de la course
      */
     private double cout;
     /**
-     * Taxi utilisé pour la facturation
+     * Taxi utilisé pour la facturation de la course
      */
-    private Taxi taxi;
+    private Taxi vehicule;
 
     /**
-     * Constructeur de la facture
-     * @param cout Cout de la facturation
-     * @param taxi Taxi utilisé pour la facturation
+     * Constructeur paramétré de la facture de la course
+     * @param cout Cout de la facturation de la course
+     * @param vehicule Taxi utilisé pour la facturation de la course
      */
-    public Facturation(double cout, Taxi taxi) {
+    public Facturation(double cout, Taxi vehicule) {
         this.cout = cout;
-        this.taxi = taxi;
+        this.vehicule = vehicule;
     }
 
     /**
@@ -43,17 +43,17 @@ public class Facturation {
 
     /**
      * Getter taxi
-     * @return taxi utilisé pour la facturation
+     * @return Vehicule utilisé pour la facturation de la course
      */
-    public Taxi getTaxi() {
-        return taxi;
+    public Taxi getVehicule() {
+        return vehicule;
     }
 
     /**
      * Setter taxi
-     * @param taxi Nouveau taxi utilisé pour la facturation
+     * @param vehicule Nouveau taxi utilisé pour la facturation de la course
      */
-    public void setTaxi(Taxi taxi) {
-        this.taxi = taxi;
+    public void setVehicule(Taxi vehicule) {
+        this.vehicule = vehicule;
     }
 }

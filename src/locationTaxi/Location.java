@@ -1,6 +1,8 @@
 package locationTaxi;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe Location de la société de Taxi
@@ -29,26 +31,24 @@ public class Location {
      */
     private Adresse adrDepart;
     /**
-     * Facture de la location
+     * Liste de facturations de la location
      */
-    private Facturation facturation;
+    private List<Facturation> facturation = new ArrayList<>();
 
     /**
-     * Constructeur de la location
+     * Constructeur paramétré de la location
      * @param id Identifiant de la location
      * @param date Date de la location
      * @param kmTotal Kilomètres total parcouru
      * @param client Client de la location
      * @param adrDepart Adresse de départ de la location
-     * @param facturation Facture de la location
      */
-    public Location(int id, LocalDate date, int kmTotal, Client client, Adresse adrDepart, Facturation facturation) {
+    public Location(int id, LocalDate date, int kmTotal, Client client, Adresse adrDepart) {
         this.id = id;
         this.date = date;
         this.kmTotal = kmTotal;
         this.client = client;
         this.adrDepart = adrDepart;
-        this.facturation = facturation;
     }
 
     /**
@@ -135,7 +135,7 @@ public class Location {
      * Getter facture
      * @return Facture de la location
      */
-    public Facturation getFacturation() {
+    public List<Facturation> getFacturation() {
         return facturation;
     }
 
@@ -143,7 +143,7 @@ public class Location {
      * Setter facture
      * @param facturation Nouvelle facture de la location
      */
-    public void setFacturation(Facturation facturation) {
+    public void setFacturation(List<Facturation> facturation) {
         this.facturation = facturation;
     }
 }
