@@ -33,7 +33,7 @@ public class Location {
     /**
      * Liste de facturations de la location
      */
-    private List<Facturation> facturation = new ArrayList<>();
+    private List<Facturation> facturations = new ArrayList<>();
 
     /**
      * Constructeur paramétré de la location
@@ -132,18 +132,18 @@ public class Location {
     }
 
     /**
-     * Getter facture
-     * @return Facture de la location
+     * Getter factures
+     * @return Liste de facturations de la location
      */
-    public List<Facturation> getFacturation() {
-        return facturation;
+    public List<Facturation> getFacturations() {
+        return facturations;
     }
 
     /**
-     * Setter facture
-     * @param facturation Nouvelle facture de la location
+     * Setter factures
+     * @param facturations Nouvelle liste de facturations de la location
      */
-    public void setFacturation(List<Facturation> facturation) {
-        this.facturation = facturation;
+    public void setFacturation(List<Facturation> facturations) {
+        this.facturations = facturations;
     }
 }
