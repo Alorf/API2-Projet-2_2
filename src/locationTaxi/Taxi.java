@@ -124,4 +124,18 @@ public class Taxi {
     public int hashCode() {
         return Objects.hash(immatriculation);
     }
+
+    /**
+     * Affichage des attributs
+     * @return Les attributs de l'objet
+     */
+    @Override
+    public String toString() {
+        return "Taxi{" +
+                "id=" + id +
+                ", immatriculation='" + immatriculation + '\'' +
+                ", carburant='" + carburant + '\'' +
+                ", prixKm=" + prixKm +
+                '}';
+    }
 }

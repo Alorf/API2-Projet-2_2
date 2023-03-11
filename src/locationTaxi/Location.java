@@ -146,4 +146,20 @@ public class Location {
     public void setFacturation(List<Facturation> facturations) {
         this.facturations = facturations;
     }
+
+    /**
+     * Affichage des attributs
+     * @return Les attributs de l'objet
+     */
+    @Override
+    public String toString() {
+        return "Location{" +
+                "id=" + id +
+                ", date=" + date +
+                ", kmTotal=" + kmTotal +
+                ", client=" + client +
+                ", adrDepart=" + adrDepart +
+                ", facturations=" + facturations +
+                '}';
+    }
 }

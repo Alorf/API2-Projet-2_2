@@ -169,4 +169,20 @@ public class Client {
     public int hashCode() {
         return Objects.hash(mail);
     }
+
+    /**
+     * Affichage des attributs
+     * @return Les attributs de l'objet
+     */
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", mail='" + mail + '\'' +
+                ", nom='" + nom + '\'' +
+                ", prenom='" + prenom + '\'' +
+                ", tel='" + tel + '\'' +
+                ", locations=" + locations +
+                '}';
+    }
 }

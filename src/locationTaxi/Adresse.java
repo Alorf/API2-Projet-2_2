@@ -146,4 +146,19 @@ public class Adresse {
     public int hashCode() {
         return Objects.hash(cp, localite, rue, num);
     }
+
+    /**
+     * Affichage des attributs
+     * @return Les attributs de l'objet
+     */
+    @Override
+    public String toString() {
+        return "Adresse{" +
+                "id=" + id +
+                ", cp=" + cp +
+                ", localite='" + localite + '\'' +
+                ", rue='" + rue + '\'' +
+                ", num='" + num + '\'' +
+                '}';
+    }
 }
