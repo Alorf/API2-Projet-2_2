@@ -1,4 +1,4 @@
-package gestion;
+package mvp;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -11,7 +11,7 @@ import locationTaxi.Location;
 import locationTaxi.Taxi;
 import myconnections.DBConnection;
 
-public class GestionClients {
+public class OldGestionClients {
 
     private Connection dbConnect;
 
@@ -34,8 +34,8 @@ public class GestionClients {
         };
 
         do {
-            Utilitaire.afficherMenu(new ArrayList<>(Arrays.asList(menu)));
-            choix = Integer.parseInt(Utilitaire.regex("[0-9]+", "Votre choix : "));
+            choix = Utilitaire.choixListe(Arrays.asList(menu));
+
 
             switch (choix) {
                 case 1 ->
@@ -164,8 +164,8 @@ public class GestionClients {
         System.out.println("Que souhaitez vous modifier");
 
         do {
-            Utilitaire.afficherMenu(new ArrayList<>(Arrays.asList(menu)));
-            choix = Integer.parseInt(Utilitaire.regex("[0-9]+", "Votre choix : "));
+            choix = Utilitaire.choixListe(Arrays.asList(menu));
+
 
             switch (choix) {
 
@@ -294,8 +294,8 @@ public class GestionClients {
         int choix;
 
         do {
-            Utilitaire.afficherMenu(new ArrayList<>(Arrays.asList(menu)));
-            choix = Integer.parseInt(Utilitaire.regex("[0-9]+", "Que choisissez vous : "));
+            choix = Utilitaire.choixListe(Arrays.asList(menu));
+
 
         } while (choix < 1 || choix > menu.length);
 
@@ -388,7 +388,7 @@ public class GestionClients {
     }
 
     public static void main(String[] args) {
-        GestionClients g = new GestionClients();
+        OldGestionClients g = new OldGestionClients();
         g.gestion();
     }
 }

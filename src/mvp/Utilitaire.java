@@ -1,11 +1,8 @@
-package gestion;
+package mvp;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Utilitaire {
     private static Scanner reader = new Scanner(System.in);
@@ -24,20 +21,10 @@ public class Utilitaire {
         return chaine;
     }
 
-    public static void afficherMenu(List<String> menu) {
-        int i = 0;
-        System.out.println("");
-        for (String menuTemp : menu) {
-            System.out.println((i + 1) + ". " + menuTemp);
-            i++;
-        }
-        System.out.println("");
-    }
-
     //Provient de Monsieur Poriaux
     public static LocalDate lecDate(){
         String splitBy = "";
-        String date = regex("^((0[1-9]|1[0-2])[\\/ ]){2}[0-9]{2,4}$", "Entrez la date : ");
+        String date = regex("^(0?[1-9]|[12][0-9]|3[01])[\\/\\s](0?[1-9]|1[0-2])[\\/\\s](\\d{4})$", "Entrez la date : ");
         String[] jma = null;
 
         if (date.contains("/")){
@@ -70,5 +57,38 @@ public class Utilitaire {
         int s = Integer.parseInt(hms[2]);
 
         return LocalTime.of(h,m,s);
+    }
+
+    public static void afficherListe(List objs){
+        if (objs != null){
+            int i = 0;
+            for (Object obj : objs){
+
+                System.out.println(++i + ". " +obj);
+            }
+        }
+    }
+
+    public static void afficherListe(Set objs){
+        if (objs != null){
+            int i = 0;
+            for (Object obj : objs){
+
+                System.out.println(++i + ". " +obj);
+            }
+        }
+    }
+
+    public static int choixListe(List objs){
+        System.out.println("");
+        int choix;
+
+        do {
+            afficherListe(objs);
+            choix = Integer.parseInt(regex("[0-9]+", "Choisissez un élément de la liste : "));
+        }while (choix < 0 || choix > objs.size());
+        System.out.println("");
+
+        return choix;
     }
 }

@@ -1,8 +1,7 @@
 package locationTaxi;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * Classe Client de la société de Taxi
@@ -182,7 +181,45 @@ public class Client {
                 ", nom='" + nom + '\'' +
                 ", prenom='" + prenom + '\'' +
                 ", tel='" + tel + '\'' +
-                ", locations=" + locations +
                 '}';
+    }
+
+    public Set<Taxi> taxiUtiliseSansDoublon(){
+
+        Set<Taxi> lt = new HashSet<>();
+        for (Location loc : locations){
+            System.out.println("loc");
+            for (Facturation fac : loc.getFacturations()){
+                //if (!lt.contains(fac.getVehicule())){
+                    lt.add(fac.getVehicule());
+                System.out.println("temp lt" + lt);
+                //}
+            }
+        }
+
+        return lt;
+    }
+
+    public List<Location> locationEntreDeuxDates(LocalDate d1, LocalDate d2){
+        List<Location> ll = new ArrayList<>();
+
+        for(Location loc : locations){
+            if (loc.getDate().isAfter(d1) && loc.getDate().isBefore(d2)){
+                ll.add(loc);
+            }
+        }
+
+        return ll;
+    }
+
+    public Set<Adresse> adresseLocationSansDoublon(){
+        Set<Adresse> la = new HashSet<>();
+        for (Location loc : locations){
+            //if (!la.contains(loc.getAdrDepart())){
+                la.add(loc.getAdrDepart());
+            //}
+        }
+
+        return la;
     }
 }

@@ -52,6 +52,13 @@ public class Location {
     }
 
     /**
+     * Constructeur par défaut
+     */
+    public Location(){
+
+    }
+
+    /**
      * Getter identifiant
      * @return Identifiant de la location
      */
