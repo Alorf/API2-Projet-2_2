@@ -1,14 +1,11 @@
 package mvp.view.taxi;
 
-import locationTaxi.Client;
 import locationTaxi.Taxi;
 import mvp.Utilitaire;
 import mvp.presenter.TaxiPresenter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class TaxiViewConsole implements TaxiViewInterface {
     private TaxiPresenter presenter;
@@ -41,6 +38,7 @@ public class TaxiViewConsole implements TaxiViewInterface {
 
     @Override
     public Taxi selectionner(List<Taxi> taxis) {
+
         int choix = Utilitaire.choixListe(taxis);
 
         return taxis.get(choix-1);
@@ -93,7 +91,7 @@ public class TaxiViewConsole implements TaxiViewInterface {
         String immatriculation = Utilitaire.regex(".*", "Entrez l'immatriculation du taxi : ").toUpperCase();
         //Normalement le regex serait 'T-[A-Z]{3}-[0-9]{3}'
         String carburant = Utilitaire.regex("[a-zA-Z0-9]+", "Entrez le carburant du taxi : ");
-        Double prixKm = Double.valueOf(Utilitaire.regex("[ \\t]*(\\+|\\-)?[ \\t]*(\\d*\\.?\\d+(E[\\+|\\-|\\d]\\d*)?)", "Entrez le prix au kilomètre du taxi : "));
+        double prixKm = Double.parseDouble(Utilitaire.regex("[ \\t]*(\\+|\\-)?[ \\t]*(\\d*\\.?\\d+(E[\\+|\\-|\\d]\\d*)?)", "Entrez le prix au kilomètre du taxi : "));
         //regex d'un double https://regex101.com/r/AtCkmx/1
 
 
@@ -107,7 +105,7 @@ public class TaxiViewConsole implements TaxiViewInterface {
 
         String immatriculation = taxi.getImmatriculation();
         String carburant = taxi.getCarburant();
-        Double prixKm = taxi.getPrixKm();
+        double prixKm = taxi.getPrixKm();
 
         String[] menu = {
                 "Immatriculation",
@@ -141,7 +139,7 @@ public class TaxiViewConsole implements TaxiViewInterface {
                     System.out.println("Anciennement : " + prixKm);
 
                     //Modifier prixKm
-                    prixKm = Double.valueOf(Utilitaire.regex("[ \\t]*(\\+|\\-)?[ \\t]*(\\d*\\.?\\d+(E[\\+|\\-|\\d]\\d*)?)", "Entrez le nouveau prix au kilomètre : "));
+                    prixKm = Double.parseDouble(Utilitaire.regex("[ \\t]*(\\+|\\-)?[ \\t]*(\\d*\\.?\\d+(E[\\+|\\-|\\d]\\d*)?)", "Entrez le nouveau prix au kilomètre : "));
                 }
                 case 4 -> {
                     break updateLoop;

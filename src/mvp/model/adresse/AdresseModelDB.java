@@ -1,7 +1,7 @@
 package mvp.model.adresse;
 
 import locationTaxi.Adresse;
-import mvp.model.adresse.DAOAdresse;
+import mvp.model.DAO;
 import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdresseModelDB implements DAOAdresse {
+public class AdresseModelDB implements DAO<Adresse> {
 
     private Connection dbConnect;
 
@@ -28,7 +28,7 @@ public class AdresseModelDB implements DAOAdresse {
     }
 
     @Override
-    public Adresse addAdresse(Adresse adresse) {
+    public Adresse add(Adresse adresse) {
         int cp = adresse.getCp();
         String localite = adresse.getLocalite();
         String rue = adresse.getRue();
@@ -71,7 +71,7 @@ public class AdresseModelDB implements DAOAdresse {
     }
 
     @Override
-    public Adresse readAdresse(int idRech) {
+    public Adresse read(int idRech) {
         String query = "SELECT * FROM API_ADRESSE WHERE ID_ADRESSE = ?";
 
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -99,7 +99,7 @@ public class AdresseModelDB implements DAOAdresse {
     }
 
     @Override
-    public boolean updateAdresse(Adresse adresseModifie) {
+    public boolean update(Adresse adresseModifie) {
 
         String query = "UPDATE API_ADRESSE SET CP = ?, LOCALITE = ?, RUE = ?, NUM = ? WHERE ID_ADRESSE = ?";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -125,7 +125,7 @@ public class AdresseModelDB implements DAOAdresse {
     }
 
     @Override
-    public boolean removeAdresse(int idAdresse) {
+    public boolean remove(int idAdresse) {
 
         String deleteQuery = "DELETE FROM API_ADRESSE WHERE ID_ADRESSE = ?";
 
@@ -147,7 +147,7 @@ public class AdresseModelDB implements DAOAdresse {
     }
 
     @Override
-    public List<Adresse> getAdresses() {
+    public List<Adresse> getAll() {
         List<Adresse> la = new ArrayList<>();
         String query = "SELECT * FROM API_ADRESSE ORDER BY ID_ADRESSE";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {

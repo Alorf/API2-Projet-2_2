@@ -1,6 +1,8 @@
 package mvp.model.taxi;
 
+import locationTaxi.Location;
 import locationTaxi.Taxi;
+import mvp.model.DAO;
 import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,7 +11,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaxiModelDB implements DAOTaxi {
+public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
 
     private Connection dbConnect;
 
@@ -24,7 +26,7 @@ public class TaxiModelDB implements DAOTaxi {
     }
 
     @Override
-    public Taxi addTaxi(Taxi taxi) {
+    public Taxi add(Taxi taxi) {
         String immatriculation = taxi.getImmatriculation();
         String carburant = taxi.getCarburant();
         double prixkm = taxi.getPrixKm();
@@ -62,7 +64,7 @@ public class TaxiModelDB implements DAOTaxi {
     }
 
     @Override
-    public Taxi readTaxi(int idRech) {
+    public Taxi read(int idRech) {
         String query = "SELECT * FROM API_TAXI WHERE ID_TAXI = ?";
 
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -85,11 +87,10 @@ public class TaxiModelDB implements DAOTaxi {
         }
 
         return null;
-
     }
 
     @Override
-    public boolean updateTaxi(Taxi taxiModifie) {
+    public boolean update(Taxi taxiModifie) {
 
         String query = "UPDATE API_TAXI SET IMMATRICULATION = ?, CARBURANT = ?, PRIXKM = ? WHERE ID_TAXI = ?";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -114,7 +115,7 @@ public class TaxiModelDB implements DAOTaxi {
     }
 
     @Override
-    public boolean removeTaxi(int idTaxi) {
+    public boolean remove(int idTaxi) {
 
         String deleteQuery = "DELETE FROM API_TAXI WHERE ID_TAXI = ?";
 
@@ -136,7 +137,7 @@ public class TaxiModelDB implements DAOTaxi {
     }
 
     @Override
-    public List<Taxi> getTaxis() {
+    public List<Taxi> getAll() {
         List<Taxi> lt = new ArrayList<>();
         String query = "SELECT * FROM API_TAXI ORDER BY ID_TAXI";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -157,6 +158,12 @@ public class TaxiModelDB implements DAOTaxi {
             logger.error("Erreur sql : " + e);
         }
 
+        return null;
+    }
+
+    @Override
+    public List<Location> locationTaxi(Taxi taxi) {
+        //todo : utiliser la fonction
         return null;
     }
 }

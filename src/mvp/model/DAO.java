@@ -1,20 +1,19 @@
 package mvp.model;
 
 
-import locationTaxi.Adresse;
 
 import java.util.List;
 
-public interface DAO<E> {
+public interface DAO<T> {
 
-    E add(E objet);
+    T add(T objet);
 
-    E read(int idRech);
+    T read(int idRech);
 
-    boolean update(E ObjetModifie);
+    boolean update(T ObjetModifie);
 
     boolean remove(int id);
 
-    List<E> get();
+    List<T> getAll();
 
 }

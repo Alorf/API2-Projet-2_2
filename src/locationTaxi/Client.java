@@ -188,11 +188,9 @@ public class Client {
 
         Set<Taxi> lt = new HashSet<>();
         for (Location loc : locations){
-            System.out.println("loc");
             for (Facturation fac : loc.getFacturations()){
                 //if (!lt.contains(fac.getVehicule())){
                     lt.add(fac.getVehicule());
-                System.out.println("temp lt" + lt);
                 //}
             }
         }

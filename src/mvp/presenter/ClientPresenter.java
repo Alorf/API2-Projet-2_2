@@ -1,8 +1,8 @@
 package mvp.presenter;
 
 import locationTaxi.*;
+import mvp.model.DAO;
 import mvp.model.client.ClientSpecial;
-import mvp.model.client.DAOClient;
 import mvp.view.client.ClientViewInterface;
 
 import java.time.LocalDate;
@@ -10,48 +10,42 @@ import java.util.List;
 import java.util.Set;
 
 public class ClientPresenter {
-    private DAOClient model;
+    private DAO<Client> model;
 
     private ClientViewInterface view;
 
-    public ClientPresenter(DAOClient model, ClientViewInterface view) {
+    public ClientPresenter(DAO<Client> model, ClientViewInterface view) {
         this.model = model;
         this.view = view;
         this.view.setPresenter(this);
     }
 
     public void start() {
-        List<Client> clients = model.getClients();
+        List<Client> clients = model.getAll();
         view.setListDatas(clients);
     }
 
     public void addClient(Client client) {
-        Client cl = model.addClient(client);
+        Client cl = model.add(client);
         if (cl == null) {
             view.affMsg("Erreur lors de la création");
         } else {
             view.affMsg("Création de : " + cl);
         }
 
-        List<Client> clients = model.getClients();
+        List<Client> clients = model.getAll();
         view.setListDatas(clients);
 
     }
 
     public Client readClient(int idRech) {
-        Client client = model.readClient(idRech);
-        if (client == null) {
-            System.out.println("Client introuvable");
-            return null;
-        } else {
-            System.out.println("Client trouvé");
-        }
+        Client client = model.read(idRech);
 
         return client;
     }
 
     public void updateClient(Client client) {
-        boolean ok = model.updateClient(client);
+        boolean ok = model.update(client);
 
         if (ok) {
             System.out.println("Client modifié");
@@ -61,7 +55,7 @@ public class ClientPresenter {
     }
 
     public void removeClient(int idCli) {
-        boolean ok = model.removeClient(idCli);
+        boolean ok = model.remove(idCli);
 
         if (ok) {
             view.affMsg("Client effacé");
@@ -69,7 +63,7 @@ public class ClientPresenter {
             view.affMsg("Client non effacé");
         }
 
-        List<Client> clients = model.getClients();
+        List<Client> clients = model.getAll();
         view.setListDatas(clients);
     }
 
@@ -84,11 +78,11 @@ public class ClientPresenter {
     }
 
     public void locationEntreDeuxDates(Client client, LocalDate d1, LocalDate d2) {
-        List<Location> ll = ((ClientSpecial) model).locationEntreDeuxDates(client, d1, d2);
 
-        if (ll == null || ll.isEmpty()) {
+        if (model.getAll().isEmpty()) {
             view.affMsg("Aucune location pour ces deux dates pour ce client");
         } else {
+            List<Location> ll = ((ClientSpecial) model).locationEntreDeuxDates(client, d1, d2);
             view.affListe(ll);
         }
     }
@@ -125,7 +119,7 @@ public class ClientPresenter {
     }
 
     public List<Client> tout(){
-        List<Client> lc = model.getClients();
+        List<Client> lc = model.getAll();
 
         if (lc == null){
             view.affMsg("Aucun client dans la base de donnée");
@@ -135,7 +129,17 @@ public class ClientPresenter {
     }
 
     public Client selectionner() {
-        Client client = view.selectionner(model.getClients());
+        Client client = view.selectionner(model.getAll());
+
         return client;
+    }
+
+    public void nombreLocation(Client client){
+        if (client.getLocations().isEmpty()){
+            view.affMsg("Aucune location pour ce client");
+        }else{
+            int rep = ((ClientSpecial) model).nombreLocation(client);
+            view.affMsg(client.getNom() + " à " + rep + " locations");
+        }
     }
 }

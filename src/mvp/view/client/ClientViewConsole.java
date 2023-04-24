@@ -51,7 +51,7 @@ public class ClientViewConsole implements ClientViewInterface {
         //lc est vide car aucun client n'est chargé en mémoire
         int choix = Utilitaire.choixListe(clients);
 
-        return clients.get(choix-1);
+        return clients.get(choix - 1);
     }
 
     public void menu() {
@@ -64,7 +64,6 @@ public class ClientViewConsole implements ClientViewInterface {
                 "Modifier",
                 "Supprimer",
                 "Tous",
-                "Opérations spéciales",
                 "Finir"
         };
 
@@ -88,12 +87,8 @@ public class ClientViewConsole implements ClientViewInterface {
                 case 5 ->
                     //Autre un client
                         tout();
-                case 6 ->{
-                    //OpSpéciales
-                        opSpeciales();
-                }
-                case 7 ->
-                    //Fin
+                case 6 ->
+                //Fin
                 {
                     return;
                 }
@@ -132,7 +127,8 @@ public class ClientViewConsole implements ClientViewInterface {
         int choix;
         System.out.println("Que souhaitez vous modifier");
 
-        updateLoop:do {
+        updateLoop:
+        do {
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
 
@@ -176,13 +172,20 @@ public class ClientViewConsole implements ClientViewInterface {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
 
         Client cl = presenter.readClient(idRech);
+
+        opSpeciales(cl);
     }
 
-    private void opSpeciales() {
+    private void opSpeciales(Client client) {
 
-        int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
+        //int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
+        //Client client = presenter.readClient(idRech);
 
-        Client client = presenter.readClient(idRech);
+        if (client == null) {
+            System.out.println("Client introuvable");
+            return;
+        }
+        System.out.println("Client trouvé");
 
         System.out.println("Que voulez-vous faire ?");
         String[] menu = {
@@ -191,44 +194,48 @@ public class ClientViewConsole implements ClientViewInterface {
                 "Toutes les adresses où il s'est rendu sans doublon",
                 "Toutes les locations",
                 "Toutes les factures",
+                "Le nombre de locations",
                 "Sortir"
         };
         int choix;
 
-        special:do{
+        special:
+        do {
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
             switch (choix) {
-                case 1 ->{
+                case 1 -> {
                     //Tous les taxis utilisés sans doublon
                     presenter.taxiUtiliseSansDoublon(client);
-
                 }
                 case 2 -> {
                     //Toutes les locations entre deux dates
                     LocalDate d1 = Utilitaire.lecDate();
                     LocalDate d2 = Utilitaire.lecDate();
                     presenter.locationEntreDeuxDates(client, d1, d2);
-
                 }
-                case 3 ->{
+                case 3 -> {
                     //Toutes les adresses où il s'est rendu sans doublon
                     presenter.adresseLocationSansDoublon(client);
 
                 }
                 case 4 -> {
+                    //Liste des locations du client
                     presenter.locations(client);
                 }
                 case 5 -> {
+                    //Liste des facturations du client
                     presenter.facturations(client);
                 }
                 case 6 -> {
+                    //Nombre de locations
+                    presenter.nombreLocation(client);
+                }
+                case 7 -> {
                     break special;
                 }
             }
-        }while (true);
-
-
+        } while (true);
 
     }
 

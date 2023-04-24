@@ -2,13 +2,14 @@ package mvp;
 
 
 
+import locationTaxi.Adresse;
+import locationTaxi.Client;
+import locationTaxi.Location;
+import locationTaxi.Taxi;
+import mvp.model.DAO;
 import mvp.model.adresse.AdresseModelDB;
-import mvp.model.adresse.DAOAdresse;
 import mvp.model.client.ClientModelHyb;
-import mvp.model.client.DAOClient;
-import mvp.model.location.DAOLocation;
 import mvp.model.location.LocationModelDB;
-import mvp.model.taxi.DAOTaxi;
 import mvp.model.taxi.TaxiModelDB;
 import mvp.presenter.AdressePresenter;
 import mvp.presenter.ClientPresenter;
@@ -26,12 +27,12 @@ import mvp.view.taxi.TaxiViewInterface;
 import java.util.Arrays;
 import java.util.List;
 
-public class GestionTaxi {
+public class GestionLocationTaxiConsole {
 
-    private DAOAdresse adresseModel;
-    private DAOClient clientModel;
-    private DAOLocation locationModel;
-    private DAOTaxi taxiModel;
+    private DAO<Adresse> adresseModel;
+    private DAO<Client> clientModel;
+    private DAO<Location> locationModel;
+    private DAO<Taxi> taxiModel;
 
     private AdressePresenter adressePresenter;
     private ClientPresenter clientPresenter;
@@ -86,7 +87,7 @@ public class GestionTaxi {
     }
 
     public static void main(String[] args) {
-        GestionTaxi gt = new GestionTaxi();
+        GestionLocationTaxiConsole gt = new GestionLocationTaxiConsole();
 
         gt.gestion();
     }

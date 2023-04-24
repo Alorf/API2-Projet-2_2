@@ -2,11 +2,12 @@ package mvp.model.location;
 
 import locationTaxi.*;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.math.BigDecimal;
 
 public interface LocationSpecial {
 
     boolean addFacturation(Location loc, Taxi taxi);
+
+    BigDecimal prixTotalLocation(Location location);
 
 }

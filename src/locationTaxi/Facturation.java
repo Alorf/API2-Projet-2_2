@@ -56,4 +56,12 @@ public class Facturation {
     public void setVehicule(Taxi vehicule) {
         this.vehicule = vehicule;
     }
+
+    @Override
+    public String toString() {
+        return "Facturation{" +
+                "cout=" + cout +
+                ", vehicule=" + vehicule +
+                '}';
+    }
 }

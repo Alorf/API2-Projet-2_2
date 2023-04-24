@@ -2,6 +2,7 @@ package mvp.model.location;
 
 
 import locationTaxi.*;
+import mvp.model.DAO;
 import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +13,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
 
-public class LocationModelDB implements DAOLocation, LocationSpecial {
+public class LocationModelDB implements DAO<Location>, LocationSpecial {
 
     private Connection dbConnect;
 
@@ -27,7 +28,7 @@ public class LocationModelDB implements DAOLocation, LocationSpecial {
     }
 
     @Override
-    public Location addLocation(Location location) {
+    public Location add(Location location) {
         LocalDate dateloc = location.getDate();
         int kmTotal = location.getKmTotal();
         Client client = location.getClient();
@@ -47,10 +48,10 @@ public class LocationModelDB implements DAOLocation, LocationSpecial {
             int response = req1.executeUpdate();
 
             if (response == 1) {
-                req2.setDate(2, Date.valueOf(dateloc));
-                req2.setInt(3, kmTotal);
-                req2.setInt(4, adresse.getId());
-                req2.setInt(5, client.getId());
+                req2.setDate(1, Date.valueOf(dateloc));
+                req2.setInt(2, kmTotal);
+                req2.setInt(3, adresse.getId());
+                req2.setInt(4, client.getId());
                 ResultSet rs = req2.executeQuery();
 
                 if (rs.next()) {
@@ -70,7 +71,7 @@ public class LocationModelDB implements DAOLocation, LocationSpecial {
     }
 
     @Override
-    public Location readLocation(int idRech) {
+    public Location read(int idRech) {
         String query = "SELECT * FROM API_LAFTC WHERE ID_LOCATION = ?";
 
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -114,7 +115,7 @@ public class LocationModelDB implements DAOLocation, LocationSpecial {
     }
 
     @Override
-    public boolean updateLocation(Location locationModifie) {
+    public boolean update(Location locationModifie) {
 
         String query = "UPDATE API_LOCATION SET DATELOC = ?, KMTOTAL = ?, ID_ADRESSE = ?, ID_CLIENT = ? WHERE ID_LOCATION = ?";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -129,30 +130,39 @@ public class LocationModelDB implements DAOLocation, LocationSpecial {
 
             if (res != 0) {
                 return true;
-            }else{
-                logger.error("Record introuvable");
-            }
-        } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean removeLocation(int idLocation) {
-
-        String deleteQuery = "DELETE FROM API_LOCATION WHERE ID_LOCATION = ?";
-
-        try (PreparedStatement delete = dbConnect.prepareStatement(deleteQuery)) {
-            delete.setInt(1, idLocation);
-            int response = delete.executeUpdate();
-
-            if (response != 0) {
-                return true;
             } else {
                 logger.error("Record introuvable");
             }
+        } catch (SQLException e) {
+            logger.error("Erreur sql : " + e);
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean remove(int idLocation) {
+
+        String deleteFacQuery = "DELETE FROM API_FACTURE WHERE ID_LOCATION = ?";
+        String deleteLocQuery = "DELETE FROM API_LOCATION WHERE ID_LOCATION = ?";
+
+        try (
+                PreparedStatement deleteFac = dbConnect.prepareStatement(deleteFacQuery);
+                PreparedStatement deleteLoc = dbConnect.prepareStatement(deleteLocQuery)
+        ) {
+            deleteFac.setInt(1, idLocation);
+            int responseFac = deleteFac.executeUpdate();
+
+            if (responseFac != 0){
+                deleteLoc.setInt(1, idLocation);
+                int responseLoc = deleteLoc.executeUpdate();
+
+                if (responseLoc != 0) {
+                    return true;
+                }
+            }else{
+                logger.error("Record de location introuvable");
+            }
 
         } catch (SQLException e) {
             logger.error("Erreur sql : " + e);
@@ -162,14 +172,14 @@ public class LocationModelDB implements DAOLocation, LocationSpecial {
     }
 
     @Override
-    public List<Location> getLocations() {
+    public List<Location> getAll() {
         List<Location> ll = new ArrayList<>();
-        String query = "SELECT * FROM API_LAFTC WHERE ID_LOCATION IS NOT NULL ORDER BY ID_LOCATION";
-        try (PreparedStatement req = dbConnect.prepareStatement(query)) {
+        String query = "SELECT * FROM API_LocationClientAdresse WHERE ID_LOCATION IS NOT NULL";
+        try (Statement req = dbConnect.createStatement()) {
             ResultSet rs = req.executeQuery(query);
+            rs.next();
 
-            while (rs.next()) {
-
+            do {
                 int idClient = rs.getInt("id_client");
                 String mailClient = rs.getString("mail");
                 String nomClient = rs.getString("nom");
@@ -185,21 +195,55 @@ public class LocationModelDB implements DAOLocation, LocationSpecial {
                 int cpAdresse = rs.getInt("cp");
                 String localiteAdresse = rs.getString("localite");
                 String rueAdresse = rs.getString("rue");
-                String numeAdresse = rs.getString("rue");
+                String numAdresse = rs.getString("num");
 
 
                 Client client = new Client(idClient, mailClient, nomClient, prenomClient, telClient);
-                Adresse adresse = new Adresse(idAdresse, cpAdresse, localiteAdresse, rueAdresse, numeAdresse);
+                Adresse adresse = new Adresse(idAdresse, cpAdresse, localiteAdresse, rueAdresse, numAdresse);
                 Location loc = new Location(idLoc, dateloc, kmTotal, client, adresse);
 
+                List<Facturation> facs = getFacturations(loc);
+
+                loc.setFacturation(facs);
+
                 ll.add(loc);
+
                 //todo: Ajouter la liste des facturations, par une autre requête ?
 
-            }
+            } while (rs.next());
 
             return ll;
         } catch (SQLException e) {
             logger.error("Erreur sql : " + e);
+        }
+
+        return null;
+    }
+
+    public List<Facturation> getFacturations(Location loc) {
+        String query = "SELECT * FROM API_FACTURESLOCATION WHERE ID_LOCATION = ?";
+
+        try (PreparedStatement req = dbConnect.prepareStatement(query)) {
+            req.setInt(1, loc.getId());
+            ResultSet rs = req.executeQuery();
+            rs.next();
+
+            List<Facturation> facs = new ArrayList<>();
+
+            do {
+                double cout = rs.getInt(1);
+                int idTaxi = rs.getInt(2);
+                String immatriculation = rs.getString(3);
+                String carburant = rs.getString(4);
+                double prixKm = rs.getDouble(5);
+
+                facs.add(new Facturation(cout, new Taxi(idTaxi, immatriculation, carburant, prixKm)));
+
+            } while (rs.next());
+
+            return facs;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
         }
 
         return null;
@@ -212,9 +256,10 @@ public class LocationModelDB implements DAOLocation, LocationSpecial {
             req.setInt(1, loc.getId());
             req.setInt(2, taxi.getId());
             req.setBigDecimal(3, BigDecimal.valueOf((loc.getKmTotal() * taxi.getPrixKm())));
+
             int reponse = req.executeUpdate();
 
-            if (reponse != 0){
+            if (reponse != 0) {
                 return true;
             }
 
@@ -223,5 +268,11 @@ public class LocationModelDB implements DAOLocation, LocationSpecial {
             logger.error("erreur d'ajout de facturation : " + e);
         }
         return false;
+    }
+
+    @Override
+    public BigDecimal prixTotalLocation(Location location) {
+        //todo : utiliser la fonction
+        return null;
     }
 }

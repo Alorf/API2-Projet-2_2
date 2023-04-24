@@ -5,7 +5,6 @@ import locationTaxi.Client;
 import locationTaxi.Location;
 import mvp.Utilitaire;
 import mvp.presenter.LocationPresenter;
-import mvp.view.location.LocationViewInterface;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -78,11 +77,10 @@ public class LocationViewConsole implements LocationViewInterface {
                     //Ajout de facturation
                         special();
                 case 7 ->
-                //Fin
                 {
+                    //Fin
                     return;
                 }
-                default -> System.out.println("Mauvaise saisie, recommencez !");
             }
         } while (true);
     }
@@ -90,11 +88,6 @@ public class LocationViewConsole implements LocationViewInterface {
     public void creerLocation() {
         LocalDate date = Utilitaire.lecDate();
         int kmTotal = Integer.parseInt(Utilitaire.regex("[0-9]+", "Nombre de kilomètres : "));
-
-        //Séléction client
-
-
-        //Séléction adresse
 
         presenter.addLocation(new Location(0, date, kmTotal, null, null));
     }
@@ -104,12 +97,14 @@ public class LocationViewConsole implements LocationViewInterface {
 
         Location location = presenter.readLocation(idRech);
 
+        LocalDate date = location.getDate();
         int kmTotal = location.getKmTotal();
         Client client = location.getClient();
         Adresse adresse = location.getAdrDepart();
 
 
         String[] menu = {
+                "Date",
                 "Nombre de kilomètre",
                 "Client",
                 "Adresse",
@@ -127,27 +122,32 @@ public class LocationViewConsole implements LocationViewInterface {
             switch (choix) {
 
                 case 1 -> {
+                    System.out.println("Anciennement : " + date);
+                    date = Utilitaire.lecDate();
+                }
+                case 2 -> {
                     System.out.println("Anciennement : " + kmTotal);
                     kmTotal = Integer.parseInt(Utilitaire.regex("[0-9]+", "Nouveau kilométrage"));
                 }
-                case 2 -> {
+                case 3 -> {
                     System.out.println("Anciennement : " + client);
                     //Sélection client
-                }
-                case 3 -> {
-                    System.out.println("Anciennement : " + adresse);
-                    //Sélection adresse
-
+                    client = presenter.choixClient();
                 }
                 case 4 -> {
+                    System.out.println("Anciennement : " + adresse);
+                    //Sélection adresse
+                    adresse = presenter.choixAdresse();
+
+                }
+                case 5 -> {
                     break updateLoop;
                 }
-                default -> System.out.println("Mauvaise saisie, recommencez !");
             }
 
         } while (true);
 
-        //presenter.updateLocation(new Location(idRech, cp, localite, rue, num));
+        presenter.updateLocation(new Location(idRech, date, kmTotal, client, adresse));
     }
 
     public void rechercherLocation() {
@@ -169,14 +169,36 @@ public class LocationViewConsole implements LocationViewInterface {
         Utilitaire.afficherListe(locations);
     }
 
-    private void special(){
+    private void special() {
         System.out.println("Ajout d'une facturation");
         System.out.println("Location concerneée");
         int choixLoc = Utilitaire.choixListe(ll);
 
-        Location loc = ll.get(choixLoc-1);
+        Location loc = ll.get(choixLoc - 1);
 
-        presenter.addFacturation(loc);
+        System.out.println("Que voulez-vous faire ?");
+        String[] menu = {
+                "Ajout d'une facturation",
+                "Quitter"
+        };
+
+        //todo : Modification et suppression de facturation ?
+
+        int choix;
+
+        special:
+        do {
+            choix = Utilitaire.choixListe(Arrays.asList(menu));
+
+            switch (choix) {
+                case 1 ->
+                    //Ajout d'une facturation
+                    presenter.addFacturation(loc);
+                case 2 -> {
+                    break special;
+                }
+            }
+        } while (true);
+
     }
-
 }

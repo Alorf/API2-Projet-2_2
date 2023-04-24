@@ -17,4 +17,6 @@ public interface ClientSpecial {
     List<Location> locations(Client client);
 
     List<Facturation> facturations(Client client);
+
+    int nombreLocation(Client client);
 }

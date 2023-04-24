@@ -1,6 +1,7 @@
 package mvp.model.client;
 
 import locationTaxi.*;
+import mvp.model.DAO;
 import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ClientModelDB implements DAOClient, ClientSpecial {
+public class ClientModelDB implements DAO<Client>, ClientSpecial {
 
     private Connection dbConnect;
 
@@ -27,7 +28,7 @@ public class ClientModelDB implements DAOClient, ClientSpecial {
     }
 
     @Override
-    public Client addClient(Client client) {
+    public Client add(Client client) {
         String mail = client.getMail();
         String nom = client.getNom();
         String prenom = client.getPrenom();
@@ -67,7 +68,7 @@ public class ClientModelDB implements DAOClient, ClientSpecial {
     }
 
     @Override
-    public Client readClient(int idRech) {
+    public Client read(int idRech) {
         String query = "SELECT * FROM API_TCLIENT WHERE ID_CLIENT = ?";
 
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -97,7 +98,7 @@ public class ClientModelDB implements DAOClient, ClientSpecial {
     }
 
     @Override
-    public boolean updateClient(Client clientModifie) {
+    public boolean update(Client clientModifie) {
 
         String query = "UPDATE API_TCLIENT SET MAIL = ?, NOM = ?, PRENOM = ?, TEL = ? WHERE ID_CLIENT = ?";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -123,7 +124,7 @@ public class ClientModelDB implements DAOClient, ClientSpecial {
     }
 
     @Override
-    public boolean removeClient(int idClient) {
+    public boolean remove(int idClient) {
 
         String deleteQuery = "DELETE FROM API_TCLIENT WHERE ID_CLIENT = ?";
 
@@ -145,7 +146,7 @@ public class ClientModelDB implements DAOClient, ClientSpecial {
     }
 
     @Override
-    public List<Client> getClients() {
+    public List<Client> getAll() {
         List<Client> lc = new ArrayList<>();
         String query = "SELECT * FROM API_TCLIENT ORDER BY ID_CLIENT";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -269,5 +270,11 @@ public class ClientModelDB implements DAOClient, ClientSpecial {
     @Override
     public List<Facturation> facturations(Client client) {
         return null;
+    }
+
+    @Override
+    public int nombreLocation(Client client) {
+        //todo : utiliser la fonction
+        return 0;
     }
 }

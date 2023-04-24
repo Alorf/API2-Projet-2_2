@@ -1,43 +1,41 @@
 package mvp.presenter;
 
 import locationTaxi.Adresse;
-import locationTaxi.Client;
-import mvp.model.adresse.DAOAdresse;
+import mvp.model.DAO;
 import mvp.view.adresse.AdresseViewInterface;
 
 import java.util.List;
 
 public class AdressePresenter {
-    private DAOAdresse model;
+    private DAO<Adresse> model;
 
     private AdresseViewInterface view;
 
-    public AdressePresenter(DAOAdresse model, AdresseViewInterface view) {
+    public AdressePresenter(DAO<Adresse> model, AdresseViewInterface view) {
         this.model = model;
         this.view = view;
         this.view.setPresenter(this);
     }
 
     public void start() {
-        List<Adresse> adresses = model.getAdresses();
+        List<Adresse> adresses = model.getAll();
         view.setListDatas(adresses);
     }
 
     public void addAdresse(Adresse adresse) {
-        Adresse cl = model.addAdresse(adresse);
+        Adresse cl = model.add(adresse);
         if (cl == null) {
             view.affMsg("Erreur lors de la création");
         } else {
             view.affMsg("Création de : " + cl);
         }
 
-        List<Adresse> adresses = model.getAdresses();
+        List<Adresse> adresses = model.getAll();
         view.setListDatas(adresses);
-
     }
 
     public Adresse readAdresse(int idRech) {
-        Adresse adresse = model.readAdresse(idRech);
+        Adresse adresse = model.read(idRech);
         if (adresse == null) {
             System.out.println("Adresse introuvable");
             return null;
@@ -49,7 +47,7 @@ public class AdressePresenter {
     }
 
     public void updateAdresse(Adresse adresse) {
-        boolean ok = model.updateAdresse(adresse);
+        boolean ok = model.update(adresse);
 
         if (ok) {
             System.out.println("Adresse modifiée");
@@ -59,7 +57,7 @@ public class AdressePresenter {
     }
 
     public void removeAdresse(int idAdr) {
-        boolean ok = model.removeAdresse(idAdr);
+        boolean ok = model.remove(idAdr);
 
         if (ok) {
             view.affMsg("Adresse effacée");
@@ -67,12 +65,12 @@ public class AdressePresenter {
             view.affMsg("Adresse non effacée");
         }
 
-        List<Adresse> adresses = model.getAdresses();
+        List<Adresse> adresses = model.getAll();
         view.setListDatas(adresses);
     }
 
     public List<Adresse> tout(){
-        List<Adresse> lc = model.getAdresses();
+        List<Adresse> lc = model.getAll();
 
         if (lc == null){
             view.affMsg("Aucune adresse dans la base de donnée");
@@ -82,7 +80,7 @@ public class AdressePresenter {
     }
 
     public Adresse selectionner() {
-        Adresse adresse = view.selectionner(model.getAdresses());
+        Adresse adresse = view.selectionner(model.getAll());
         return adresse;
     }
 }

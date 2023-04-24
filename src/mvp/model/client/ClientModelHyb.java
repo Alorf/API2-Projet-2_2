@@ -1,6 +1,7 @@
 package mvp.model.client;
 
 import locationTaxi.*;
+import mvp.model.DAO;
 import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,11 +9,10 @@ import org.apache.logging.log4j.Logger;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ClientModelHyb implements DAOClient, ClientSpecial {
+public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
     private Connection dbConnect;
 
@@ -27,36 +27,31 @@ public class ClientModelHyb implements DAOClient, ClientSpecial {
     }
 
     @Override
-    public Client addClient(Client client) {
+    public Client add(Client client) {
+        //fixme : voir si cela marche
         String mail = client.getMail();
         String nom = client.getNom();
         String prenom = client.getPrenom();
         String tel = client.getTel();
 
-        String ajoutCli = "INSERT INTO API_TCLIENT(MAIL, NOM, PRENOM, TEL) VALUES (?, ?, ?, ?)";
-        String getCliId = "SELECT ID_CLIENT FROM API_TCLIENT WHERE MAIL=?";
+        String ajoutCli = "CALL API_PROC_CREATE_CLIENT(?, ?, ?, ?, ?)";
 
-        try (PreparedStatement req1 = dbConnect.prepareStatement(ajoutCli);
-             PreparedStatement req2 = dbConnect.prepareStatement(getCliId)
-        ) {
-            req1.setString(1, mail);
-            req1.setString(2, nom);
-            req1.setString(3, prenom);
-            req1.setString(4, tel);
+        try (CallableStatement cs = dbConnect.prepareCall(ajoutCli)) {
+            cs.setString(1, mail);
+            cs.setString(2, nom);
+            cs.setString(3, prenom);
+            cs.setString(4, tel);
 
-            int response = req1.executeUpdate();
 
-            if (response == 1) {
-                req2.setString(1, mail);
-                ResultSet rs = req2.executeQuery();
+            cs.registerOutParameter(5, Types.INTEGER);
 
-                if (rs.next()) {
-                    int idCli = rs.getInt(1);
-                    client.setId(idCli);
-                    return client;
-                } else {
-                    logger.error("Record introuvable");
-                }
+            int response = cs.executeUpdate();
+
+            if (response != 0){
+                int idCli = cs.getInt(5);
+                client.setId(idCli);
+
+                return client;
             }
 
         } catch (SQLException e) {
@@ -67,8 +62,8 @@ public class ClientModelHyb implements DAOClient, ClientSpecial {
     }
 
     @Override
-    public Client readClient(int idRech) {
-        String query = "SELECT * FROM API_LAFTC WHERE ID_CLIENT = ?";
+    public Client read(int idRech) {
+        String query = "SELECT * FROM API_LOCATIONCLIENTADRESSE WHERE ID_CLIENT = ?";
 
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
             req.setInt(1, idRech);
@@ -84,43 +79,30 @@ public class ClientModelHyb implements DAOClient, ClientSpecial {
 
                 Client client = new Client(idRech, mailClient, nomClient, prenomClient, telClient);
 
-
                 List<Location> locations = new ArrayList<>();
 
-                int idLoc = rs.getInt("id_location");
-                if (idLoc != 0) {
-                    do {
-                        idLoc = rs.getInt("id_location");
-                        LocalDate dateloc = rs.getDate("dateloc").toLocalDate();
-                        int kmTotalLoc = rs.getInt("kmtotal");
+                do {
+                    int idLoc = rs.getInt("id_location");
+                    LocalDate dateloc = rs.getDate("dateloc").toLocalDate();
+                    int kmTotalLoc = rs.getInt("kmtotal");
 
-                        int idAdresse = rs.getInt("id_adresse");
-                        int cpAdresse = rs.getInt("cp");
-                        String localiteAdresse = rs.getString("localite");
-                        String rueAdresse = rs.getString("rue");
-                        String numAdresse = rs.getString("num");
+                    int idAdresse = rs.getInt("id_adresse");
+                    int cpAdresse = rs.getInt("cp");
+                    String localiteAdresse = rs.getString("localite");
+                    String rueAdresse = rs.getString("rue");
+                    String numAdresse = rs.getString("num");
 
-                        Adresse adresse = new Adresse(idAdresse, cpAdresse, localiteAdresse, rueAdresse, numAdresse);
+                    Adresse adresse = new Adresse(idAdresse, cpAdresse, localiteAdresse, rueAdresse, numAdresse);
 
-                        int coutFac = rs.getInt("cout");
+                    Location loc = new Location(idLoc, dateloc, kmTotalLoc, client, adresse);
 
-                        int idTaxi = rs.getInt("id_taxi");
-                        String immatriculationTaxi = rs.getString("immatriculation");
-                        String carburantTaxi = rs.getString("carburant");
-                        double prixKmTaxi = rs.getDouble("prixkm");
+                    List<Facturation> facs = getFacturations(loc);
+                    loc.setFacturation(facs);
 
-                        Taxi taxi = new Taxi(idTaxi, immatriculationTaxi, carburantTaxi, prixKmTaxi);
+                    locations.add(loc);
 
-                        Facturation fac = new Facturation(coutFac, taxi);
-                        Location loc = new Location(idLoc, dateloc, kmTotalLoc, client, adresse);
+                } while (rs.next());
 
-                        loc.getFacturations().add(fac);
-                        //todo : mais si une location a plusieurs taxis ?
-
-                        locations.add(loc);
-
-                    } while (rs.next());
-                }
 
                 client.setLocations(locations);
                 return client;
@@ -136,8 +118,37 @@ public class ClientModelHyb implements DAOClient, ClientSpecial {
 
     }
 
+    public List<Facturation> getFacturations(Location loc) {
+        String query = "SELECT * FROM API_FACTURESLOCATION WHERE ID_LOCATION = ?";
+
+        try (PreparedStatement req = dbConnect.prepareStatement(query)) {
+            req.setInt(1, loc.getId());
+            ResultSet rs = req.executeQuery();
+            rs.next();
+
+            List<Facturation> facs = new ArrayList<>();
+
+            do {
+                double cout = rs.getInt(1);
+                int idTaxi = rs.getInt(2);
+                String immatriculation = rs.getString(3);
+                String carburant = rs.getString(4);
+                double prixKm = rs.getDouble(5);
+
+                facs.add(new Facturation(cout, new Taxi(idTaxi, immatriculation, carburant, prixKm)));
+
+            } while (rs.next());
+
+            return facs;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return null;
+    }
+
     @Override
-    public boolean updateClient(Client clientModifie) {
+    public boolean update(Client clientModifie) {
 
         String query = "UPDATE API_TCLIENT SET MAIL = ?, NOM = ?, PRENOM = ?, TEL = ? WHERE ID_CLIENT = ?";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -163,7 +174,7 @@ public class ClientModelHyb implements DAOClient, ClientSpecial {
     }
 
     @Override
-    public boolean removeClient(int idClient) {
+    public boolean remove(int idClient) {
 
         String deleteQuery = "DELETE FROM API_TCLIENT WHERE ID_CLIENT = ?";
 
@@ -185,7 +196,7 @@ public class ClientModelHyb implements DAOClient, ClientSpecial {
     }
 
     @Override
-    public List<Client> getClients() {
+    public List<Client> getAll() {
         List<Client> lc = new ArrayList<>();
         String query = "SELECT * FROM API_TCLIENT ORDER BY ID_CLIENT";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -209,42 +220,10 @@ public class ClientModelHyb implements DAOClient, ClientSpecial {
 
         return null;
     }
-/*
+
     @Override
     public Set<Taxi> taxiUtiliseSansDoublon(Client client) {
         return client.taxiUtiliseSansDoublon();
-    }
- */
-
-    @Override
-
-    public Set<Taxi> taxiUtiliseSansDoublon(Client client) {
-        Set<Taxi> lt = new HashSet<>();
-        String query = "SELECT ID_TAXI, IMMATRICULATION, CARBURANT, PRIXKM FROM API_TAXIPARCLIENT TAXPARCLI JOIN API_TAXI TAX ON TAXPARCLI.TAXI = TAX.IMMATRICULATION WHERE CLIENT=?";
-
-        try (PreparedStatement req = dbConnect.prepareStatement(query)) {
-            //todo: Mettre cela dans un try catch ?
-            req.setString(1, client.getNom() + " " + client.getPrenom());
-            ResultSet rs = req.executeQuery();
-
-            boolean trouve = false;
-            while (rs.next()){
-                trouve=true;
-                Taxi taxi = new Taxi(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getDouble(4));
-                logger.info(taxi);
-                lt.add(taxi);
-            }
-
-            if (!trouve){
-                logger.error("Record introuvable");
-            }else{
-                return lt;
-            }
-        } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
-        }
-
-        return lt;
     }
 
     @Override
@@ -262,34 +241,39 @@ public class ClientModelHyb implements DAOClient, ClientSpecial {
         return client.getLocations();
     }
 
-    @Override
     public List<Facturation> facturations(Client client) {
+        //todo : bouger la méthode vers la classe client ?
+
         List<Facturation> facs = new ArrayList<>();
-        String query = "SELECT * FROM API_FACTURE";
-        try (PreparedStatement req = dbConnect.prepareStatement(query)) {
-            req.setInt(1, client.getId());
-            ResultSet rs = req.executeQuery();
 
-            boolean trouve = false;
-            while (rs.next()) {
-                trouve = true;
-                double coutFac = rs.getDouble("cout");
-
-                int idTaxi = rs.getInt("id_taxi");
-                String immatriculationTaxi = rs.getString("immatriculation");
-                String carburantTaxi = rs.getString("carburant");
-                double prixKmTaxi = rs.getDouble("prixkm");
-
-                Taxi taxi = new Taxi(idTaxi, immatriculationTaxi, carburantTaxi, prixKmTaxi);
-                Facturation facturation = new Facturation(coutFac, taxi);
-
-                facs.add(facturation);
-            }
-            if (!trouve) System.out.println("aucune commande trouvée");
-        } catch (SQLException e) {
-            logger.error("erreur sql : " + e);
-            return null;
+        for (Location location : client.getLocations()) {
+            facs.addAll(location.getFacturations());
         }
-        return null;
+
+        return facs.isEmpty() ? null : facs;
+    }
+
+    @Override
+    public int nombreLocation(Client client) {
+        //Utilisation d'une fonction de SGBD
+        //fixme : ne marche pas
+        String nombreLoc = "CALL API_FONC_NOMBRE_LOCATION_CLIENT(?)";
+
+        try (CallableStatement cs = dbConnect.prepareCall(nombreLoc)) {
+            cs.setString(1, client.getMail());
+            int response = cs.executeUpdate();
+
+            System.out.println(response);
+
+            int idCli = cs.getInt(1);
+            client.setId(idCli);
+
+            return 1;
+
+        } catch (SQLException e) {
+            logger.error("Erreur sql : " + e);
+        }
+
+        return -1;
     }
 }
