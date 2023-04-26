@@ -1,4 +1,4 @@
-package locationTaxi;
+package designpatterns.builder;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -35,20 +35,12 @@ public class Client {
      */
     private List<Location> locations = new ArrayList<>();
 
-    /**
-     * Constructeur paramétré de locations du client
-     * @param id Identifiant unique du client
-     * @param mail Mail unique du client
-     * @param nom Nom du client
-     * @param prenom Prénom du client
-     * @param tel Numéro de téléphone du client
-     */
-    public Client(int id, String mail, String nom, String prenom, String tel) {
-        this.id = id;
-        this.mail = mail;
-        this.nom = nom;
-        this.prenom = prenom;
-        this.tel = tel;
+    private Client(ClientBuilder cb) {
+        this.id = cb.id;
+        this.mail = cb.mail;
+        this.nom = cb.mail;
+        this.prenom = cb.prenom;
+        this.tel = cb.tel;
     }
 
     /**
@@ -60,27 +52,11 @@ public class Client {
     }
 
     /**
-     * Setter id
-     * @param id Nouvel identifiant du client
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
      * Getter mail
      * @return Mail du client
      */
     public String getMail() {
         return mail;
-    }
-
-    /**
-     * Setter mail
-     * @param mail Nouveau mail du client
-     */
-    public void setMail(String mail) {
-        this.mail = mail;
     }
 
     /**
@@ -92,14 +68,6 @@ public class Client {
     }
 
     /**
-     * Setter nom
-     * @param nom Nouveau nom du client
-     */
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    /**
      * Getter prénom
      * @return Prénom du client
      */
@@ -108,27 +76,11 @@ public class Client {
     }
 
     /**
-     * Setter prénom
-     * @param prenom Nouveau prénom du client
-     */
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-
-    /**
      * Getter numéro de téléphone
      * @return Numéro de téléphone du client
      */
     public String getTel() {
         return tel;
-    }
-
-    /**
-     * Setter numéro de téléphone
-     * @param tel Nouveau numéro de téléphone du client
-     */
-    public void setTel(String tel) {
-        this.tel = tel;
     }
 
     /**
@@ -219,5 +171,67 @@ public class Client {
         }
 
         return la;
+    }
+
+    public static class ClientBuilder{
+        /**
+         * Identifiant unique du client
+         */
+        protected int id;
+        /**
+         * Mail unique du client
+         */
+        protected String mail;
+        /**
+         * Nom du client
+         */
+        protected String nom;
+        /**
+         * Prénom du client
+         */
+        protected String prenom;
+        /**
+         * Numéro de téléphone du client
+         */
+        protected String tel;
+
+        public ClientBuilder setId(int id) {
+            this.id = id;
+
+            return this;
+        }
+
+        public ClientBuilder setMail(String mail) {
+            this.mail = mail;
+
+            return this;
+        }
+
+        public ClientBuilder setNom(String nom) {
+            this.nom = nom;
+
+            return this;
+        }
+
+        public ClientBuilder setPrenom(String prenom) {
+            this.prenom = prenom;
+
+            return this;
+        }
+
+        public ClientBuilder setTel(String tel) {
+            this.tel = tel;
+
+            return this;
+        }
+
+        public Client build() throws Exception{
+            if (false){
+                //todo : faire le if
+                throw new Exception("Informations de construction incomplètes");
+            }
+
+            return new Client(this);
+        }
     }
 }

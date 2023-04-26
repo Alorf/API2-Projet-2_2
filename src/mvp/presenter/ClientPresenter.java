@@ -1,6 +1,6 @@
 package mvp.presenter;
 
-import locationTaxi.*;
+import locationTaxi.metier.*;
 import mvp.model.DAO;
 import mvp.model.client.ClientSpecial;
 import mvp.view.client.ClientViewInterface;

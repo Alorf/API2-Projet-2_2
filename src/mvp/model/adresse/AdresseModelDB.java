@@ -1,6 +1,6 @@
 package mvp.model.adresse;
 
-import locationTaxi.Adresse;
+import locationTaxi.metier.Adresse;
 import mvp.model.DAO;
 import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;

@@ -1,4 +1,4 @@
-package locationTaxi;
+package locationTaxi.metier;
 
 import java.util.Objects;
 

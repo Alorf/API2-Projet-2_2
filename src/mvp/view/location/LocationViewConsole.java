@@ -1,9 +1,9 @@
 package mvp.view.location;
 
-import locationTaxi.Adresse;
-import locationTaxi.Client;
-import locationTaxi.Location;
-import mvp.Utilitaire;
+import locationTaxi.metier.Adresse;
+import locationTaxi.metier.Client;
+import locationTaxi.metier.Location;
+import utilitaire.Utilitaire;
 import mvp.presenter.LocationPresenter;
 
 import java.time.LocalDate;
@@ -170,8 +170,6 @@ public class LocationViewConsole implements LocationViewInterface {
     }
 
     private void special() {
-        System.out.println("Ajout d'une facturation");
-        System.out.println("Location concerneée");
         int choixLoc = Utilitaire.choixListe(ll);
 
         Location loc = ll.get(choixLoc - 1);

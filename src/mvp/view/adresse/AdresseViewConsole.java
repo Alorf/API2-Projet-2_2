@@ -1,15 +1,11 @@
 package mvp.view.adresse;
 
-import locationTaxi.Adresse;
-import locationTaxi.Client;
-import mvp.Utilitaire;
+import locationTaxi.metier.Adresse;
+import utilitaire.Utilitaire;
 import mvp.presenter.AdressePresenter;
-import mvp.view.adresse.AdresseViewInterface;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class AdresseViewConsole implements AdresseViewInterface {
     private AdressePresenter presenter;

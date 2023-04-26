@@ -1,4 +1,4 @@
-package locationTaxi;
+package designpatterns.builder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,20 +35,12 @@ public class Location {
      */
     private List<Facturation> facturations = new ArrayList<>();
 
-    /**
-     * Constructeur paramétré de la location
-     * @param id Identifiant de la location
-     * @param date Date de la location
-     * @param kmTotal Kilomètres total parcouru
-     * @param client Client de la location
-     * @param adrDepart Adresse de départ de la location
-     */
-    public Location(int id, LocalDate date, int kmTotal, Client client, Adresse adrDepart) {
-        this.id = id;
-        this.date = date;
-        this.kmTotal = kmTotal;
-        this.client = client;
-        this.adrDepart = adrDepart;
+    private Location(LocationBuilder lb) {
+        this.id = lb.id;
+        this.date = lb.date;
+        this.kmTotal = lb.kmTotal;
+        this.client = lb.client;
+        this.adrDepart = lb.adrDepart;
     }
 
     /**
@@ -67,27 +59,11 @@ public class Location {
     }
 
     /**
-     * Setter identifiant
-     * @param id Nouvel identifiant de la location
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
      * Getter date
      * @return Date de la location
      */
     public LocalDate getDate() {
         return date;
-    }
-
-    /**
-     * Setter date
-     * @param date Nouvelle date de location
-     */
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 
     /**
@@ -99,14 +75,6 @@ public class Location {
     }
 
     /**
-     * Setter kilomètre total
-     * @param kmTotal Nouvelle distance parcourue de la location
-     */
-    public void setKmTotal(int kmTotal) {
-        this.kmTotal = kmTotal;
-    }
-
-    /**
      * Getter client
      * @return Client de la location
      */
@@ -115,27 +83,11 @@ public class Location {
     }
 
     /**
-     * Setter client
-     * @param client Nouveau client de la location
-     */
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    /**
      * Getter adresse
      * @return Adresse de départ de la location
      */
     public Adresse getAdrDepart() {
         return adrDepart;
-    }
-
-    /**
-     * Setter adresse de départ
-     * @param adrDepart Nouvelle adresse de départ de la location
-     */
-    public void setAdrDepart(Adresse adrDepart) {
-        this.adrDepart = adrDepart;
     }
 
     /**
@@ -168,5 +120,67 @@ public class Location {
                 ", adrDepart=" + adrDepart +
                 ", facturations=" + facturations +
                 '}';
+    }
+
+    public static class LocationBuilder{
+        /**
+         * Identifiant de la location
+         */
+        private int id;
+        /**
+         * Date de la location
+         */
+        private LocalDate date;
+        /**
+         * Kilomètres total parcouru
+         */
+        private int kmTotal;
+        /**
+         * Client de la location
+         */
+        private Client client;
+        /**
+         * Adresse de départ de la location
+         */
+        private Adresse adrDepart;
+
+        public LocationBuilder setId(int id) {
+            this.id = id;
+
+            return this;
+        }
+
+        public LocationBuilder setDate(LocalDate date) {
+            this.date = date;
+
+            return this;
+        }
+
+        public LocationBuilder setKmTotal(int kmTotal) {
+            this.kmTotal = kmTotal;
+
+            return this;
+        }
+
+        public LocationBuilder setClient(Client client) {
+            this.client = client;
+
+            return this;
+        }
+
+        public LocationBuilder setAdrDepart(Adresse adrDepart) {
+            this.adrDepart = adrDepart;
+
+            return this;
+        }
+
+        public Location build() throws Exception{
+            if (false){
+                //todo : faire le if
+                throw new Exception("Informations de construction incomplètes");
+            }
+
+            return new Location(this);
+        }
     }
 }

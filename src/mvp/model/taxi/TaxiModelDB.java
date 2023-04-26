@@ -1,7 +1,7 @@
 package mvp.model.taxi;
 
-import locationTaxi.Location;
-import locationTaxi.Taxi;
+import locationTaxi.metier.Location;
+import locationTaxi.metier.Taxi;
 import mvp.model.DAO;
 import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;

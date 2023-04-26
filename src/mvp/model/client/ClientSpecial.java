@@ -1,6 +1,7 @@
 package mvp.model.client;
 
-import locationTaxi.*;
+
+import locationTaxi.metier.*;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,7 +1,6 @@
 package mvp.view.adresse;
 
-import locationTaxi.Adresse;
-import locationTaxi.Client;
+import locationTaxi.metier.Adresse;
 import mvp.presenter.AdressePresenter;
 
 import java.util.List;

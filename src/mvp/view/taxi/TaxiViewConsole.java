@@ -1,7 +1,7 @@
 package mvp.view.taxi;
 
-import locationTaxi.Taxi;
-import mvp.Utilitaire;
+import locationTaxi.metier.Taxi;
+import utilitaire.Utilitaire;
 import mvp.presenter.TaxiPresenter;
 
 import java.util.Arrays;

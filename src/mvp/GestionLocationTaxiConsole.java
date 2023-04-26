@@ -2,10 +2,10 @@ package mvp;
 
 
 
-import locationTaxi.Adresse;
-import locationTaxi.Client;
-import locationTaxi.Location;
-import locationTaxi.Taxi;
+import locationTaxi.metier.Adresse;
+import locationTaxi.metier.Client;
+import locationTaxi.metier.Location;
+import locationTaxi.metier.Taxi;
 import mvp.model.DAO;
 import mvp.model.adresse.AdresseModelDB;
 import mvp.model.client.ClientModelHyb;
@@ -23,6 +23,7 @@ import mvp.view.location.LocationViewConsole;
 import mvp.view.location.LocationViewInterface;
 import mvp.view.taxi.TaxiViewConsole;
 import mvp.view.taxi.TaxiViewInterface;
+import utilitaire.Utilitaire;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,4 +1,4 @@
-package locationTaxi;
+package designpatterns.builder;
 
 import java.util.Objects;
 
@@ -29,20 +29,12 @@ public class Adresse {
      */
     private String num;
 
-    /**
-     * Constructeur paramétré de l'adresse
-     * @param id Identifiant de l'adresse
-     * @param cp Code postal de l'adresse
-     * @param localite Localité de l'adresse
-     * @param rue Rue de l'adresse
-     * @param num Numéro de porte de l'adresse
-     */
-    public Adresse(int id, int cp, String localite, String rue, String num) {
-        this.id = id;
-        this.cp = cp;
-        this.localite = localite;
-        this.rue = rue;
-        this.num = num;
+    private Adresse(AdresseBuilder ab) {
+        this.id = ab.id;
+        this.cp = ab.cp;
+        this.localite = ab.localite;
+        this.rue = ab.rue;
+        this.num = ab.num;
     }
 
     /**
@@ -70,27 +62,11 @@ public class Adresse {
     }
 
     /**
-     * Setter code postal
-     * @param cp Nouveau code postal de l'adresse
-     */
-    public void setCp(int cp) {
-        this.cp = cp;
-    }
-
-    /**
      * Getter localité
      * @return localité de l'adresse
      */
     public String getLocalite() {
         return localite;
-    }
-
-    /**
-     * Setter localité
-     * @param localite Nouvelle localité de l'adresse
-     */
-    public void setLocalite(String localite) {
-        this.localite = localite;
     }
 
     /**
@@ -102,27 +78,11 @@ public class Adresse {
     }
 
     /**
-     * Setter num
-     * @param rue Nouvelle rue de l'adresse
-     */
-    public void setRue(String rue) {
-        this.rue = rue;
-    }
-
-    /**
      * Getter num
      * @return Numéro de porte de l'adresse
      */
     public String getNum() {
         return num;
-    }
-
-    /**
-     * Setter num
-     * @param num Nouveau numéro de porte de l'adresse
-     */
-    public void setNum(String num) {
-        this.num = num;
     }
 
     /**
@@ -160,5 +120,67 @@ public class Adresse {
                 ", rue='" + rue + '\'' +
                 ", num='" + num + '\'' +
                 '}';
+    }
+
+    public static class AdresseBuilder{
+        /**
+         * Identifiant de l'adresse
+         */
+        protected int id;
+        /**
+         * Code postale de l'adresse
+         */
+        protected int cp;
+        /**
+         * Localité de l'adresse
+         */
+        protected String localite;
+        /**
+         * Rue de l'adresse
+         */
+        protected String rue;
+        /**
+         * Numéro de porte de l'adresse
+         */
+        protected String num;
+
+        public AdresseBuilder setId(int id) {
+            this.id = id;
+
+            return this;
+        }
+
+        public AdresseBuilder setCp(int cp) {
+            this.cp = cp;
+
+            return this;
+        }
+
+        public AdresseBuilder setLocalite(String localite) {
+            this.localite = localite;
+
+            return this;
+        }
+
+        public AdresseBuilder setRue(String rue) {
+            this.rue = rue;
+
+            return this;
+        }
+
+        public AdresseBuilder setNum(String num) {
+            this.num = num;
+
+            return this;
+        }
+
+        public Adresse build() throws Exception{
+            if (false){
+                //todo : faire le if
+                throw new Exception("Informations de construction incomplètes");
+            }
+
+            return new Adresse(this);
+        }
     }
 }

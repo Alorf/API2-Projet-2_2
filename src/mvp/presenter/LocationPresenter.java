@@ -1,9 +1,9 @@
 package mvp.presenter;
 
-import locationTaxi.Adresse;
-import locationTaxi.Client;
-import locationTaxi.Location;
-import locationTaxi.Taxi;
+import locationTaxi.metier.Adresse;
+import locationTaxi.metier.Client;
+import locationTaxi.metier.Location;
+import locationTaxi.metier.Taxi;
 import mvp.model.DAO;
 import mvp.model.location.LocationSpecial;
 import mvp.view.location.LocationViewInterface;

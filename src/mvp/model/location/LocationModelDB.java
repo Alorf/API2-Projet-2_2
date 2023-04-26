@@ -1,7 +1,6 @@
 package mvp.model.location;
 
-
-import locationTaxi.*;
+import locationTaxi.metier.*;
 import mvp.model.DAO;
 import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;
@@ -220,6 +219,7 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
         return null;
     }
 
+    @Override
     public List<Facturation> getFacturations(Location loc) {
         String query = "SELECT * FROM API_FACTURESLOCATION WHERE ID_LOCATION = ?";
 

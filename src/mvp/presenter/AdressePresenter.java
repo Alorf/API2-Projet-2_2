@@ -1,6 +1,6 @@
 package mvp.presenter;
 
-import locationTaxi.Adresse;
+import locationTaxi.metier.Adresse;
 import mvp.model.DAO;
 import mvp.view.adresse.AdresseViewInterface;
 

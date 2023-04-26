@@ -1,4 +1,4 @@
-package locationTaxi;
+package locationTaxi.metier;
 
 /**
  * Classe Facturation de la société de Taxi

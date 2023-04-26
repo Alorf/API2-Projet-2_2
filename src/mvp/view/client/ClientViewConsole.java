@@ -1,7 +1,7 @@
 package mvp.view.client;
 
-import locationTaxi.*;
-import mvp.Utilitaire;
+import locationTaxi.metier.Client;
+import utilitaire.Utilitaire;
 import mvp.presenter.ClientPresenter;
 
 import java.time.LocalDate;

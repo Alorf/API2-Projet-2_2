@@ -1,7 +1,7 @@
 package mvp.presenter;
 
-import locationTaxi.Facturation;
-import locationTaxi.Taxi;
+import locationTaxi.metier.Facturation;
+import locationTaxi.metier.Taxi;
 import mvp.model.DAO;
 import mvp.view.taxi.TaxiViewInterface;
 
@@ -85,10 +85,12 @@ public class TaxiPresenter {
         List<Taxi> taxis = model.getAll();
 
         for (Facturation fac : facs){
+            //On retire les véhicules qui ne nous intéressent plus
             taxis.remove(fac.getVehicule());
         }
 
         if (taxis.isEmpty()){
+            view.affMsg("Aucun taxi disponnible");
             return null;
         }
 
