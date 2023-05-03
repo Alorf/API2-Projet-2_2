@@ -1,6 +1,6 @@
 package mvp.model.location;
 
-import locationTaxi.metier.*;
+import designpatterns.builder.*;
 import mvp.model.DAO;
 import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;
@@ -92,13 +92,36 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
                 int cpAdresse = rs.getInt("cp");
                 String localiteAdresse = rs.getString("localite");
                 String rueAdresse = rs.getString("rue");
-                String numeAdresse = rs.getString("rue");
+                String numAdresse = rs.getString("num");
 
 
-                Client client = new Client(idClient, mailClient, nomClient, prenomClient, telClient);
-                Adresse adresse = new Adresse(idAdresse, cpAdresse, localiteAdresse, rueAdresse, numeAdresse);
-                Location location = new Location(idLoc, dateloc, kmTotal, client, adresse);
-                //todo : Ajout de la liste de facturations ici ?
+                Client client = new Client.ClientBuilder()
+                        .setId(idClient)
+                        .setMail(mailClient)
+                        .setNom(nomClient)
+                        .setPrenom(prenomClient)
+                        .setTel(telClient)
+                        .build();
+
+                Adresse adresse = new Adresse.AdresseBuilder()
+                        .setId(idAdresse)
+                        .setCp(cpAdresse)
+                        .setLocalite(localiteAdresse)
+                        .setRue(rueAdresse)
+                        .setNum(numAdresse)
+                        .build();
+
+                Location location = new Location.LocationBuilder()
+                        .setId(idLoc)
+                        .setDate(dateloc)
+                        .setKmTotal(kmTotal)
+                        .setClient(client)
+                        .setAdrDepart(adresse)
+                        .build();
+
+                List<Facturation> facs = getFacturations(location);
+
+                location.setFacturation(facs);
 
                 return location;
 
@@ -107,10 +130,11 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
             }
         } catch (SQLException e) {
             logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur Builder : " + e);
         }
 
         return null;
-
     }
 
     @Override
@@ -173,12 +197,11 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
     @Override
     public List<Location> getAll() {
         List<Location> ll = new ArrayList<>();
-        String query = "SELECT * FROM API_LocationClientAdresse WHERE ID_LOCATION IS NOT NULL";
+        String query = "SELECT * FROM API_LOCATION WHERE ID_LOCATION IS NOT NULL";
         try (Statement req = dbConnect.createStatement()) {
             ResultSet rs = req.executeQuery(query);
-            rs.next();
 
-            do {
+            while(rs.next()) {
                 int idClient = rs.getInt("id_client");
                 String mailClient = rs.getString("mail");
                 String nomClient = rs.getString("nom");
@@ -196,24 +219,38 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
                 String rueAdresse = rs.getString("rue");
                 String numAdresse = rs.getString("num");
 
+                Client client = new Client.ClientBuilder()
+                        .setId(idClient)
+                        .setMail(mailClient)
+                        .setNom(nomClient)
+                        .setPrenom(prenomClient)
+                        .setTel(telClient)
+                        .build();
 
-                Client client = new Client(idClient, mailClient, nomClient, prenomClient, telClient);
-                Adresse adresse = new Adresse(idAdresse, cpAdresse, localiteAdresse, rueAdresse, numAdresse);
-                Location loc = new Location(idLoc, dateloc, kmTotal, client, adresse);
+                Adresse adresse = new Adresse.AdresseBuilder()
+                        .setId(idAdresse)
+                        .setCp(cpAdresse)
+                        .setLocalite(localiteAdresse)
+                        .setRue(rueAdresse)
+                        .setNum(numAdresse)
+                        .build();
 
-                List<Facturation> facs = getFacturations(loc);
-
-                loc.setFacturation(facs);
+                Location loc = new Location.LocationBuilder()
+                        .setId(idLoc)
+                        .setDate(dateloc)
+                        .setKmTotal(kmTotal)
+                        .setClient(client)
+                        .setAdrDepart(adresse)
+                        .build();
 
                 ll.add(loc);
-
-                //todo: Ajouter la liste des facturations, par une autre requête ?
-
-            } while (rs.next());
+            };
 
             return ll;
         } catch (SQLException e) {
             logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur Builder : " + e);
         }
 
         return null;
@@ -237,13 +274,28 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
                 String carburant = rs.getString(4);
                 double prixKm = rs.getDouble(5);
 
-                facs.add(new Facturation(cout, new Taxi(idTaxi, immatriculation, carburant, prixKm)));
+                Taxi taxi = new Taxi.TaxiBuilder()
+                        .setId(idTaxi)
+                        .setImmatriculation(immatriculation)
+                        .setCarburant(carburant)
+                        .setPrixKm(prixKm)
+                        .build();
+
+                Facturation fac = new Facturation.FacturationBuilder()
+                        .setCout(cout)
+                        .setVehicule(taxi)
+                        .build();
+
+
+                facs.add(fac);
 
             } while (rs.next());
 
             return facs;
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur builder : " + e);
         }
 
         return null;
@@ -251,11 +303,11 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
 
     @Override
     public boolean addFacturation(Location loc, Taxi taxi) {
-        String query = "insert into  API_FACTURE values(?,?,?)";
+        //Utilisation du trigger de SGBD pour calculer le cout de la location
+        String query = "INSERT INTO  API_FACTURE(id_location, id_taxi) values(?,?)";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
             req.setInt(1, loc.getId());
             req.setInt(2, taxi.getId());
-            req.setBigDecimal(3, BigDecimal.valueOf((loc.getKmTotal() * taxi.getPrixKm())));
 
             int reponse = req.executeUpdate();
 
@@ -265,14 +317,30 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
 
 
         } catch (SQLException e) {
-            logger.error("erreur d'ajout de facturation : " + e);
+            logger.error("Erreur sql : " + e);
         }
         return false;
     }
 
     @Override
     public BigDecimal prixTotalLocation(Location location) {
-        //todo : utiliser la fonction
+        //Appel de fonction SGBD
+        String totalLoc = "{? = call api_fonc_prix_location(?)}";
+
+        try (CallableStatement cs = dbConnect.prepareCall(totalLoc)) {
+            cs.registerOutParameter(1, Types.DECIMAL);
+
+            cs.setInt(2, location.getId());
+            boolean response = cs.execute();
+
+            BigDecimal total = cs.getBigDecimal(1);
+
+            return total;
+
+        } catch (SQLException e) {
+            logger.error("Erreur sql : " + e);
+        }
+
         return null;
     }
 }

@@ -1,6 +1,6 @@
 package mvp.view.client;
 
-import locationTaxi.metier.Client;
+import designpatterns.builder.Client;
 import utilitaire.Utilitaire;
 import mvp.presenter.ClientPresenter;
 
@@ -32,7 +32,7 @@ public class ClientViewConsole implements ClientViewInterface {
 
     @Override
     public void affMsg(String msg) {
-        System.out.println("information : " + msg);
+        System.out.println("Information : " + msg);
 
     }
 
@@ -63,7 +63,7 @@ public class ClientViewConsole implements ClientViewInterface {
                 "Rechercher",
                 "Modifier",
                 "Supprimer",
-                "Tous",
+                "Opérations spéciales",
                 "Finir"
         };
 
@@ -85,9 +85,9 @@ public class ClientViewConsole implements ClientViewInterface {
                     //Supprimer un client
                         supprimerClient();
                 case 5 ->
-                    //Autre un client
-                        tout();
-                case 6 ->
+                    //Opérations spéciales
+                        opSpeciales();
+                default ->
                 //Fin
                 {
                     return;
@@ -98,12 +98,26 @@ public class ClientViewConsole implements ClientViewInterface {
 
     public void creerClient() {
         String mail = Utilitaire.regex("[a-zA-Z.@]+", "Entrez le mail du client : ").toLowerCase();
-        String nom = Utilitaire.regex("[a-zA-Z]+", "Entrez le nom du client : ");
-        String prenom = Utilitaire.regex("[a-zA-Z]+", "Entrez le prénom du client : ");
+        String nom = Utilitaire.regex("[a-zA-Z -]+", "Entrez le nom du client : ");
+        String prenom = Utilitaire.regex("[a-zA-Z -]+", "Entrez le prénom du client : ");
         String tel = Utilitaire.regex("[0-9/ +]+", "Entrez le numéro de téléphone du client : ");
 
+        try {
 
-        presenter.addClient(new Client(0, mail, nom, prenom, tel));
+            Client client = new Client.ClientBuilder()
+                    //.setId(0)
+                    .setMail(mail)
+                    .setNom(nom)
+                    .setPrenom(prenom)
+                    .setTel(tel)
+                    .build();
+
+            presenter.addClient(client);
+
+        } catch (Exception e) {
+            System.err.println("Erreur Builder : " + e);
+        }
+
     }
 
     public void modifierClient() {
@@ -125,7 +139,8 @@ public class ClientViewConsole implements ClientViewInterface {
         };
 
         int choix;
-        System.out.println("Que souhaitez vous modifier");
+
+        System.out.println("Que souhaitez vous modifier ?");
 
         updateLoop:
         do {
@@ -143,13 +158,13 @@ public class ClientViewConsole implements ClientViewInterface {
                     //Modifier nom
                     System.out.println("Anciennement : " + nom);
 
-                    nom = Utilitaire.regex("[a-zA-Z]+", "Entrez le nouveau nom : ");
+                    nom = Utilitaire.regex("[a-zA-Z -]+", "Entrez le nouveau nom : ");
                 }
                 case 3 -> {
                     System.out.println("Anciennement : " + prenom);
 
                     //Modifier prenom
-                    prenom = Utilitaire.regex("[a-zA-Z]+", "Entrez le nouveau prénom : ");
+                    prenom = Utilitaire.regex("[a-zA-Z -]+", "Entrez le nouveau prénom : ");
                 }
                 case 4 -> {
                     //Modifier téléphone
@@ -157,35 +172,42 @@ public class ClientViewConsole implements ClientViewInterface {
 
                     tel = Utilitaire.regex("[0-9/ +]+", "Entrez le nouveau numéro de téléphone du client : ");
                 }
-                case 5 -> {
+                default -> {
                     break updateLoop;
                 }
-                default -> System.out.println("Mauvaise saisie, recommencez !");
             }
 
         } while (true);
 
-        presenter.updateClient(new Client(idRech, mail, nom, prenom, tel));
+        try {
+
+            Client newClient = new Client.ClientBuilder()
+                    .setId(0)
+                    .setMail(mail)
+                    .setNom(nom)
+                    .setPrenom(prenom)
+                    .setTel(tel)
+                    .build();
+
+            presenter.updateClient(newClient);
+
+        } catch (Exception e) {
+            System.err.println("Erreur Builder : " + e);
+        }
     }
 
     public void rechercherClient() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
 
         Client cl = presenter.readClient(idRech);
-
-        opSpeciales(cl);
     }
 
-    private void opSpeciales(Client client) {
+    private void opSpeciales() {
 
-        //int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
-        //Client client = presenter.readClient(idRech);
+        Client client = lc.get(Utilitaire.choixListe(lc) - 1);
 
-        if (client == null) {
-            System.out.println("Client introuvable");
-            return;
-        }
-        System.out.println("Client trouvé");
+        //Avoir tout ce que le client possèdes
+        client = presenter.readClient(client.getId());
 
         System.out.println("Que voulez-vous faire ?");
         String[] menu = {
@@ -194,7 +216,8 @@ public class ClientViewConsole implements ClientViewInterface {
                 "Toutes les adresses où il s'est rendu sans doublon",
                 "Toutes les locations",
                 "Toutes les factures",
-                "Le nombre de locations",
+                "Le nombre de locations (SGBD)",
+                "Le cout total des locations (SGBD)",
                 "Sortir"
         };
         int choix;
@@ -204,34 +227,31 @@ public class ClientViewConsole implements ClientViewInterface {
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
             switch (choix) {
-                case 1 -> {
+                case 1 ->
                     //Tous les taxis utilisés sans doublon
-                    presenter.taxiUtiliseSansDoublon(client);
-                }
+                        presenter.taxiUtiliseSansDoublon(client);
                 case 2 -> {
                     //Toutes les locations entre deux dates
                     LocalDate d1 = Utilitaire.lecDate();
                     LocalDate d2 = Utilitaire.lecDate();
                     presenter.locationEntreDeuxDates(client, d1, d2);
                 }
-                case 3 -> {
+                case 3 ->
                     //Toutes les adresses où il s'est rendu sans doublon
-                    presenter.adresseLocationSansDoublon(client);
-
-                }
-                case 4 -> {
+                        presenter.adresseLocationSansDoublon(client);
+                case 4 ->
                     //Liste des locations du client
-                    presenter.locations(client);
-                }
-                case 5 -> {
+                        presenter.locations(client);
+                case 5 ->
                     //Liste des facturations du client
-                    presenter.facturations(client);
-                }
-                case 6 -> {
+                        presenter.facturations(client);
+                case 6 ->
                     //Nombre de locations
-                    presenter.nombreLocation(client);
-                }
-                case 7 -> {
+                        presenter.nombreLocation(client);
+                case 7 ->
+                    //Cout total des locations
+                        presenter.prixTotalLocs(client);
+                default -> {
                     break special;
                 }
             }
@@ -243,11 +263,5 @@ public class ClientViewConsole implements ClientViewInterface {
         int idCli = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id du client que vous souhaitez supprimer : "));
 
         presenter.removeClient(idCli);
-    }
-
-    public void tout() {
-        List<Client> clients = presenter.tout();
-
-        Utilitaire.afficherListe(clients);
     }
 }

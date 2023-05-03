@@ -1,9 +1,11 @@
 package mvp.view.taxi;
 
-import locationTaxi.metier.Taxi;
+import designpatterns.builder.Client;
+import designpatterns.builder.Taxi;
 import utilitaire.Utilitaire;
 import mvp.presenter.TaxiPresenter;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class TaxiViewConsole implements TaxiViewInterface {
 
     @Override
     public void affMsg(String msg) {
-        System.out.println("information : " + msg);
+        System.out.println("Information : " + msg);
 
     }
 
@@ -41,8 +43,15 @@ public class TaxiViewConsole implements TaxiViewInterface {
 
         int choix = Utilitaire.choixListe(taxis);
 
-        return taxis.get(choix-1);
+        return taxis.get(choix - 1);
     }
+
+    @Override
+    public void affListe(List info) {
+        Utilitaire.afficherListe(info);
+    }
+
+
 
     public void menu() {
 
@@ -53,7 +62,7 @@ public class TaxiViewConsole implements TaxiViewInterface {
                 "Rechercher",
                 "Modifier",
                 "Supprimer",
-                "Tous",
+                "Opérations speciales",
                 "Finir",
         };
 
@@ -75,14 +84,13 @@ public class TaxiViewConsole implements TaxiViewInterface {
                     //Supprimer un taxi
                         supprimerTaxi();
                 case 5 ->
-                    //Autre un taxi
-                        tout();
-                case 6 ->
-                    //Fin
+                    //Opérations spéciales
+                        opSpeciales();
+                default ->
+                //Fin
                 {
                     return;
                 }
-                default -> System.out.println("Mauvaise saisie, recommencez !");
             }
         } while (true);
     }
@@ -94,8 +102,20 @@ public class TaxiViewConsole implements TaxiViewInterface {
         double prixKm = Double.parseDouble(Utilitaire.regex("[ \\t]*(\\+|\\-)?[ \\t]*(\\d*\\.?\\d+(E[\\+|\\-|\\d]\\d*)?)", "Entrez le prix au kilomètre du taxi : "));
         //regex d'un double https://regex101.com/r/AtCkmx/1
 
+        try {
+            Taxi taxi = new Taxi.TaxiBuilder()
+                    //.setId(0)
+                    .setImmatriculation(immatriculation)
+                    .setCarburant(carburant)
+                    .setPrixKm(prixKm)
+                    .build();
 
-        presenter.addTaxi(new Taxi(0, immatriculation, carburant, prixKm));
+            presenter.addTaxi(taxi);
+
+        } catch (Exception e) {
+            System.err.println("Erreur Builder : " + e);
+        }
+
     }
 
     public void modifierTaxi() {
@@ -115,9 +135,11 @@ public class TaxiViewConsole implements TaxiViewInterface {
         };
 
         int choix;
-        System.out.println("Que souhaitez vous modifier");
 
-        updateLoop:do {
+        System.out.println("Que souhaitez vous modifier ?");
+
+        updateLoop:
+        do {
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
 
@@ -141,21 +163,60 @@ public class TaxiViewConsole implements TaxiViewInterface {
                     //Modifier prixKm
                     prixKm = Double.parseDouble(Utilitaire.regex("[ \\t]*(\\+|\\-)?[ \\t]*(\\d*\\.?\\d+(E[\\+|\\-|\\d]\\d*)?)", "Entrez le nouveau prix au kilomètre : "));
                 }
-                case 4 -> {
+                default -> {
                     break updateLoop;
                 }
-                default -> System.out.println("Mauvaise saisie, recommencez !");
             }
 
         } while (true);
 
-        presenter.updateTaxi(new Taxi(idRech, immatriculation, carburant, prixKm));
+        try {
+            Taxi newTaxi = new Taxi.TaxiBuilder()
+                    .setId(idRech)
+                    .setImmatriculation(immatriculation)
+                    .setCarburant(carburant)
+                    .setPrixKm(prixKm)
+                    .build();
+
+            presenter.updateTaxi(newTaxi);
+
+        } catch (Exception e) {
+            System.err.println("Erreur Builder : " + e);
+        }
+
     }
 
     public void rechercherTaxi() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du taxi recherché : "));
 
-        Taxi taxi= presenter.readTaxi(idRech);
+        Taxi taxi = presenter.readTaxi(idRech);
+    }
+
+    private void opSpeciales() {
+
+        Taxi taxi = lt.get(Utilitaire.choixListe(lt)-1);
+
+        System.out.println("Que voulez-vous faire ?");
+        String[] menu = {
+                "Les locations de ce taxi (SGBD)",
+                "Sortir"
+        };
+        int choix;
+
+        special:
+        do {
+            choix = Utilitaire.choixListe(Arrays.asList(menu));
+
+            switch (choix) {
+                case 1 -> {
+                    //Tous les taxis utilisés sans doublon
+                    presenter.locationsTaxi(taxi);
+                }
+                default -> {
+                    break special;
+                }
+            }
+        } while (true);
 
     }
 
@@ -164,11 +225,4 @@ public class TaxiViewConsole implements TaxiViewInterface {
 
         presenter.removeTaxi(idTaxi);
     }
-
-    public void tout() {
-        List<Taxi> taxis = presenter.tout();
-
-        Utilitaire.afficherListe(taxis);
-    }
-
 }

@@ -1,14 +1,20 @@
 package mvp.presenter;
 
-import locationTaxi.metier.Facturation;
-import locationTaxi.metier.Taxi;
+import designpatterns.builder.Facturation;
+import designpatterns.builder.Location;
+import designpatterns.builder.Taxi;
 import mvp.model.DAO;
+import mvp.model.taxi.TaxiSpecial;
 import mvp.view.taxi.TaxiViewInterface;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public class TaxiPresenter {
     private DAO<Taxi> model;
+
+    private static final Logger logger = LogManager.getLogger(TaxiPresenter.class);
 
     private TaxiViewInterface view;
 
@@ -71,17 +77,9 @@ public class TaxiPresenter {
         view.setListDatas(taxis);
     }
 
-    public List<Taxi> tout(){
-        List<Taxi> lc = model.getAll();
-
-        if (lc == null){
-            view.affMsg("Aucun taxi dans la base de donnée");
-        }
-
-        return lc;
-    }
-
     public Taxi selectionner(List<Facturation> facs) {
+        logger.info("Appel de la sélection");
+
         List<Taxi> taxis = model.getAll();
 
         for (Facturation fac : facs){
@@ -96,5 +94,14 @@ public class TaxiPresenter {
 
         Taxi taxi = view.selectionner(taxis);
         return taxi;
+    }
+
+    public void locationsTaxi(Taxi taxi){
+        List<Location> locations = ((TaxiSpecial) model).locationTaxi(taxi);
+        if (locations == null || locations.isEmpty()){
+            view.affMsg("Aucune location pour ce taxi");
+        }else{
+            view.affListe(locations);
+        }
     }
 }

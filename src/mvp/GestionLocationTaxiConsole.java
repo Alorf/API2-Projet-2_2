@@ -2,10 +2,10 @@ package mvp;
 
 
 
-import locationTaxi.metier.Adresse;
-import locationTaxi.metier.Client;
-import locationTaxi.metier.Location;
-import locationTaxi.metier.Taxi;
+import designpatterns.builder.Adresse;
+import designpatterns.builder.Client;
+import designpatterns.builder.Location;
+import designpatterns.builder.Taxi;
 import mvp.model.DAO;
 import mvp.model.adresse.AdresseModelDB;
 import mvp.model.client.ClientModelHyb;
@@ -70,19 +70,11 @@ public class GestionLocationTaxiConsole {
         do {
             int ch = Utilitaire.choixListe(loptions);
             switch (ch) {
-                case 1:
-                    adressePresenter.start();
-                    break;
-                case 2:
-                    clientPresenter.start();
-                    break;
-                case 3:
-                    taxiPresenter.start();
-                    break;
-                case 4: locationPresenter.start();
-                    break;
-                case 5:
-                    System.exit(0);
+                case 1 -> adressePresenter.start();
+                case 2 -> clientPresenter.start();
+                case 3 -> taxiPresenter.start();
+                case 4 -> locationPresenter.start();
+                default -> System.exit(0);
             }
         } while (true);
     }

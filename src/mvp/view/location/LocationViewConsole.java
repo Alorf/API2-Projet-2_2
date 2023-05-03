@@ -1,8 +1,8 @@
 package mvp.view.location;
 
-import locationTaxi.metier.Adresse;
-import locationTaxi.metier.Client;
-import locationTaxi.metier.Location;
+import designpatterns.builder.Adresse;
+import designpatterns.builder.Client;
+import designpatterns.builder.Location;
 import utilitaire.Utilitaire;
 import mvp.presenter.LocationPresenter;
 
@@ -35,7 +35,7 @@ public class LocationViewConsole implements LocationViewInterface {
 
     @Override
     public void affMsg(String msg) {
-        System.out.println("information : " + msg);
+        System.out.println("Information : " + msg);
 
     }
 
@@ -48,8 +48,7 @@ public class LocationViewConsole implements LocationViewInterface {
                 "Rechercher",
                 "Modifier",
                 "Supprimer",
-                "Tous",
-                "Special",
+                "Opérations spéciales",
                 "Finir",
         };
 
@@ -71,12 +70,9 @@ public class LocationViewConsole implements LocationViewInterface {
                     //Supprimer une location
                         supprimerLocation();
                 case 5 ->
-                    //Autre une location
-                        tout();
-                case 6 ->
-                    //Ajout de facturation
-                        special();
-                case 7 ->
+                    //Opérations spéciales
+                        opSpeciales();
+                default ->
                 {
                     //Fin
                     return;
@@ -89,7 +85,19 @@ public class LocationViewConsole implements LocationViewInterface {
         LocalDate date = Utilitaire.lecDate();
         int kmTotal = Integer.parseInt(Utilitaire.regex("[0-9]+", "Nombre de kilomètres : "));
 
-        presenter.addLocation(new Location(0, date, kmTotal, null, null));
+        try {
+            Location location = new Location.LocationBuilder()
+                    //.setId(0)
+                    .setDate(date)
+                    .setKmTotal(kmTotal)
+                    .build();
+
+            presenter.addLocation(location);
+
+        } catch (Exception e) {
+            System.err.println("Erreur Builder : " + e);
+        }
+
     }
 
     public void modifierLocation() {
@@ -112,7 +120,8 @@ public class LocationViewConsole implements LocationViewInterface {
         };
 
         int choix;
-        System.out.println("Que souhaitez vous modifier");
+
+        System.out.println("Que souhaitez vous modifier ?");
 
         updateLoop:
         do {
@@ -140,14 +149,28 @@ public class LocationViewConsole implements LocationViewInterface {
                     adresse = presenter.choixAdresse();
 
                 }
-                case 5 -> {
+                default -> {
                     break updateLoop;
                 }
             }
 
         } while (true);
 
-        presenter.updateLocation(new Location(idRech, date, kmTotal, client, adresse));
+        try {
+            Location newLocation = new Location.LocationBuilder()
+                    .setId(idRech)
+                    .setDate(date)
+                    .setKmTotal(kmTotal)
+                    .setClient(client)
+                    .setAdrDepart(adresse)
+                    .build();
+
+            presenter.updateLocation(newLocation);
+
+        } catch (Exception e) {
+            System.err.println("Erreur Builder : " + e);
+        }
+
     }
 
     public void rechercherLocation() {
@@ -163,13 +186,7 @@ public class LocationViewConsole implements LocationViewInterface {
         presenter.removeLocation(idLocation);
     }
 
-    public void tout() {
-        List<Location> locations = presenter.tout();
-
-        Utilitaire.afficherListe(locations);
-    }
-
-    private void special() {
+    private void opSpeciales() {
         int choixLoc = Utilitaire.choixListe(ll);
 
         Location loc = ll.get(choixLoc - 1);
@@ -177,6 +194,7 @@ public class LocationViewConsole implements LocationViewInterface {
         System.out.println("Que voulez-vous faire ?");
         String[] menu = {
                 "Ajout d'une facturation",
+                "Prix total d'une location (SGBD)",
                 "Quitter"
         };
 
@@ -192,11 +210,13 @@ public class LocationViewConsole implements LocationViewInterface {
                 case 1 ->
                     //Ajout d'une facturation
                     presenter.addFacturation(loc);
-                case 2 -> {
+                case 2 ->
+                    //Prix total d'une location
+                    presenter.prixTotalLocation(loc);
+                default -> {
                     break special;
                 }
             }
         } while (true);
-
     }
 }

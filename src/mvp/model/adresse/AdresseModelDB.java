@@ -1,6 +1,6 @@
 package mvp.model.adresse;
 
-import locationTaxi.metier.Adresse;
+import designpatterns.builder.Adresse;
 import mvp.model.DAO;
 import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;
@@ -84,7 +84,14 @@ public class AdresseModelDB implements DAO<Adresse> {
                 String rue = rs.getString(4);
                 String num = rs.getString(5);
 
-                Adresse adresse = new Adresse(idRech, cp, localite, rue, num);
+                Adresse adresse = new Adresse.AdresseBuilder()
+                        .setId(idRech)
+                        .setCp(cp)
+                        .setLocalite(localite)
+                        .setRue(rue)
+                        .setNum(num)
+                        .build();
+
                 return adresse;
 
             } else {
@@ -92,6 +99,8 @@ public class AdresseModelDB implements DAO<Adresse> {
             }
         } catch (SQLException e) {
             logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur AdresseBuilder : " + e);
         }
 
         return null;
@@ -114,7 +123,7 @@ public class AdresseModelDB implements DAO<Adresse> {
 
             if (res != 0) {
                 return true;
-            }else{
+            } else {
                 logger.error("Record introuvable");
             }
         } catch (SQLException e) {
@@ -160,13 +169,22 @@ public class AdresseModelDB implements DAO<Adresse> {
                 String rue = rs.getString(4);
                 String num = rs.getString(5);
 
-                Adresse a = new Adresse(idAdresse, cp, localite, rue, num);
+                Adresse a = new Adresse.AdresseBuilder()
+                        .setId(idAdresse)
+                        .setCp(cp)
+                        .setLocalite(localite)
+                        .setRue(rue)
+                        .setNum(num)
+                        .build();
+
                 la.add(a);
             }
 
             return la;
         } catch (SQLException e) {
             logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur AdresseBuilder : " + e);
         }
 
         return null;

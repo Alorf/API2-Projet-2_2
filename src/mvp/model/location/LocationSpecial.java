@@ -1,8 +1,8 @@
 package mvp.model.location;
 
-import locationTaxi.metier.Facturation;
-import locationTaxi.metier.Location;
-import locationTaxi.metier.Taxi;
+import designpatterns.builder.Facturation;
+import designpatterns.builder.Location;
+import designpatterns.builder.Taxi;
 
 import java.math.BigDecimal;
 import java.util.List;

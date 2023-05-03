@@ -1,7 +1,7 @@
 package mvp.model.taxi;
 
-import locationTaxi.metier.Location;
-import locationTaxi.metier.Taxi;
+import designpatterns.builder.Location;
+import designpatterns.builder.Taxi;
 
 import java.util.List;
 

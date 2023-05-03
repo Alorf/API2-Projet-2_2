@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Classe Location de la société de Taxi
+ *
  * @Author Lorfèvre Arthur
  * @Version 1.0
  */
@@ -44,14 +45,8 @@ public class Location {
     }
 
     /**
-     * Constructeur par défaut
-     */
-    public Location(){
-
-    }
-
-    /**
      * Getter identifiant
+     *
      * @return Identifiant de la location
      */
     public int getId() {
@@ -60,6 +55,7 @@ public class Location {
 
     /**
      * Getter date
+     *
      * @return Date de la location
      */
     public LocalDate getDate() {
@@ -68,6 +64,7 @@ public class Location {
 
     /**
      * Getter kilomètres total
+     *
      * @return Kilomètres total parcouru lors de la location
      */
     public int getKmTotal() {
@@ -76,6 +73,7 @@ public class Location {
 
     /**
      * Getter client
+     *
      * @return Client de la location
      */
     public Client getClient() {
@@ -84,14 +82,20 @@ public class Location {
 
     /**
      * Getter adresse
+     *
      * @return Adresse de départ de la location
      */
     public Adresse getAdrDepart() {
         return adrDepart;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     /**
      * Getter factures
+     *
      * @return Liste de facturations de la location
      */
     public List<Facturation> getFacturations() {
@@ -100,6 +104,7 @@ public class Location {
 
     /**
      * Setter factures
+     *
      * @param facturations Nouvelle liste de facturations de la location
      */
     public void setFacturation(List<Facturation> facturations) {
@@ -108,6 +113,7 @@ public class Location {
 
     /**
      * Affichage des attributs
+     *
      * @return Les attributs de l'objet
      */
     @Override
@@ -122,7 +128,15 @@ public class Location {
                 '}';
     }
 
-    public static class LocationBuilder{
+    public void setAdrDepart(Adresse adrDepart) {
+        this.adrDepart= adrDepart;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public static class LocationBuilder {
         /**
          * Identifiant de la location
          */
@@ -174,9 +188,8 @@ public class Location {
             return this;
         }
 
-        public Location build() throws Exception{
-            if (false){
-                //todo : faire le if
+        public Location build() throws Exception {
+            if (client == null || adrDepart == null || date == null || date.isBefore(LocalDate.now()) || kmTotal < 0) {
                 throw new Exception("Informations de construction incomplètes");
             }
 

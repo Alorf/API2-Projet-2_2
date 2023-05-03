@@ -1,6 +1,6 @@
 package mvp.view.client;
 
-import locationTaxi.metier.Client;
+import designpatterns.builder.Client;
 import mvp.presenter.ClientPresenter;
 
 import java.util.List;

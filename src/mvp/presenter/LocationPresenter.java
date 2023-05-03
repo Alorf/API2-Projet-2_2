@@ -1,13 +1,14 @@
 package mvp.presenter;
 
-import locationTaxi.metier.Adresse;
-import locationTaxi.metier.Client;
-import locationTaxi.metier.Location;
-import locationTaxi.metier.Taxi;
+import designpatterns.builder.Adresse;
+import designpatterns.builder.Client;
+import designpatterns.builder.Location;
+import designpatterns.builder.Taxi;
 import mvp.model.DAO;
 import mvp.model.location.LocationSpecial;
 import mvp.view.location.LocationViewInterface;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class LocationPresenter {
@@ -44,7 +45,7 @@ public class LocationPresenter {
     }
 
     public void addLocation(Location location) {
-        Location loc = new Location();
+        Location loc;
         Client client = clientPresenter.selectionner();
         Adresse adresse = adressePresenter.selectionner();
 
@@ -102,21 +103,11 @@ public class LocationPresenter {
         view.setListDatas(locations);
     }
 
-    public List<Location> tout(){
-        List<Location> lc = model.getAll();
-
-        if (lc == null){
-            view.affMsg("Aucune location dans la base de donnée");
-        }
-
-        return lc;
-    }
-
     public void addFacturation(Location loc){
         Taxi taxi = taxiPresenter.selectionner(loc.getFacturations());
 
         if (taxi == null){
-            view.affMsg("Plus de taxi disponnible");
+            view.affMsg("Pas de taxi disponnible");
             return;
         }
 
@@ -141,5 +132,15 @@ public class LocationPresenter {
         Adresse adresse = adressePresenter.selectionner();
 
         return adresse;
+    }
+
+    public void prixTotalLocation(Location loc) {
+        BigDecimal total = ((LocationSpecial) model).prixTotalLocation(loc);
+
+        if (total == null ){
+            view.affMsg("Il n'y à pas de total à cette location");
+        }else{
+            view.affMsg("Montant total de la location : " + total + "€");
+        }
     }
 }

@@ -1,4 +1,4 @@
-package designpatterns.builder;
+package designpatterns.Observer;
 
 import java.util.Objects;
 
@@ -7,7 +7,7 @@ import java.util.Objects;
  * @Author Lorfèvre Arthur
  * @Version 1.0
  */
-public class Taxi {
+public class Taxi extends Subject{
     /**
      * Identifiant du taxi
      */
@@ -25,11 +25,18 @@ public class Taxi {
      */
     private double prixKm;
 
-    public Taxi(TaxiBuilder tb) {
-        this.id = tb.id;
-        this.immatriculation = tb.immatriculation;
-        this.carburant = tb.carburant;
-        this.prixKm = tb.prixKm;
+    /**
+     * Constructeur paramétré du taxi
+     * @param id Identifiant du taxi
+     * @param immatriculation Immatriculation unique du taxi
+     * @param carburant Type de carburant du taxi
+     * @param prixKm Prix au kilomètre du taxi
+     */
+    public Taxi(int id, String immatriculation, String carburant, double prixKm) {
+        this.id = id;
+        this.immatriculation = immatriculation;
+        this.carburant = carburant;
+        this.prixKm = prixKm;
     }
 
     /**
@@ -41,11 +48,27 @@ public class Taxi {
     }
 
     /**
+     * Setter identifiant
+     * @param id Nouvel identifiant du taxi
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
      * Getter immatriculation
      * @return Immatriculation du taxi
      */
     public String getImmatriculation() {
         return immatriculation;
+    }
+
+    /**
+     * Setter Immatriculation
+     * @param immatriculation Nouvelle immatriculation du taxi
+     */
+    public void setImmatriculation(String immatriculation) {
+        this.immatriculation = immatriculation;
     }
 
     /**
@@ -57,11 +80,28 @@ public class Taxi {
     }
 
     /**
+     * Setter carburant
+     * @param carburant Type de carburant du taxi
+     */
+    public void setCarburant(String carburant) {
+        this.carburant = carburant;
+    }
+
+    /**
      * Getter prix au kilomètre
      * @return Prix au kilomètre du taxi
      */
     public double getPrixKm() {
         return prixKm;
+    }
+
+    /**
+     * Setter prix au kilomètre
+     * @param prixKm Nouveau prix au kilomètre du taxi
+     */
+    public void setPrixKm(double prixKm) {
+        this.prixKm = prixKm;
+        notifyObservers();
     }
 
     /**
@@ -100,59 +140,8 @@ public class Taxi {
                 '}';
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public static class TaxiBuilder{
-        /**
-         * Identifiant du taxi
-         */
-        private int id;
-        /**
-         * Immatriculation unique du taxi
-         */
-        private String immatriculation;
-        /**
-         * Type de carburant du taxi
-         */
-        private String carburant;
-        /**
-         * Prix au kilomètre du taxi
-         */
-        private double prixKm;
-
-        public TaxiBuilder setId(int id) {
-            this.id = id;
-
-            return this;
-        }
-
-        public TaxiBuilder setImmatriculation(String immatriculation) {
-            this.immatriculation = immatriculation;
-
-            return this;
-        }
-
-        public TaxiBuilder setCarburant(String carburant) {
-            this.carburant = carburant;
-
-            return this;
-        }
-
-        public TaxiBuilder setPrixKm(double prixKm) {
-            this.prixKm = prixKm;
-
-            return this;
-        }
-
-        public Taxi build() throws Exception{
-            if (false){
-                //todo : faire le if
-                throw new Exception("Informations de construction incomplètes");
-            }
-
-            return new Taxi(this);
-        }
+    @Override
+    public String getNotification() {
+        return "Nouveau prix pour " + immatriculation + " : " + prixKm + "€/km";
     }
 }

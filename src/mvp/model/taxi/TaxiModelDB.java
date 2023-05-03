@@ -1,13 +1,15 @@
 package mvp.model.taxi;
 
-import locationTaxi.metier.Location;
-import locationTaxi.metier.Taxi;
+import designpatterns.builder.*;
 import mvp.model.DAO;
 import myconnections.DBConnection;
+import oracle.jdbc.OracleCallableStatement;
+import oracle.jdbc.OracleTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +78,13 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
                 String carburant = rs.getString(3);
                 double prixkm = rs.getDouble(4);
 
-                Taxi taxi = new Taxi(idRech, immatriculation, carburant, prixkm);
+                Taxi taxi = new Taxi.TaxiBuilder()
+                        .setId(idRech)
+                        .setImmatriculation(immatriculation)
+                        .setCarburant(carburant)
+                        .setPrixKm(prixkm)
+                        .build();
+
                 return taxi;
 
             } else {
@@ -84,6 +92,8 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
             }
         } catch (SQLException e) {
             logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur Builder : " + e);
         }
 
         return null;
@@ -149,13 +159,21 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
                 String carburant = rs.getString(3);
                 double prixkm = rs.getDouble(4);
 
-                Taxi t = new Taxi(idTax, immatriculation, carburant, prixkm);
+                Taxi t = new Taxi.TaxiBuilder()
+                        .setId(idTax)
+                        .setImmatriculation(immatriculation)
+                        .setCarburant(carburant)
+                        .setPrixKm(prixkm)
+                        .build();
+
                 lt.add(t);
             }
 
             return lt;
         } catch (SQLException e) {
             logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur Builder : " + e);
         }
 
         return null;
@@ -163,7 +181,71 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
 
     @Override
     public List<Location> locationTaxi(Taxi taxi) {
-        //todo : utiliser la fonction
+        //Appel de fonction SGBD
+        String nombreLoc = "{? = call api_fonc_locations_taxi(?)}";
+
+        try (CallableStatement cs = dbConnect.prepareCall(nombreLoc)) {
+            cs.registerOutParameter(1, OracleTypes.CURSOR);
+
+            cs.setString(2, taxi.getImmatriculation());
+            cs.execute();
+
+            ResultSet rs = ((OracleCallableStatement)cs).getCursor(1);
+            List<Location> locations = new ArrayList<>();
+
+            while (rs.next()){
+                int idClient = rs.getInt("id_client");
+                String mailClient = rs.getString("mail");
+                String nomClient = rs.getString("nom");
+                String prenomClient = rs.getString("prenom");
+                String telClient = rs.getString("tel");
+
+                int idLoc = rs.getInt("id_location");
+                LocalDate dateloc = rs.getDate("dateloc").toLocalDate();
+                int kmTotal = rs.getInt("kmtotal");
+
+                int idAdresse = rs.getInt("id_adresse");
+                int cpAdresse = rs.getInt("cp");
+                String localiteAdresse = rs.getString("localite");
+                String rueAdresse = rs.getString("rue");
+                String numAdresse = rs.getString("num");
+
+
+                Client client = new Client.ClientBuilder()
+                        .setId(idClient)
+                        .setMail(mailClient)
+                        .setNom(nomClient)
+                        .setPrenom(prenomClient)
+                        .setTel(telClient)
+                        .build();
+
+                Adresse adresse = new Adresse.AdresseBuilder()
+                        .setId(idAdresse)
+                        .setCp(cpAdresse)
+                        .setLocalite(localiteAdresse)
+                        .setRue(rueAdresse)
+                        .setNum(numAdresse)
+                        .build();
+
+                Location location = new Location.LocationBuilder()
+                        .setId(idLoc)
+                        .setDate(dateloc)
+                        .setKmTotal(kmTotal)
+                        .setClient(client)
+                        .setAdrDepart(adresse)
+                        .build();
+
+                locations.add(location);
+            }
+
+            return locations;
+
+        } catch (SQLException e) {
+            logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur Builder : " + e);
+        }
+
         return null;
     }
 }

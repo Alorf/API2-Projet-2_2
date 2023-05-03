@@ -40,31 +40,12 @@ public class Utilitaire {
         return LocalDate.of(a,m,j);
     }
 
-    //Provient de Monsieur Poriaux
-    public static LocalTime lecTime(){
-        String splitBy = " ";
-        String heure = regex("^[0-9]{1,2}[:][0-9]{2}[:][0-9]{2}$", "Entrez l'heure : ");
-        String[] hms = null;
-
-        if (heure.contains(":")){
-            splitBy = ":";
-        }
-
-        hms = heure.split(splitBy);
-
-        int h = Integer.parseInt(hms[0]);
-        int m = Integer.parseInt(hms[1]);
-        int s = Integer.parseInt(hms[2]);
-
-        return LocalTime.of(h,m,s);
-    }
-
     public static void afficherListe(List objs){
         if (objs != null){
             int i = 0;
             for (Object obj : objs){
 
-                System.out.println(++i + ". " +obj);
+                System.out.println(++i + ". " + obj);
             }
         }
     }

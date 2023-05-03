@@ -1,11 +1,13 @@
 package mvp.model.client;
 
-import locationTaxi.metier.*;
+import designpatterns.builder.*;
 import mvp.model.DAO;
 import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,19 +18,18 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
     private Connection dbConnect;
 
-    private static final Logger logger = LogManager.getLogger(ClientModelDB.class);
+    private static final Logger logger = LogManager.getLogger(ClientModelHyb.class);
 
     public ClientModelHyb() {
         dbConnect = DBConnection.getConnection();
         if (dbConnect == null) {
-            logger.error("erreur de connexion");
+            logger.error("Erreur de connexion");
             System.exit(1);
         }
     }
 
     @Override
     public Client add(Client client) {
-        //fixme : voir si cela marche
         String mail = client.getMail();
         String nom = client.getNom();
         String prenom = client.getPrenom();
@@ -47,7 +48,7 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
             int response = cs.executeUpdate();
 
-            if (response != 0){
+            if (response != 0) {
                 int idCli = cs.getInt(5);
                 client.setId(idCli);
 
@@ -77,7 +78,13 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
                 String prenomClient = rs.getString("prenom");
                 String telClient = rs.getString("tel");
 
-                Client client = new Client(idRech, mailClient, nomClient, prenomClient, telClient);
+                Client client = new Client.ClientBuilder()
+                        .setId(idRech)
+                        .setMail(mailClient)
+                        .setNom(nomClient)
+                        .setPrenom(prenomClient)
+                        .setTel(telClient)
+                        .build();
 
                 List<Location> locations = new ArrayList<>();
 
@@ -92,9 +99,21 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
                     String rueAdresse = rs.getString("rue");
                     String numAdresse = rs.getString("num");
 
-                    Adresse adresse = new Adresse(idAdresse, cpAdresse, localiteAdresse, rueAdresse, numAdresse);
+                    Adresse adresse = new Adresse.AdresseBuilder()
+                            .setId(idAdresse)
+                            .setCp(cpAdresse)
+                            .setLocalite(localiteAdresse)
+                            .setRue(rueAdresse)
+                            .setNum(numAdresse)
+                            .build();
 
-                    Location loc = new Location(idLoc, dateloc, kmTotalLoc, client, adresse);
+                    Location loc = new Location.LocationBuilder()
+                            .setId(idLoc)
+                            .setDate(dateloc)
+                            .setKmTotal(kmTotalLoc)
+                            .setClient(client)
+                            .setAdrDepart(adresse)
+                            .build();
 
                     List<Facturation> facs = getFacturations(loc);
                     loc.setFacturation(facs);
@@ -112,6 +131,8 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
             }
         } catch (SQLException e) {
             logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur Builder : " + e);
         }
 
         return null;
@@ -135,13 +156,27 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
                 String carburant = rs.getString(4);
                 double prixKm = rs.getDouble(5);
 
-                facs.add(new Facturation(cout, new Taxi(idTaxi, immatriculation, carburant, prixKm)));
+                Taxi taxi = new Taxi.TaxiBuilder()
+                        .setId(idTaxi)
+                        .setImmatriculation(immatriculation)
+                        .setCarburant(carburant)
+                        .setPrixKm(prixKm)
+                        .build();
+
+                Facturation fac = new Facturation.FacturationBuilder()
+                        .setCout(cout)
+                        .setVehicule(taxi)
+                        .build();
+
+                facs.add(fac);
 
             } while (rs.next());
 
             return facs;
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur builder : " + e);
         }
 
         return null;
@@ -209,13 +244,21 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
                 String prenom = rs.getString(4);
                 String tel = rs.getString(5);
 
-                Client cl = new Client(idCli, mail, nom, prenom, tel);
+                Client cl = new Client.ClientBuilder()
+                        .setId(idCli)
+                        .setMail(mail)
+                        .setNom(nom)
+                        .setPrenom(prenom)
+                        .setTel(tel)
+                        .build();
                 lc.add(cl);
             }
 
             return lc;
         } catch (SQLException e) {
             logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur builder : " + e);
         }
 
         return null;
@@ -255,25 +298,46 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
     @Override
     public int nombreLocation(Client client) {
-        //Utilisation d'une fonction de SGBD
-        //fixme : ne marche pas
-        String nombreLoc = "CALL API_FONC_NOMBRE_LOCATION_CLIENT(?)";
+        //Appel de fonction SGBD
+        String nombreLoc = "{? = call api_fonc_nombre_location_client(?)}";
 
         try (CallableStatement cs = dbConnect.prepareCall(nombreLoc)) {
-            cs.setString(1, client.getMail());
-            int response = cs.executeUpdate();
+            cs.registerOutParameter(1, Types.INTEGER);
 
-            System.out.println(response);
+            cs.setString(2, client.getMail());
+            boolean response = cs.execute();
 
-            int idCli = cs.getInt(1);
-            client.setId(idCli);
+            int nbre = cs.getInt(1);
+            System.out.println(nbre);
 
-            return 1;
+            return nbre;
 
         } catch (SQLException e) {
             logger.error("Erreur sql : " + e);
         }
 
         return -1;
+    }
+
+    @Override
+    public BigDecimal prixTotalLocs(Client client) {
+        //Appel de fonction SGBD
+        String prixTotalLocs = "{? = call api_fonc_prix_total_loc(?)}";
+
+        try (CallableStatement cs = dbConnect.prepareCall(prixTotalLocs)) {
+            cs.registerOutParameter(1, Types.INTEGER);
+
+            cs.setString(2, client.getMail());
+            boolean response = cs.execute();
+
+            BigDecimal prixTotal = cs.getBigDecimal(1);
+
+            return prixTotal;
+
+        } catch (SQLException e) {
+            logger.error("Erreur sql : " + e);
+        }
+
+        return null;
     }
 }

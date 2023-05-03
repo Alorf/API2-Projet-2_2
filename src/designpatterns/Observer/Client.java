@@ -1,4 +1,8 @@
-package designpatterns.builder;
+package designpatterns.Observer;
+
+import locationTaxi.metier.Adresse;
+import locationTaxi.metier.Facturation;
+import locationTaxi.metier.Location;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -8,7 +12,7 @@ import java.util.*;
  * @Author Lorfèvre Arthur
  * @Version 1.0
  */
-public class Client {
+public class Client extends Observer{
     /**
      * Identifiant unique du client
      */
@@ -35,12 +39,20 @@ public class Client {
      */
     private List<Location> locations = new ArrayList<>();
 
-    private Client(ClientBuilder cb) {
-        this.id = cb.id;
-        this.mail = cb.mail;
-        this.nom = cb.mail;
-        this.prenom = cb.prenom;
-        this.tel = cb.tel;
+    /**
+     * Constructeur paramétré de locations du client
+     * @param id Identifiant unique du client
+     * @param mail Mail unique du client
+     * @param nom Nom du client
+     * @param prenom Prénom du client
+     * @param tel Numéro de téléphone du client
+     */
+    public Client(int id, String mail, String nom, String prenom, String tel) {
+        this.id = id;
+        this.mail = mail;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.tel = tel;
     }
 
     /**
@@ -52,11 +64,27 @@ public class Client {
     }
 
     /**
+     * Setter id
+     * @param id Nouvel identifiant du client
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
      * Getter mail
      * @return Mail du client
      */
     public String getMail() {
         return mail;
+    }
+
+    /**
+     * Setter mail
+     * @param mail Nouveau mail du client
+     */
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
     /**
@@ -68,6 +96,14 @@ public class Client {
     }
 
     /**
+     * Setter nom
+     * @param nom Nouveau nom du client
+     */
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    /**
      * Getter prénom
      * @return Prénom du client
      */
@@ -76,11 +112,27 @@ public class Client {
     }
 
     /**
+     * Setter prénom
+     * @param prenom Nouveau prénom du client
+     */
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    /**
      * Getter numéro de téléphone
      * @return Numéro de téléphone du client
      */
     public String getTel() {
         return tel;
+    }
+
+    /**
+     * Setter numéro de téléphone
+     * @param tel Nouveau numéro de téléphone du client
+     */
+    public void setTel(String tel) {
+        this.tel = tel;
     }
 
     /**
@@ -136,106 +188,8 @@ public class Client {
                 '}';
     }
 
-    public Set<Taxi> taxiUtiliseSansDoublon(){
-
-        Set<Taxi> lt = new HashSet<>();
-        for (Location loc : locations){
-            for (Facturation fac : loc.getFacturations()){
-                //if (!lt.contains(fac.getVehicule())){
-                    lt.add(fac.getVehicule());
-                //}
-            }
-        }
-
-        return lt;
-    }
-
-    public List<Location> locationEntreDeuxDates(LocalDate d1, LocalDate d2){
-        List<Location> ll = new ArrayList<>();
-
-        for(Location loc : locations){
-            if (loc.getDate().isAfter(d1) && loc.getDate().isBefore(d2)){
-                ll.add(loc);
-            }
-        }
-
-        return ll;
-    }
-
-    public Set<Adresse> adresseLocationSansDoublon(){
-        Set<Adresse> la = new HashSet<>();
-        for (Location loc : locations){
-            //if (!la.contains(loc.getAdrDepart())){
-                la.add(loc.getAdrDepart());
-            //}
-        }
-
-        return la;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public static class ClientBuilder{
-        /**
-         * Identifiant unique du client
-         */
-        protected int id;
-        /**
-         * Mail unique du client
-         */
-        protected String mail;
-        /**
-         * Nom du client
-         */
-        protected String nom;
-        /**
-         * Prénom du client
-         */
-        protected String prenom;
-        /**
-         * Numéro de téléphone du client
-         */
-        protected String tel;
-
-        public ClientBuilder setId(int id) {
-            this.id = id;
-
-            return this;
-        }
-
-        public ClientBuilder setMail(String mail) {
-            this.mail = mail;
-
-            return this;
-        }
-
-        public ClientBuilder setNom(String nom) {
-            this.nom = nom;
-
-            return this;
-        }
-
-        public ClientBuilder setPrenom(String prenom) {
-            this.prenom = prenom;
-
-            return this;
-        }
-
-        public ClientBuilder setTel(String tel) {
-            this.tel = tel;
-
-            return this;
-        }
-
-        public Client build() throws Exception{
-            if (false){
-                //todo : faire le if
-                throw new Exception("Informations de construction incomplètes");
-            }
-
-            return new Client(this);
-        }
+    @Override
+    public void update(String msg) {
+        System.out.println("Le client " + this.getNom() + " a été notifié : " + msg);
     }
 }

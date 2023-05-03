@@ -1,8 +1,11 @@
 package mvp.model.client;
 
 
-import locationTaxi.metier.*;
 
+
+import designpatterns.builder.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -20,4 +23,6 @@ public interface ClientSpecial {
     List<Facturation> facturations(Client client);
 
     int nombreLocation(Client client);
+
+    BigDecimal prixTotalLocs(Client client);
 }

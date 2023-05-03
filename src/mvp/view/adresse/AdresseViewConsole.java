@@ -1,6 +1,6 @@
 package mvp.view.adresse;
 
-import locationTaxi.metier.Adresse;
+import designpatterns.builder.Adresse;
 import utilitaire.Utilitaire;
 import mvp.presenter.AdressePresenter;
 
@@ -32,7 +32,7 @@ public class AdresseViewConsole implements AdresseViewInterface {
 
     @Override
     public void affMsg(String msg) {
-        System.out.println("information : " + msg);
+        System.out.println("Information : " + msg);
 
     }
 
@@ -40,7 +40,7 @@ public class AdresseViewConsole implements AdresseViewInterface {
     public Adresse selectionner(List<Adresse> adresses) {
         int choix = Utilitaire.choixListe(adresses);
 
-        return adresses.get(choix-1);
+        return adresses.get(choix - 1);
     }
 
     public void menu() {
@@ -73,15 +73,11 @@ public class AdresseViewConsole implements AdresseViewInterface {
                 case 4 ->
                     //Supprimer une adresse
                         supprimerAdresse();
-                case 5 ->
-                    //Autre une adresse
-                        tout();
-                case 6 ->
-                    //Fin
+                default ->
+                //Fin
                 {
                     return;
                 }
-                default -> System.out.println("Mauvaise saisie, recommencez !");
             }
         } while (true);
     }
@@ -93,7 +89,23 @@ public class AdresseViewConsole implements AdresseViewInterface {
         String num = Utilitaire.regex("[a-zA-Z0-9 ]+", "Entrez le numéro de l'adresse : ");
 
 
-        presenter.addAdresse(new Adresse(0, cp, localite, rue, num));
+        Adresse adresse;
+        try {
+            adresse = new Adresse.AdresseBuilder()
+                    //.setId(0)
+                    .setCp(cp)
+                    .setLocalite(localite)
+                    .setRue(rue)
+                    .setNum(num)
+                    .build();
+
+            presenter.addAdresse(adresse);
+
+        } catch (Exception e) {
+            //todo : peut-être logger
+            System.err.println("Erreur Builder : " + e);
+        }
+
     }
 
     public void modifierAdresse() {
@@ -115,9 +127,11 @@ public class AdresseViewConsole implements AdresseViewInterface {
         };
 
         int choix;
-        System.out.println("Que souhaitez vous modifier");
 
-        updateLoop:do {
+        System.out.println("Que souhaitez vous modifier ?");
+
+        updateLoop:
+        do {
 
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
@@ -146,21 +160,35 @@ public class AdresseViewConsole implements AdresseViewInterface {
                     //Modifier rue
                     num = Utilitaire.regex("[a-zA-Z0-9]+", "Entrez le nouveau numéro : ");
                 }
-                case 5 -> {
+                default -> {
                     break updateLoop;
                 }
-                default -> System.out.println("Mauvaise saisie, recommencez !");
             }
 
         } while (true);
 
-        presenter.updateAdresse(new Adresse(idRech, cp, localite, rue, num));
+        try {
+
+            Adresse newAdresse = new Adresse.AdresseBuilder()
+                    .setId(idRech)
+                    .setCp(cp)
+                    .setLocalite(localite)
+                    .setRue(rue)
+                    .setNum(num)
+                    .build();
+
+            presenter.updateAdresse(newAdresse);
+
+        } catch (Exception e) {
+            //todo : peut-être logger
+            System.err.println("Erreur Builder : " + e);
+        }
     }
 
     public void rechercherAdresse() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de l'adresse recherché : "));
 
-        Adresse adresse= presenter.readAdresse(idRech);
+        Adresse adresse = presenter.readAdresse(idRech);
 
     }
 
@@ -168,11 +196,5 @@ public class AdresseViewConsole implements AdresseViewInterface {
         int idAdresse = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id de l'adresse que vous souhaitez supprimer : "));
 
         presenter.removeAdresse(idAdresse);
-    }
-
-    public void tout() {
-        List<Adresse> adresses = presenter.tout();
-
-        Utilitaire.afficherListe(adresses);
     }
 }

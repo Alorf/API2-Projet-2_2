@@ -1,8 +1,11 @@
 package mvp.presenter;
 
-import locationTaxi.metier.Adresse;
+import designpatterns.builder.Adresse;
 import mvp.model.DAO;
+import mvp.model.taxi.TaxiModelDB;
 import mvp.view.adresse.AdresseViewInterface;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -10,6 +13,8 @@ public class AdressePresenter {
     private DAO<Adresse> model;
 
     private AdresseViewInterface view;
+
+    private static final Logger logger = LogManager.getLogger(AdressePresenter.class);
 
     public AdressePresenter(DAO<Adresse> model, AdresseViewInterface view) {
         this.model = model;
@@ -69,17 +74,8 @@ public class AdressePresenter {
         view.setListDatas(adresses);
     }
 
-    public List<Adresse> tout(){
-        List<Adresse> lc = model.getAll();
-
-        if (lc == null){
-            view.affMsg("Aucune adresse dans la base de donnée");
-        }
-
-        return lc;
-    }
-
     public Adresse selectionner() {
+        logger.info("Appel de la sélection");
         Adresse adresse = view.selectionner(model.getAll());
         return adresse;
     }
