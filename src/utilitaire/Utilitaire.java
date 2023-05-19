@@ -14,7 +14,7 @@ public class Utilitaire {
             System.out.printf(msg);
             chaine = reader.nextLine();
             if (!chaine.matches(regex)) {
-                System.out.println("Recommencez !");
+                System.out.println("Recommencez votre entrée !");
             }
         } while (!chaine.matches(regex));
 
@@ -23,21 +23,28 @@ public class Utilitaire {
 
     //Provient de Monsieur Poriaux
     public static LocalDate lecDate(){
-        String splitBy = "";
-        String date = regex("^(0?[1-9]|[12][0-9]|3[01])[\\/\\s](0?[1-9]|1[0-2])[\\/\\s](\\d{4})$", "Entrez la date : ");
-        String[] jma = null;
 
-        if (date.contains("/")){
-            splitBy = "/";
+        while (true){
+            try{
+                String splitBy = "";
+                String date = regex("^(0?[1-9]|[12][0-9]|3[01])[\\/\\s](0?[1-9]|1[0-2])[\\/\\s](\\d{4})$", "Entrez la date : ");
+                String[] jma = null;
+
+                if (date.contains("/")){
+                    splitBy = "/";
+                }
+
+                jma = date.split(splitBy);
+
+                int j = Integer.parseInt(jma[0]);
+                int m = Integer.parseInt(jma[1]);
+                int a = Integer.parseInt(jma[2]);
+
+                return LocalDate.of(a,m,j);
+            }catch (Exception e){
+                System.out.println("Erreur d'entrée de date, recommencez");
+            }
         }
-
-        jma = date.split(splitBy);
-
-        int j = Integer.parseInt(jma[0]);
-        int m = Integer.parseInt(jma[1]);
-        int a = Integer.parseInt(jma[2]);
-
-        return LocalDate.of(a,m,j);
     }
 
     public static void afficherListe(List objs){
@@ -53,9 +60,9 @@ public class Utilitaire {
     public static void afficherListe(Set objs){
         if (objs != null){
             int i = 0;
-            for (Object obj : objs){
-
-                System.out.println(++i + ". " +obj);
+            Iterator it = objs.iterator();
+            while (it.hasNext()){
+                System.out.println(++i + " " + it.next());
             }
         }
     }
@@ -67,7 +74,14 @@ public class Utilitaire {
         do {
             afficherListe(objs);
             choix = Integer.parseInt(regex("[0-9]+", "Choisissez un élément de la liste : "));
-        }while (choix < 0 || choix > objs.size());
+
+            if (choix < 0 || choix > objs.size()){
+                System.out.println("\nChoix incorrect !\n");
+            }else{
+                break;
+            }
+
+        }while (true);
         System.out.println("");
 
         return choix;

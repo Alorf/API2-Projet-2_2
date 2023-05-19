@@ -19,6 +19,11 @@ public class Categorie extends Element {
 
     @Override
     public String toString() {
-        return nom + " " + elements.size() + " véhicules";
+        StringBuilder ts = new StringBuilder(getId() + " Catégorie : " + nom + "\n");
+        for (Element e : elements) {
+            ts.append(e.toString()).append("\n");
+        }
+        ts.append(nom + " " + elements.size() + " véhicules").append("\n");
+        return ts.toString();
     }
 }

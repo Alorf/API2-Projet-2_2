@@ -27,6 +27,7 @@ public class TaxiPresenter {
     public void start() {
         List<Taxi> taxis = model.getAll();
         view.setListDatas(taxis);
+        view.menu();
     }
 
     public void addTaxi(Taxi taxi) {
@@ -45,10 +46,8 @@ public class TaxiPresenter {
     public Taxi readTaxi(int idRech) {
         Taxi taxi = model.read(idRech);
         if (taxi == null) {
-            System.out.println("Taxi introuvable");
+            view.affMsg("Taxi introuvable");
             return null;
-        } else {
-            System.out.println("Taxi trouvé");
         }
 
         return taxi;
@@ -58,10 +57,13 @@ public class TaxiPresenter {
         boolean ok = model.update(taxi);
 
         if (ok) {
-            System.out.println("Taxi modifié");
+            view.affMsg("Taxi modifié");
         } else {
-            System.out.println("Taxi non modifié, erreur");
+            view.affMsg("Taxi non modifié, erreur");
         }
+
+        List<Taxi> taxis = model.getAll();
+        view.setListDatas(taxis);
     }
 
     public void removeTaxi(int idTaxi) {
@@ -70,7 +72,7 @@ public class TaxiPresenter {
         if (ok) {
             view.affMsg("Taxi effacé");
         } else {
-            view.affMsg("Taxi non effacé");
+            view.affMsg("Taxi non effacé, erreur");
         }
 
         List<Taxi> taxis = model.getAll();
@@ -82,13 +84,14 @@ public class TaxiPresenter {
 
         List<Taxi> taxis = model.getAll();
 
-        for (Facturation fac : facs){
-            //On retire les véhicules qui ne nous intéressent plus
-            taxis.remove(fac.getVehicule());
+        if (facs != null && !facs.isEmpty()){
+            for (Facturation fac : facs){
+                //On retire les véhicules qui ne nous intéressent plus
+                taxis.remove(fac.getVehicule());
+            }
         }
 
         if (taxis.isEmpty()){
-            view.affMsg("Aucun taxi disponnible");
             return null;
         }
 
@@ -98,6 +101,7 @@ public class TaxiPresenter {
 
     public void locationsTaxi(Taxi taxi){
         List<Location> locations = ((TaxiSpecial) model).locationTaxi(taxi);
+
         if (locations == null || locations.isEmpty()){
             view.affMsg("Aucune location pour ce taxi");
         }else{

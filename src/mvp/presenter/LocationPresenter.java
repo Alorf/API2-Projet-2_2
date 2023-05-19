@@ -42,6 +42,7 @@ public class LocationPresenter {
     public void start() {
         List<Location> locations = model.getAll();
         view.setListDatas(locations);
+        view.menu();
     }
 
     public void addLocation(Location location) {
@@ -70,11 +71,9 @@ public class LocationPresenter {
 
     public Location readLocation(int idRech) {
         Location location = model.read(idRech);
+
         if (location == null) {
-            System.out.println("Location introuvable");
-            return null;
-        } else {
-            System.out.println("Location trouvée");
+            view.affMsg("Location introuvable");
         }
 
         return location;
@@ -84,10 +83,13 @@ public class LocationPresenter {
         boolean ok = model.update(location);
 
         if (ok) {
-            System.out.println("Location modifiée");
+            view.affMsg("Location modifiée");
         } else {
-            System.out.println("Location non modifiée, erreur");
+            view.affMsg("Location non modifiée, erreur");
         }
+
+        List<Location> locations = model.getAll();
+        view.setListDatas(locations);
     }
 
     public void removeLocation(int idAdr) {
@@ -96,7 +98,7 @@ public class LocationPresenter {
         if (ok) {
             view.affMsg("Location effacée");
         } else {
-            view.affMsg("Location non effacée");
+            view.affMsg("Location non effacée, erreur");
         }
 
         List<Location> locations = model.getAll();
@@ -104,6 +106,7 @@ public class LocationPresenter {
     }
 
     public void addFacturation(Location loc){
+        loc = readLocation(loc.getId());
         Taxi taxi = taxiPresenter.selectionner(loc.getFacturations());
 
         if (taxi == null){

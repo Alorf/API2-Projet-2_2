@@ -54,12 +54,12 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
                     taxi.setId(idTax);
                     return taxi;
                 } else {
-                    logger.error("Record introuvable");
+                    logger.error("Record introuvable lors de l'ajout");
                 }
             }
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de l'ajout : " + e);
         }
 
         return null;
@@ -88,12 +88,12 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
                 return taxi;
 
             } else {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors du read");
             }
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du read : " + e);
         } catch (Exception e) {
-            logger.error("Erreur Builder : " + e);
+            logger.error("Erreur Builder lors du read : " + e);
         }
 
         return null;
@@ -115,10 +115,10 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
             if (res != 0) {
                 return true;
             }else{
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors de l'update");
             }
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de l'update : " + e);
         }
 
         return false;
@@ -136,11 +136,11 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
             if (response != 0) {
                 return true;
             } else {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors du remove");
             }
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du remove : " + e);
         }
 
         return false;
@@ -171,9 +171,9 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
 
             return lt;
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du getAll : " + e);
         } catch (Exception e) {
-            logger.error("Erreur Builder : " + e);
+            logger.error("Erreur Builder lors du getAll : " + e);
         }
 
         return null;
@@ -233,7 +233,7 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
                         .setKmTotal(kmTotal)
                         .setClient(client)
                         .setAdrDepart(adresse)
-                        .build();
+                        .build(false);
 
                 locations.add(location);
             }
@@ -241,9 +241,9 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
             return locations;
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de locationTaxi : " + e);
         } catch (Exception e) {
-            logger.error("Erreur Builder : " + e);
+            logger.error("Erreur Builder lors de locationTaxi : " + e);
         }
 
         return null;

@@ -13,12 +13,15 @@ public class TestComposite {
 
         c1.getElements().add(t1);
         c1.getElements().add(t2);
+        c2.getElements().add(c1);
         c2.getElements().add(t3);
         c2.getElements().add(t4);
         c3.getElements().add(t5);
 
         System.out.println(c1);
+        System.out.println("\n------------------------\n");
         System.out.println(c2);
+        System.out.println("\n------------------------\n");
         System.out.println(c3);
     }
 }

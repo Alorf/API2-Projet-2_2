@@ -25,6 +25,7 @@ public class AdressePresenter {
     public void start() {
         List<Adresse> adresses = model.getAll();
         view.setListDatas(adresses);
+        view.menu();
     }
 
     public void addAdresse(Adresse adresse) {
@@ -41,11 +42,9 @@ public class AdressePresenter {
 
     public Adresse readAdresse(int idRech) {
         Adresse adresse = model.read(idRech);
+
         if (adresse == null) {
-            System.out.println("Adresse introuvable");
-            return null;
-        } else {
-            System.out.println("Adresse trouvée");
+            view.affMsg("Adresse introuvable");
         }
 
         return adresse;
@@ -55,10 +54,13 @@ public class AdressePresenter {
         boolean ok = model.update(adresse);
 
         if (ok) {
-            System.out.println("Adresse modifiée");
+            view.affMsg("Adresse modifiée");
         } else {
-            System.out.println("Adresse non modifiée, erreur");
+            view.affMsg("Adresse non modifiée, erreur");
         }
+
+        List<Adresse> adresses = model.getAll();
+        view.setListDatas(adresses);
     }
 
     public void removeAdresse(int idAdr) {
@@ -67,7 +69,7 @@ public class AdressePresenter {
         if (ok) {
             view.affMsg("Adresse effacée");
         } else {
-            view.affMsg("Adresse non effacée");
+            view.affMsg("Adresse non effacée, erreur");
         }
 
         List<Adresse> adresses = model.getAll();

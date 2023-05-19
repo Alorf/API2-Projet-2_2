@@ -18,4 +18,6 @@ public interface ClientViewInterface {
     public void affListe(Set info);
 
     public Client selectionner(List<Client> clients);
+
+    void menu();
 }

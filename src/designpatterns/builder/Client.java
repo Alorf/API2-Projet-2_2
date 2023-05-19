@@ -38,7 +38,7 @@ public class Client {
     private Client(ClientBuilder cb) {
         this.id = cb.id;
         this.mail = cb.mail;
-        this.nom = cb.mail;
+        this.nom = cb.nom;
         this.prenom = cb.prenom;
         this.tel = cb.tel;
     }
@@ -153,8 +153,11 @@ public class Client {
     public List<Location> locationEntreDeuxDates(LocalDate d1, LocalDate d2){
         List<Location> ll = new ArrayList<>();
 
+        LocalDate dmax = d1.isAfter(d2) ? d1 : d2;
+        LocalDate dmin = d1.isBefore(d2) ? d1 : d2;
+
         for(Location loc : locations){
-            if (loc.getDate().isAfter(d1) && loc.getDate().isBefore(d2)){
+            if (loc.getDate().isAfter(dmin.minusDays(1)) && loc.getDate().isBefore(dmax.plusDays(1))){
                 ll.add(loc);
             }
         }
@@ -231,7 +234,6 @@ public class Client {
 
         public Client build() throws Exception{
             if (false){
-                //todo : faire le if
                 throw new Exception("Informations de construction incomplètes");
             }
 

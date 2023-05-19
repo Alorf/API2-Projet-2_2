@@ -23,11 +23,6 @@ public class AdresseViewConsole implements AdresseViewInterface {
     @Override
     public void setListDatas(List<Adresse> adresses) {
         this.la = adresses;
-        int i = 1;
-        for (Adresse adresse : la) {
-            System.out.println((i++) + "." + adresse);
-        }
-        menu();
     }
 
     @Override
@@ -43,6 +38,7 @@ public class AdresseViewConsole implements AdresseViewInterface {
         return adresses.get(choix - 1);
     }
 
+    @Override
     public void menu() {
 
         int choix;
@@ -57,6 +53,7 @@ public class AdresseViewConsole implements AdresseViewInterface {
         };
 
         do {
+            Utilitaire.afficherListe(la);
 
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
@@ -83,7 +80,7 @@ public class AdresseViewConsole implements AdresseViewInterface {
     }
 
     public void creerAdresse() {
-        int cp = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez le code postal de l'adresse : ").toUpperCase());
+        int cp = Integer.parseInt(Utilitaire.regex("[0-9]{4}", "Entrez le code postal de l'adresse : ").toUpperCase());
         String localite = Utilitaire.regex("[a-zA-Z0-9]+", "Entrez la localité de l'adresse : ");
         String rue = Utilitaire.regex(".*", "Entrez la rue de l'adresse : ");
         String num = Utilitaire.regex("[a-zA-Z0-9 ]+", "Entrez le numéro de l'adresse : ");
@@ -92,7 +89,6 @@ public class AdresseViewConsole implements AdresseViewInterface {
         Adresse adresse;
         try {
             adresse = new Adresse.AdresseBuilder()
-                    //.setId(0)
                     .setCp(cp)
                     .setLocalite(localite)
                     .setRue(rue)
@@ -102,8 +98,7 @@ public class AdresseViewConsole implements AdresseViewInterface {
             presenter.addAdresse(adresse);
 
         } catch (Exception e) {
-            //todo : peut-être logger
-            System.err.println("Erreur Builder : " + e);
+            affMsg("Erreur Builder : " + e);
         }
 
     }
@@ -128,11 +123,8 @@ public class AdresseViewConsole implements AdresseViewInterface {
 
         int choix;
 
-        System.out.println("Que souhaitez vous modifier ?");
-
         updateLoop:
         do {
-
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
             switch (choix) {
@@ -140,7 +132,7 @@ public class AdresseViewConsole implements AdresseViewInterface {
                 case 1 -> {
                     //Modifier cp
                     System.out.println("Anciennement : " + cp);
-                    cp = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez le nouveau code postal : "));
+                    cp = Integer.parseInt(Utilitaire.regex("[0-9 ]{4}", "Entrez le nouveau code postal : "));
                 }
                 case 2 -> {
                     //Modifier localite
@@ -177,11 +169,11 @@ public class AdresseViewConsole implements AdresseViewInterface {
                     .setNum(num)
                     .build();
 
-            presenter.updateAdresse(newAdresse);
-
+            if (!newAdresse.equals(adresse)){
+                presenter.updateAdresse(newAdresse);
+            }
         } catch (Exception e) {
-            //todo : peut-être logger
-            System.err.println("Erreur Builder : " + e);
+            affMsg("Erreur Builder : " + e);
         }
     }
 

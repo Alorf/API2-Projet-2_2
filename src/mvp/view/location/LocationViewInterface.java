@@ -12,5 +12,5 @@ public interface LocationViewInterface {
 
     public void affMsg(String msg);
 
-
+    void menu();
 }

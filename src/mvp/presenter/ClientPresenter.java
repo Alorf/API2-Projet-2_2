@@ -28,6 +28,7 @@ public class ClientPresenter {
     public void start() {
         List<Client> clients = model.getAll();
         view.setListDatas(clients);
+        view.menu();
     }
 
     public void addClient(Client client) {
@@ -46,6 +47,10 @@ public class ClientPresenter {
     public Client readClient(int idRech) {
         Client client = model.read(idRech);
 
+        if (client == null) {
+            view.affMsg("Client introuvable");
+        }
+
         return client;
     }
 
@@ -53,10 +58,13 @@ public class ClientPresenter {
         boolean ok = model.update(client);
 
         if (ok) {
-            System.out.println("Client modifié");
+            view.affMsg("Client modifié");
         } else {
-            System.out.println("Client non modifié, erreur");
+            view.affMsg("Client non modifié, erreur");
         }
+
+        List<Client> clients = model.getAll();
+        view.setListDatas(clients);
     }
 
     public void removeClient(int idCli) {
@@ -65,7 +73,7 @@ public class ClientPresenter {
         if (ok) {
             view.affMsg("Client effacé");
         } else {
-            view.affMsg("Client non effacé");
+            view.affMsg("Client non effacé, erreur");
         }
 
         List<Client> clients = model.getAll();
@@ -84,7 +92,7 @@ public class ClientPresenter {
 
     public void locationEntreDeuxDates(Client client, LocalDate d1, LocalDate d2) {
 
-        if (model.getAll().isEmpty()) {
+        if (client.getLocations() == null || client.getLocations().isEmpty()) {
             view.affMsg("Aucune location pour ces deux dates pour ce client");
         } else {
             List<Location> ll = ((ClientSpecial) model).locationEntreDeuxDates(client, d1, d2);
@@ -117,7 +125,7 @@ public class ClientPresenter {
         List<Location> ll = ((ClientSpecial) model).locations(client);
 
         if (ll == null || ll.isEmpty()) {
-            view.affMsg("Aucune facture de location pour ce client");
+            view.affMsg("Aucune location pour ce client");
         } else {
             view.affListe(ll);
         }

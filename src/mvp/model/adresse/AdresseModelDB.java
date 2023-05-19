@@ -59,12 +59,12 @@ public class AdresseModelDB implements DAO<Adresse> {
                     adresse.setId(idAdresse);
                     return adresse;
                 } else {
-                    logger.error("Record introuvable");
+                    logger.error("Record introuvable lors de l'ajout");
                 }
             }
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de l'ajout : " + e);
         }
 
         return null;
@@ -95,12 +95,12 @@ public class AdresseModelDB implements DAO<Adresse> {
                 return adresse;
 
             } else {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors du read");
             }
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du read : " + e);
         } catch (Exception e) {
-            logger.error("Erreur AdresseBuilder : " + e);
+            logger.error("Erreur AdresseBuilder lors du read : " + e);
         }
 
         return null;
@@ -124,10 +124,10 @@ public class AdresseModelDB implements DAO<Adresse> {
             if (res != 0) {
                 return true;
             } else {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors de l'update");
             }
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de l'update : " + e);
         }
 
         return false;
@@ -145,11 +145,11 @@ public class AdresseModelDB implements DAO<Adresse> {
             if (response != 0) {
                 return true;
             } else {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors du remove");
             }
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du remove : " + e);
         }
 
         return false;
@@ -182,9 +182,9 @@ public class AdresseModelDB implements DAO<Adresse> {
 
             return la;
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du getAll : " + e);
         } catch (Exception e) {
-            logger.error("Erreur AdresseBuilder : " + e);
+            logger.error("Erreur AdresseBuilder lors du getAll : " + e);
         }
 
         return null;

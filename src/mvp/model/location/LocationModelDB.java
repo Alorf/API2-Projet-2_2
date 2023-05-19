@@ -34,11 +34,13 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
         Adresse adresse = location.getAdrDepart();
 
         String ajoutLoc = "INSERT INTO API_LOCATION(DATELOC, KMTOTAL, ID_ADRESSE, ID_CLIENT) VALUES (?, ?, ?, ?)";
-        String getLocId = "SELECT ID_LOCATION FROM API_LOCATION WHERE DATELOC = ? AND KMTOTAL=? AND ID_ADRESSE=? AND ID_CLIENT=?";
+        String getLocId = "SELECT DISTINCT ID_LOCATION FROM API_LOCATION WHERE DATELOC = ? AND KMTOTAL=? AND ID_ADRESSE=? AND ID_CLIENT=?";
+        //Ici je met distinct sinon j'ai une erreur "Ensemble de résultats après la dernière ligne", le seul moyen de régler cela est de fournir une unicité entre le client et la date de location
 
         try (PreparedStatement req1 = dbConnect.prepareStatement(ajoutLoc);
              PreparedStatement req2 = dbConnect.prepareStatement(getLocId)
         ) {
+            System.out.println(adresse.getId());
             req1.setDate(1, Date.valueOf(dateloc));
             req1.setInt(2, kmTotal);
             req1.setInt(3, adresse.getId());
@@ -57,13 +59,11 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
                     int idLoc = rs.getInt(1);
                     location.setId(idLoc);
                     return location;
-                } else {
-                    logger.error("Record introuvable");
                 }
             }
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de l'ajout: " + e);
         }
 
         return null;
@@ -117,7 +117,7 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
                         .setKmTotal(kmTotal)
                         .setClient(client)
                         .setAdrDepart(adresse)
-                        .build();
+                        .build(false);
 
                 List<Facturation> facs = getFacturations(location);
 
@@ -126,12 +126,12 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
                 return location;
 
             } else {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors du read");
             }
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du read : " + e);
         } catch (Exception e) {
-            logger.error("Erreur Builder : " + e);
+            logger.error("Erreur Builder lors du read : " + e);
         }
 
         return null;
@@ -154,10 +154,10 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
             if (res != 0) {
                 return true;
             } else {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors de l'update");
             }
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de l'update' : " + e);
         }
 
         return false;
@@ -176,6 +176,7 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
             deleteFac.setInt(1, idLocation);
             int responseFac = deleteFac.executeUpdate();
 
+            //todo : dans un monde parfait une location implique une facture, or si probleme avec l'ajout de facture impossible de supprimer la location
             if (responseFac != 0){
                 deleteLoc.setInt(1, idLocation);
                 int responseLoc = deleteLoc.executeUpdate();
@@ -184,11 +185,11 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
                     return true;
                 }
             }else{
-                logger.error("Record de location introuvable");
+                logger.error("Record de location introuvable lors du remove (Pas de facture correspondant à cette location)");
             }
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du remove : " + e);
         }
 
         return false;
@@ -197,7 +198,7 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
     @Override
     public List<Location> getAll() {
         List<Location> ll = new ArrayList<>();
-        String query = "SELECT * FROM API_LOCATION WHERE ID_LOCATION IS NOT NULL";
+        String query = "SELECT * FROM API_LOCATIONCLIENTADRESSE WHERE ID_LOCATION IS NOT NULL";
         try (Statement req = dbConnect.createStatement()) {
             ResultSet rs = req.executeQuery(query);
 
@@ -209,7 +210,6 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
                 String telClient = rs.getString("tel");
 
                 int idLoc = rs.getInt("id_location");
-
                 LocalDate dateloc = rs.getDate("dateloc").toLocalDate();
                 int kmTotal = rs.getInt("kmtotal");
 
@@ -241,16 +241,17 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
                         .setKmTotal(kmTotal)
                         .setClient(client)
                         .setAdrDepart(adresse)
-                        .build();
+                        .build(false);
+                //ICI LOC EST NULL VOIR CAR DATELOC EST AVANT AJD
 
                 ll.add(loc);
             };
 
             return ll;
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du getAll : " + e);
         } catch (Exception e) {
-            logger.error("Erreur Builder : " + e);
+            logger.error("Erreur Builder lors du getAll : " + e);
         }
 
         return null;
@@ -263,11 +264,10 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
             req.setInt(1, loc.getId());
             ResultSet rs = req.executeQuery();
-            rs.next();
 
             List<Facturation> facs = new ArrayList<>();
 
-            do {
+            while(rs.next()){
                 double cout = rs.getInt(1);
                 int idTaxi = rs.getInt(2);
                 String immatriculation = rs.getString(3);
@@ -289,13 +289,13 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
 
                 facs.add(fac);
 
-            } while (rs.next());
+            }
 
             return facs;
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du getFacturations : " + e);
         } catch (Exception e) {
-            logger.error("Erreur builder : " + e);
+            logger.error("Erreur builder lors du getFacturations : " + e);
         }
 
         return null;
@@ -303,21 +303,24 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
 
     @Override
     public boolean addFacturation(Location loc, Taxi taxi) {
-        //Utilisation du trigger de SGBD pour calculer le cout de la location
-        String query = "INSERT INTO  API_FACTURE(id_location, id_taxi) values(?,?)";
-        try (PreparedStatement req = dbConnect.prepareStatement(query)) {
-            req.setInt(1, loc.getId());
-            req.setInt(2, taxi.getId());
+        //Utilisation du trigger de SGBD pour calculer le cout de la location ainsi que la procédure d'ajout de facture
+        // Si un taxi est utilisé plus de 10x dans la journée, il ne sera pas disponible pour la location
+        //String query = "INSERT INTO  API_FACTURE(id_location, id_taxi) values(?,?)";
+        String query = "CALL api_proc_insert_fac(?, ?, ?)";
+        try (CallableStatement cs = dbConnect.prepareCall(query)) {
+            cs.setInt(1, taxi.getId());
+            cs.setInt(2, loc.getId());
+            cs.setDate(3, Date.valueOf(loc.getDate()));
 
-            int reponse = req.executeUpdate();
+            boolean reponse = cs.execute();
 
-            if (reponse != 0) {
+            if (!reponse) {
                 return true;
             }
 
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de addFacturations : " + e);
         }
         return false;
     }
@@ -338,7 +341,7 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
             return total;
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de prixTotalLocation : " + e);
         }
 
         return null;

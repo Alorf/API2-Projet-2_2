@@ -16,4 +16,5 @@ public interface TaxiViewInterface {
 
     void affListe(List info);
 
+    void menu();
 }

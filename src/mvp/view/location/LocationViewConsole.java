@@ -26,11 +26,6 @@ public class LocationViewConsole implements LocationViewInterface {
     @Override
     public void setListDatas(List<Location> locations) {
         this.ll = locations;
-        int i = 1;
-        for (Location location : ll) {
-            System.out.println((i++) + "." + location);
-        }
-        menu();
     }
 
     @Override
@@ -39,6 +34,7 @@ public class LocationViewConsole implements LocationViewInterface {
 
     }
 
+    @Override
     public void menu() {
 
         int choix;
@@ -53,6 +49,7 @@ public class LocationViewConsole implements LocationViewInterface {
         };
 
         do {
+            Utilitaire.afficherListe(ll);
 
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
@@ -90,12 +87,12 @@ public class LocationViewConsole implements LocationViewInterface {
                     //.setId(0)
                     .setDate(date)
                     .setKmTotal(kmTotal)
-                    .build();
+                    .build(false);
 
             presenter.addLocation(location);
 
         } catch (Exception e) {
-            System.err.println("Erreur Builder : " + e);
+            affMsg("Erreur Builder : " + e);
         }
 
     }
@@ -163,12 +160,14 @@ public class LocationViewConsole implements LocationViewInterface {
                     .setKmTotal(kmTotal)
                     .setClient(client)
                     .setAdrDepart(adresse)
-                    .build();
+                    .build(false);
 
-            presenter.updateLocation(newLocation);
+            if (!newLocation.equals(location)){
+                presenter.updateLocation(newLocation);
+            }
 
         } catch (Exception e) {
-            System.err.println("Erreur Builder : " + e);
+            affMsg("Erreur Builder : " + e);
         }
 
     }
@@ -193,12 +192,10 @@ public class LocationViewConsole implements LocationViewInterface {
 
         System.out.println("Que voulez-vous faire ?");
         String[] menu = {
-                "Ajout d'une facturation",
+                "Ajout d'une facturation (SGBD)",
                 "Prix total d'une location (SGBD)",
                 "Quitter"
         };
-
-        //todo : Modification et suppression de facturation ?
 
         int choix;
 

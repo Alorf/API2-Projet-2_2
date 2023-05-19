@@ -188,9 +188,12 @@ public class Location {
             return this;
         }
 
-        public Location build() throws Exception {
-            if (client == null || adrDepart == null || date == null || date.isBefore(LocalDate.now()) || kmTotal < 0) {
-                throw new Exception("Informations de construction incomplètes");
+        public Location build(boolean globalCheck) throws Exception {
+
+            if (globalCheck){
+                if (client == null || adrDepart == null || date == null || date.isBefore(LocalDate.now()) || kmTotal < 0) {
+                    throw new Exception("Informations de construction incomplètes");
+                }
             }
 
             return new Location(this);

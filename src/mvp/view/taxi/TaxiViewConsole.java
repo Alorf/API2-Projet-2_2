@@ -25,11 +25,6 @@ public class TaxiViewConsole implements TaxiViewInterface {
     @Override
     public void setListDatas(List<Taxi> taxis) {
         this.lt = taxis;
-        int i = 1;
-        for (Taxi taxi : lt) {
-            System.out.println((i++) + "." + taxi);
-        }
-        menu();
     }
 
     @Override
@@ -51,9 +46,12 @@ public class TaxiViewConsole implements TaxiViewInterface {
         Utilitaire.afficherListe(info);
     }
 
-
-
+    @Override
     public void menu() {
+        int i = 1;
+        for (Taxi taxi : lt) {
+            System.out.println((i++) + "." + taxi);
+        }
 
         int choix;
 
@@ -113,7 +111,7 @@ public class TaxiViewConsole implements TaxiViewInterface {
             presenter.addTaxi(taxi);
 
         } catch (Exception e) {
-            System.err.println("Erreur Builder : " + e);
+            affMsg("Erreur Builder : " + e);
         }
 
     }
@@ -178,7 +176,9 @@ public class TaxiViewConsole implements TaxiViewInterface {
                     .setPrixKm(prixKm)
                     .build();
 
-            presenter.updateTaxi(newTaxi);
+            if (!newTaxi.equals(taxi)) {
+                presenter.updateTaxi(newTaxi);
+            }
 
         } catch (Exception e) {
             System.err.println("Erreur Builder : " + e);

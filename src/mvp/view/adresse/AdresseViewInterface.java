@@ -14,4 +14,5 @@ public interface AdresseViewInterface {
 
     public Adresse selectionner(List<Adresse> adresses);
 
+    void menu();
 }

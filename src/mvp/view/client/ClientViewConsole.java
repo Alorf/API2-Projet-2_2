@@ -23,11 +23,6 @@ public class ClientViewConsole implements ClientViewInterface {
     @Override
     public void setListDatas(List<Client> clients) {
         this.lc = clients;
-        int i = 1;
-        for (Client cl : lc) {
-            System.out.println((i++) + "." + cl);
-        }
-        menu();
     }
 
     @Override
@@ -54,6 +49,7 @@ public class ClientViewConsole implements ClientViewInterface {
         return clients.get(choix - 1);
     }
 
+    @Override
     public void menu() {
 
         int choix;
@@ -68,6 +64,9 @@ public class ClientViewConsole implements ClientViewInterface {
         };
 
         do {
+            affListe(lc);
+
+
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
 
@@ -115,7 +114,7 @@ public class ClientViewConsole implements ClientViewInterface {
             presenter.addClient(client);
 
         } catch (Exception e) {
-            System.err.println("Erreur Builder : " + e);
+            affMsg("Erreur Builder : " + e);
         }
 
     }
@@ -189,10 +188,12 @@ public class ClientViewConsole implements ClientViewInterface {
                     .setTel(tel)
                     .build();
 
-            presenter.updateClient(newClient);
+            if (!newClient.equals(client)){
+                presenter.updateClient(newClient);
+            }
 
         } catch (Exception e) {
-            System.err.println("Erreur Builder : " + e);
+            affMsg("Erreur Builder : " + e);
         }
     }
 

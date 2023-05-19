@@ -56,7 +56,7 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
             }
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de l'ajout : " + e);
         }
 
         return null;
@@ -90,6 +90,9 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
                 do {
                     int idLoc = rs.getInt("id_location");
+                    if (idLoc == 0) {
+                        break;
+                    }
                     LocalDate dateloc = rs.getDate("dateloc").toLocalDate();
                     int kmTotalLoc = rs.getInt("kmtotal");
 
@@ -113,7 +116,7 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
                             .setKmTotal(kmTotalLoc)
                             .setClient(client)
                             .setAdrDepart(adresse)
-                            .build();
+                            .build(false);
 
                     List<Facturation> facs = getFacturations(loc);
                     loc.setFacturation(facs);
@@ -127,12 +130,12 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
                 return client;
 
             } else {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors du read");
             }
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du read : " + e);
         } catch (Exception e) {
-            logger.error("Erreur Builder : " + e);
+            logger.error("Erreur Builder lors du read : " + e);
         }
 
         return null;
@@ -174,9 +177,9 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
             return facs;
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du getFacturations: " + e);
         } catch (Exception e) {
-            logger.error("Erreur builder : " + e);
+            logger.error("Erreur builder lors du getFacturations : " + e);
         }
 
         return null;
@@ -199,10 +202,10 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
             if (res != 0) {
                 return true;
             } else {
-                logger.error("Record introuvable");
+                logger.error("Erreur sql lors de l'update : Record introuvable");
             }
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de l'update : " + e);
         }
 
         return false;
@@ -220,11 +223,11 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
             if (response != 0) {
                 return true;
             } else {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors du remove");
             }
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du remove : " + e);
         }
 
         return false;
@@ -256,9 +259,9 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
             return lc;
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors du getAll : " + e);
         } catch (Exception e) {
-            logger.error("Erreur builder : " + e);
+            logger.error("Erreur builder lors du getAll : " + e);
         }
 
         return null;
@@ -308,12 +311,11 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
             boolean response = cs.execute();
 
             int nbre = cs.getInt(1);
-            System.out.println(nbre);
 
             return nbre;
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de nombreLocation : " + e);
         }
 
         return -1;
@@ -322,7 +324,7 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
     @Override
     public BigDecimal prixTotalLocs(Client client) {
         //Appel de fonction SGBD
-        String prixTotalLocs = "{? = call api_fonc_prix_total_loc(?)}";
+        String prixTotalLocs = "{? = call api_fonc_prix_total_loc_client(?)}";
 
         try (CallableStatement cs = dbConnect.prepareCall(prixTotalLocs)) {
             cs.registerOutParameter(1, Types.INTEGER);
@@ -335,7 +337,7 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
             return prixTotal;
 
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de prixTotalLocs : " + e);
         }
 
         return null;
