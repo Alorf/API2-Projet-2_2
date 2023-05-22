@@ -181,7 +181,7 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
 
     @Override
     public List<Location> locationTaxi(Taxi taxi) {
-        //Appel de fonction SGBD
+        //Appel de fonction SGBD (2)
         String nombreLoc = "{? = call api_fonc_locations_taxi(?)}";
 
         try (CallableStatement cs = dbConnect.prepareCall(nombreLoc)) {

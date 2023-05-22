@@ -30,6 +30,7 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
     @Override
     public Client add(Client client) {
+        //Appel procédure SGBD (1)
         String mail = client.getMail();
         String nom = client.getNom();
         String prenom = client.getPrenom();
@@ -301,7 +302,7 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
     @Override
     public int nombreLocation(Client client) {
-        //Appel de fonction SGBD
+        //Appel de fonction SGBD (3)
         String nombreLoc = "{? = call api_fonc_nombre_location_client(?)}";
 
         try (CallableStatement cs = dbConnect.prepareCall(nombreLoc)) {
@@ -323,7 +324,7 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
     @Override
     public BigDecimal prixTotalLocs(Client client) {
-        //Appel de fonction SGBD
+        //Appel de fonction SGBD (6)
         String prixTotalLocs = "{? = call api_fonc_prix_total_loc_client(?)}";
 
         try (CallableStatement cs = dbConnect.prepareCall(prixTotalLocs)) {

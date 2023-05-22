@@ -7,6 +7,7 @@ public class Categorie extends Element {
     String nom;
     //Type de véhicule
     Set<Element> elements = new HashSet<>();
+    // véhicules de la catégorie
 
     public Categorie(int id, String nom) {
         super(id);
@@ -19,11 +20,12 @@ public class Categorie extends Element {
 
     @Override
     public String toString() {
-        StringBuilder ts = new StringBuilder(getId() + " Catégorie : " + nom + "\n");
+        StringBuilder sb = new StringBuilder();
+        sb.append("\nCategorie{" + "id=" + id + ", nom=" + nom + "}\n");
         for (Element e : elements) {
-            ts.append(e.toString()).append("\n");
+            sb.append(e.toString() + "\n");
+            //Si catégorie, alors il va rappeller le toString de la catégorie => récursivité donc beaucoup de retour a la ligne...
         }
-        ts.append(nom + " " + elements.size() + " véhicules").append("\n");
-        return ts.toString();
+        return sb.toString();
     }
 }

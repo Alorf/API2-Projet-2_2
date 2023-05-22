@@ -303,7 +303,7 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
 
     @Override
     public boolean addFacturation(Location loc, Taxi taxi) {
-        //Utilisation du trigger de SGBD pour calculer le cout de la location ainsi que la procédure d'ajout de facture
+        //Utilisation du trigger de SGBD (7) pour calculer le cout de la location ainsi que la procédure d'ajout de facture
         // Si un taxi est utilisé plus de 10x dans la journée, il ne sera pas disponible pour la location
         //String query = "INSERT INTO  API_FACTURE(id_location, id_taxi) values(?,?)";
         String query = "CALL api_proc_insert_fac(?, ?, ?)";
@@ -327,7 +327,7 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
 
     @Override
     public BigDecimal prixTotalLocation(Location location) {
-        //Appel de fonction SGBD
+        //Appel de fonction SGBD (4)
         String totalLoc = "{? = call api_fonc_prix_location(?)}";
 
         try (CallableStatement cs = dbConnect.prepareCall(totalLoc)) {

@@ -13,15 +13,18 @@ public class TestComposite {
 
         c1.getElements().add(t1);
         c1.getElements().add(t2);
-        c2.getElements().add(c1);
         c2.getElements().add(t3);
         c2.getElements().add(t4);
         c3.getElements().add(t5);
 
+        c2.getElements().add(c1);
+        c3.getElements().add(c2);
+
         System.out.println(c1);
-        System.out.println("\n------------------------\n");
+        System.out.println("------------------------");
         System.out.println(c2);
-        System.out.println("\n------------------------\n");
+        System.out.println("------------------------");
         System.out.println(c3);
+        //Le c3 a rappeller 2x la classe Catégorie donc 1 \n en normal et 2 \n en plus
     }
 }
