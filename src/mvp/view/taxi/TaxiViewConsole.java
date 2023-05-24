@@ -121,6 +121,10 @@ public class TaxiViewConsole implements TaxiViewInterface {
 
         Taxi taxi = presenter.readTaxi(idRech);
 
+        if (taxi == null) {
+            return;
+        }
+
         String immatriculation = taxi.getImmatriculation();
         String carburant = taxi.getCarburant();
         double prixKm = taxi.getPrixKm();

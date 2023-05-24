@@ -124,6 +124,10 @@ public class ClientViewConsole implements ClientViewInterface {
 
         Client client = presenter.readClient(idRech);
 
+        if (client == null) {
+            return;
+        }
+
         String mail = client.getMail();
         String nom = client.getNom();
         String prenom = client.getPrenom();

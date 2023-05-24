@@ -108,6 +108,10 @@ public class AdresseViewConsole implements AdresseViewInterface {
 
         Adresse adresse = presenter.readAdresse(idRech);
 
+        if (adresse == null) {
+            return;
+        }
+
         int cp = adresse.getCp();
         String localite = adresse.getLocalite();
         String rue = adresse.getRue();

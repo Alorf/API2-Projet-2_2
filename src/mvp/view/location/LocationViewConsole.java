@@ -102,6 +102,10 @@ public class LocationViewConsole implements LocationViewInterface {
 
         Location location = presenter.readLocation(idRech);
 
+        if (location == null) {
+            return;
+        }
+
         LocalDate date = location.getDate();
         int kmTotal = location.getKmTotal();
         Client client = location.getClient();
