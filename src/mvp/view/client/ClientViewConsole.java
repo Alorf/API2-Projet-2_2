@@ -1,54 +1,14 @@
 package mvp.view.client;
 
 import designpatterns.builder.Client;
+import mvp.view.AbstractViewConsole;
 import utilitaire.Utilitaire;
 import mvp.presenter.ClientPresenter;
 
 import java.time.LocalDate;
 import java.util.*;
 
-public class ClientViewConsole implements ClientViewInterface {
-    private ClientPresenter presenter;
-    private List<Client> lc;
-
-    public ClientViewConsole() {
-
-    }
-
-    @Override
-    public void setPresenter(ClientPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public void setListDatas(List<Client> clients) {
-        this.lc = clients;
-    }
-
-    @Override
-    public void affMsg(String msg) {
-        System.out.println("Information : " + msg);
-
-    }
-
-    @Override
-    public void affListe(List info) {
-        Utilitaire.afficherListe(info);
-    }
-
-    @Override
-    public void affListe(Set info) {
-        Utilitaire.afficherListe(info);
-    }
-
-    @Override
-    public Client selectionner(List<Client> clients) {
-        //lc est vide car aucun client n'est chargé en mémoire
-        int choix = Utilitaire.choixListe(clients);
-
-        return clients.get(choix - 1);
-    }
-
+public class ClientViewConsole extends AbstractViewConsole<Client> {
     @Override
     public void menu() {
 
@@ -64,7 +24,7 @@ public class ClientViewConsole implements ClientViewInterface {
         };
 
         do {
-            affListe(lc);
+            affListe(lobjects);
 
 
             choix = Utilitaire.choixListe(Arrays.asList(menu));
@@ -73,16 +33,16 @@ public class ClientViewConsole implements ClientViewInterface {
             switch (choix) {
                 case 1 ->
                     //Créer un client
-                        creerClient();
+                        creer();
                 case 2 ->
                     //Rechercher un client
-                        rechercherClient();
+                        rechercher();
                 case 3 ->
                     //Modifier un client
-                        modifierClient();
+                        modifier();
                 case 4 ->
                     //Supprimer un client
-                        supprimerClient();
+                        supprimer();
                 case 5 ->
                     //Opérations spéciales
                         opSpeciales();
@@ -95,7 +55,7 @@ public class ClientViewConsole implements ClientViewInterface {
         } while (true);
     }
 
-    public void creerClient() {
+    public void creer() {
         String mail = Utilitaire.regex("[a-zA-Z.@]+", "Entrez le mail du client : ").toLowerCase();
         String nom = Utilitaire.regex("[a-zA-Z -]+", "Entrez le nom du client : ");
         String prenom = Utilitaire.regex("[a-zA-Z -]+", "Entrez le prénom du client : ");
@@ -111,7 +71,7 @@ public class ClientViewConsole implements ClientViewInterface {
                     .setTel(tel)
                     .build();
 
-            presenter.addClient(client);
+            presenter.add(client);
 
         } catch (Exception e) {
             affMsg("Erreur Builder : " + e);
@@ -119,10 +79,14 @@ public class ClientViewConsole implements ClientViewInterface {
 
     }
 
-    public void modifierClient() {
+    public void modifier() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
 
-        Client client = presenter.readClient(idRech);
+        Client client = presenter.read(idRech);
+
+        if (client == null) {
+            return;
+        }
 
         String mail = client.getMail();
         String nom = client.getNom();
@@ -188,8 +152,8 @@ public class ClientViewConsole implements ClientViewInterface {
                     .setTel(tel)
                     .build();
 
-            if (!newClient.equals(client)){
-                presenter.updateClient(newClient);
+            if (!newClient.equals(client)) {
+                presenter.update(newClient);
             }
 
         } catch (Exception e) {
@@ -197,18 +161,18 @@ public class ClientViewConsole implements ClientViewInterface {
         }
     }
 
-    public void rechercherClient() {
+    public void rechercher() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
 
-        Client cl = presenter.readClient(idRech);
+        Client cl = presenter.read(idRech);
     }
 
     private void opSpeciales() {
 
-        Client client = lc.get(Utilitaire.choixListe(lc) - 1);
+        Client client = lobjects.get(Utilitaire.choixListe(lobjects) - 1);
 
         //Avoir tout ce que le client possèdes
-        client = presenter.readClient(client.getId());
+        client = presenter.read(client.getId());
 
         System.out.println("Que voulez-vous faire ?");
         String[] menu = {
@@ -230,28 +194,28 @@ public class ClientViewConsole implements ClientViewInterface {
             switch (choix) {
                 case 1 ->
                     //Tous les taxis utilisés sans doublon
-                        presenter.taxiUtiliseSansDoublon(client);
+                        ((ClientPresenter) presenter).taxiUtiliseSansDoublon(client);
                 case 2 -> {
                     //Toutes les locations entre deux dates
                     LocalDate d1 = Utilitaire.lecDate();
                     LocalDate d2 = Utilitaire.lecDate();
-                    presenter.locationEntreDeuxDates(client, d1, d2);
+                    ((ClientPresenter) presenter).locationEntreDeuxDates(client, d1, d2);
                 }
                 case 3 ->
                     //Toutes les adresses où il s'est rendu sans doublon
-                        presenter.adresseLocationSansDoublon(client);
+                        ((ClientPresenter) presenter).adresseLocationSansDoublon(client);
                 case 4 ->
                     //Liste des locations du client
-                        presenter.locations(client);
+                        ((ClientPresenter) presenter).locations(client);
                 case 5 ->
                     //Liste des facturations du client
-                        presenter.facturations(client);
+                        ((ClientPresenter) presenter).facturations(client);
                 case 6 ->
                     //Nombre de locations
-                        presenter.nombreLocation(client);
+                        ((ClientPresenter) presenter).nombreLocation(client);
                 case 7 ->
                     //Cout total des locations
-                        presenter.prixTotalLocs(client);
+                        ((ClientPresenter) presenter).prixTotalLocs(client);
                 default -> {
                     break special;
                 }
@@ -260,9 +224,9 @@ public class ClientViewConsole implements ClientViewInterface {
 
     }
 
-    public void supprimerClient() {
+    public void supprimer() {
         int idCli = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id du client que vous souhaitez supprimer : "));
 
-        presenter.removeClient(idCli);
+        presenter.remove(idCli);
     }
 }

@@ -6,26 +6,24 @@ import designpatterns.builder.Location;
 import designpatterns.builder.Taxi;
 import mvp.model.DAO;
 import mvp.model.location.LocationSpecial;
-import mvp.view.location.LocationViewInterface;
+import mvp.view.ViewInterface;
 
 import java.math.BigDecimal;
-import java.util.List;
 
-public class LocationPresenter {
-    private DAO<Location> model;
-    private DAO<Client> clientModel;
-    private DAO<Adresse> adresseModel;
-
-    private LocationViewInterface view;
+public class LocationPresenter extends Presenter<Location> {
     private ClientPresenter clientPresenter;
-    private AdressePresenter adressePresenter;
+    private Presenter<Adresse> adressePresenter;
     private TaxiPresenter taxiPresenter;
+
+    public LocationPresenter(DAO<Location> model, ViewInterface<Location> view) {
+        super(model, view);
+    }
 
     public void setClientPresenter(ClientPresenter clientPresenter){
         this.clientPresenter = clientPresenter;
     }
 
-    public void setAdressePresenter(AdressePresenter adressePresenter){
+    public void setAdressePresenter(Presenter<Adresse> adressePresenter){
         this.adressePresenter = adressePresenter;
     }
 
@@ -33,80 +31,8 @@ public class LocationPresenter {
         this.taxiPresenter = taxiPresenter;
     }
 
-    public LocationPresenter(DAO<Location> model, LocationViewInterface view) {
-        this.model = model;
-        this.view = view;
-        this.view.setPresenter(this);
-    }
-
-    public void start() {
-        List<Location> locations = model.getAll();
-        view.setListDatas(locations);
-        view.menu();
-    }
-
-    public void addLocation(Location location) {
-        Location loc;
-        Client client = clientPresenter.selectionner();
-        Adresse adresse = adressePresenter.selectionner();
-
-        location.setAdrDepart(adresse);
-        location.setClient(client);
-
-        loc = model.add(location);
-
-        if (loc == null) {
-            view.affMsg("Erreur lors de la création le la location");
-        } else {
-            view.affMsg("Création de : " + loc);
-
-            //Ajout de la facture
-            addFacturation(loc);
-        }
-
-        List<Location> locations = model.getAll();
-        view.setListDatas(locations);
-
-    }
-
-    public Location readLocation(int idRech) {
-        Location location = model.read(idRech);
-
-        if (location == null) {
-            view.affMsg("Location introuvable");
-        }
-
-        return location;
-    }
-
-    public void updateLocation(Location location) {
-        boolean ok = model.update(location);
-
-        if (ok) {
-            view.affMsg("Location modifiée");
-        } else {
-            view.affMsg("Location non modifiée, erreur");
-        }
-
-        List<Location> locations = model.getAll();
-        view.setListDatas(locations);
-    }
-
-    public void removeLocation(int idAdr) {
-        boolean ok = model.remove(idAdr);
-
-        if (ok) {
-            view.affMsg("Location effacée");
-        } else {
-            view.affMsg("Location non effacée, erreur");
-        }
-
-        List<Location> locations = model.getAll();
-        view.setListDatas(locations);
-    }
-
     public void addFacturation(Location loc){
-        loc = readLocation(loc.getId());
+        loc = read(loc.getId());
         Taxi taxi = taxiPresenter.selectionner(loc.getFacturations());
 
         if (taxi == null){

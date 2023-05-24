@@ -5,78 +5,24 @@ import designpatterns.builder.Location;
 import designpatterns.builder.Taxi;
 import mvp.model.DAO;
 import mvp.model.taxi.TaxiSpecial;
-import mvp.view.taxi.TaxiViewInterface;
+import mvp.view.ViewInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class TaxiPresenter {
-    private DAO<Taxi> model;
+public class TaxiPresenter extends Presenter<Taxi> {
 
     private static final Logger logger = LogManager.getLogger(TaxiPresenter.class);
 
-    private TaxiViewInterface view;
-
-    public TaxiPresenter(DAO<Taxi> model, TaxiViewInterface view) {
-        this.model = model;
-        this.view = view;
-        this.view.setPresenter(this);
+    public TaxiPresenter(DAO<Taxi> model, ViewInterface<Taxi> view) {
+        super(model, view);
     }
 
     public void start() {
         List<Taxi> taxis = model.getAll();
         view.setListDatas(taxis);
         view.menu();
-    }
-
-    public void addTaxi(Taxi taxi) {
-        Taxi cl = model.add(taxi);
-        if (cl == null) {
-            view.affMsg("Erreur lors de la création");
-        } else {
-            view.affMsg("Création de : " + cl);
-        }
-
-        List<Taxi> taxis = model.getAll();
-        view.setListDatas(taxis);
-
-    }
-
-    public Taxi readTaxi(int idRech) {
-        Taxi taxi = model.read(idRech);
-        if (taxi == null) {
-            view.affMsg("Taxi introuvable");
-            return null;
-        }
-
-        return taxi;
-    }
-
-    public void updateTaxi(Taxi taxi) {
-        boolean ok = model.update(taxi);
-
-        if (ok) {
-            view.affMsg("Taxi modifié");
-        } else {
-            view.affMsg("Taxi non modifié, erreur");
-        }
-
-        List<Taxi> taxis = model.getAll();
-        view.setListDatas(taxis);
-    }
-
-    public void removeTaxi(int idTaxi) {
-        boolean ok = model.remove(idTaxi);
-
-        if (ok) {
-            view.affMsg("Taxi effacé");
-        } else {
-            view.affMsg("Taxi non effacé, erreur");
-        }
-
-        List<Taxi> taxis = model.getAll();
-        view.setListDatas(taxis);
     }
 
     public Taxi selectionner(List<Facturation> facs) {

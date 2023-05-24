@@ -3,36 +3,14 @@ package mvp.view.location;
 import designpatterns.builder.Adresse;
 import designpatterns.builder.Client;
 import designpatterns.builder.Location;
+import mvp.view.AbstractViewConsole;
 import utilitaire.Utilitaire;
 import mvp.presenter.LocationPresenter;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.List;
 
-public class LocationViewConsole implements LocationViewInterface {
-    private LocationPresenter presenter;
-    private List<Location> ll;
-
-    public LocationViewConsole() {
-
-    }
-
-    @Override
-    public void setPresenter(LocationPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public void setListDatas(List<Location> locations) {
-        this.ll = locations;
-    }
-
-    @Override
-    public void affMsg(String msg) {
-        System.out.println("Information : " + msg);
-
-    }
+public class LocationViewConsole extends AbstractViewConsole<Location> {
 
     @Override
     public void menu() {
@@ -49,28 +27,27 @@ public class LocationViewConsole implements LocationViewInterface {
         };
 
         do {
-            Utilitaire.afficherListe(ll);
+            Utilitaire.afficherListe(lobjects);
 
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
             switch (choix) {
                 case 1 ->
                     //Créer une location
-                        creerLocation();
+                        creer();
                 case 2 ->
                     //Rechercher une location
-                        rechercherLocation();
+                        rechercher();
                 case 3 ->
                     //Modifier une location
-                        modifierLocation();
+                        modifier();
                 case 4 ->
                     //Supprimer une location
-                        supprimerLocation();
+                        supprimer();
                 case 5 ->
                     //Opérations spéciales
                         opSpeciales();
-                default ->
-                {
+                default -> {
                     //Fin
                     return;
                 }
@@ -78,7 +55,7 @@ public class LocationViewConsole implements LocationViewInterface {
         } while (true);
     }
 
-    public void creerLocation() {
+    public void creer() {
         LocalDate date = Utilitaire.lecDate();
         int kmTotal = Integer.parseInt(Utilitaire.regex("[0-9]+", "Nombre de kilomètres : "));
 
@@ -89,7 +66,7 @@ public class LocationViewConsole implements LocationViewInterface {
                     .setKmTotal(kmTotal)
                     .build(false);
 
-            presenter.addLocation(location);
+            presenter.add(location);
 
         } catch (Exception e) {
             affMsg("Erreur Builder : " + e);
@@ -97,10 +74,14 @@ public class LocationViewConsole implements LocationViewInterface {
 
     }
 
-    public void modifierLocation() {
+    public void modifier() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de la location recherché : "));
 
-        Location location = presenter.readLocation(idRech);
+        Location location = presenter.read(idRech);
+
+        if (location == null) {
+            return;
+        }
 
         LocalDate date = location.getDate();
         int kmTotal = location.getKmTotal();
@@ -138,12 +119,12 @@ public class LocationViewConsole implements LocationViewInterface {
                 case 3 -> {
                     System.out.println("Anciennement : " + client);
                     //Sélection client
-                    client = presenter.choixClient();
+                    client = ((LocationPresenter) presenter).choixClient();
                 }
                 case 4 -> {
                     System.out.println("Anciennement : " + adresse);
                     //Sélection adresse
-                    adresse = presenter.choixAdresse();
+                    adresse = ((LocationPresenter) presenter).choixAdresse();
 
                 }
                 default -> {
@@ -162,8 +143,8 @@ public class LocationViewConsole implements LocationViewInterface {
                     .setAdrDepart(adresse)
                     .build(false);
 
-            if (!newLocation.equals(location)){
-                presenter.updateLocation(newLocation);
+            if (!newLocation.equals(location)) {
+                presenter.update(newLocation);
             }
 
         } catch (Exception e) {
@@ -172,23 +153,23 @@ public class LocationViewConsole implements LocationViewInterface {
 
     }
 
-    public void rechercherLocation() {
+    public void rechercher() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de la location recherchée : "));
 
-        Location location = presenter.readLocation(idRech);
+        Location location = presenter.read(idRech);
 
     }
 
-    public void supprimerLocation() {
+    public void supprimer() {
         int idLocation = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id de la location que vous souhaitez supprimer : "));
 
-        presenter.removeLocation(idLocation);
+        presenter.remove(idLocation);
     }
 
     private void opSpeciales() {
-        int choixLoc = Utilitaire.choixListe(ll);
+        int choixLoc = Utilitaire.choixListe(lobjects);
 
-        Location loc = ll.get(choixLoc - 1);
+        Location loc = lobjects.get(choixLoc - 1);
 
         System.out.println("Que voulez-vous faire ?");
         String[] menu = {
@@ -206,10 +187,10 @@ public class LocationViewConsole implements LocationViewInterface {
             switch (choix) {
                 case 1 ->
                     //Ajout d'une facturation
-                    presenter.addFacturation(loc);
+                        ((LocationPresenter) presenter).addFacturation(loc);
                 case 2 ->
                     //Prix total d'une location
-                    presenter.prixTotalLocation(loc);
+                        ((LocationPresenter) presenter).prixTotalLocation(loc);
                 default -> {
                     break special;
                 }

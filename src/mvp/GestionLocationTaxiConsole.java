@@ -11,18 +11,12 @@ import mvp.model.adresse.AdresseModelDB;
 import mvp.model.client.ClientModelHyb;
 import mvp.model.location.LocationModelDB;
 import mvp.model.taxi.TaxiModelDB;
-import mvp.presenter.AdressePresenter;
-import mvp.presenter.ClientPresenter;
-import mvp.presenter.LocationPresenter;
-import mvp.presenter.TaxiPresenter;
+import mvp.presenter.*;
+import mvp.view.ViewInterface;
 import mvp.view.adresse.AdresseViewConsole;
-import mvp.view.adresse.AdresseViewInterface;
 import mvp.view.client.ClientViewConsole;
-import mvp.view.client.ClientViewInterface;
 import mvp.view.location.LocationViewConsole;
-import mvp.view.location.LocationViewInterface;
 import mvp.view.taxi.TaxiViewConsole;
-import mvp.view.taxi.TaxiViewInterface;
 import utilitaire.Utilitaire;
 
 import java.util.Arrays;
@@ -35,15 +29,15 @@ public class GestionLocationTaxiConsole {
     private DAO<Location> locationModel;
     private DAO<Taxi> taxiModel;
 
-    private AdressePresenter adressePresenter;
-    private ClientPresenter clientPresenter;
-    private LocationPresenter locationPresenter;
-    private TaxiPresenter taxiPresenter;
+    private Presenter<Adresse> adressePresenter;
+    private Presenter<Client> clientPresenter;
+    private Presenter<Location> locationPresenter;
+    private Presenter<Taxi> taxiPresenter;
 
-    private AdresseViewInterface adresseViewInterface;
-    private ClientViewInterface clientViewInterface;
-    private LocationViewInterface locationViewInterface;
-    private TaxiViewInterface taxiViewInterface;
+    private ViewInterface<Adresse> adresseViewInterface;
+    private ViewInterface<Client> clientViewInterface;
+    private ViewInterface<Location> locationViewInterface;
+    private ViewInterface<Taxi> taxiViewInterface;
 
     public void gestion() {
         adresseModel = new AdresseModelDB();
@@ -62,9 +56,9 @@ public class GestionLocationTaxiConsole {
         locationViewInterface = new LocationViewConsole();
         locationPresenter = new LocationPresenter(locationModel, locationViewInterface);
 
-        locationPresenter.setAdressePresenter(adressePresenter);
-        locationPresenter.setClientPresenter(clientPresenter);
-        locationPresenter.setTaxiPresenter(taxiPresenter);
+        ((LocationPresenter) locationPresenter).setClientPresenter((ClientPresenter) clientPresenter);
+        ((LocationPresenter) locationPresenter).setAdressePresenter(adressePresenter);
+        ((LocationPresenter) locationPresenter).setTaxiPresenter((TaxiPresenter) taxiPresenter);
 
         List<String> loptions = Arrays.asList("Adresse", "Client", "Taxi", "Location", "Quitter");
         do {
