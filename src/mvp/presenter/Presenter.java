@@ -24,6 +24,7 @@ public abstract class Presenter<T> {
 
     public void add(T object) {
         T newObject = model.add(object);
+
         if (newObject == null) {
             view.affMsg("Erreur lors de la création de l'élément");
         } else {
@@ -71,7 +72,15 @@ public abstract class Presenter<T> {
     }
 
     public T selectionner() {
-        T object = view.selectionner(model.getAll());
+
+        List<T> objects = model.getAll();
+
+        if (objects == null || objects.isEmpty()) {
+            return null;
+        }
+
+        T object = view.selectionner(objects);
+
         return object;
     }
 }

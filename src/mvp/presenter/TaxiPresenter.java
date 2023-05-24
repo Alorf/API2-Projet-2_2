@@ -27,15 +27,15 @@ public class TaxiPresenter extends Presenter<Taxi> {
 
         List<Taxi> taxis = model.getAll();
 
+        if (taxis == null || taxis.isEmpty()) {
+            return null;
+        }
+
         if (facs != null && !facs.isEmpty()){
             for (Facturation fac : facs){
                 //On retire les véhicules qui ne nous intéressent plus
                 taxis.remove(fac.getVehicule());
             }
-        }
-
-        if (taxis.isEmpty()){
-            return null;
         }
 
         Taxi taxi = view.selectionner(taxis);

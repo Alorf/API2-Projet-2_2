@@ -60,8 +60,7 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
         String immatriculation = Utilitaire.regex(".*", "Entrez l'immatriculation du taxi : ").toUpperCase();
         //Normalement le regex serait 'T-[A-Z]{3}-[0-9]{3}'
         String carburant = Utilitaire.regex("[a-zA-Z0-9]+", "Entrez le carburant du taxi : ");
-        double prixKm = Double.parseDouble(Utilitaire.regex("[ \\t]*(\\+|\\-)?[ \\t]*(\\d*\\.?\\d+(E[\\+|\\-|\\d]\\d*)?)", "Entrez le prix au kilomètre du taxi : "));
-        //regex d'un double https://regex101.com/r/AtCkmx/1
+        double prixKm = Utilitaire.lireDouble("Entrez le prix au kilomètre : ");
 
         try {
             Taxi taxi = new Taxi.TaxiBuilder()
@@ -126,7 +125,7 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
                     System.out.println("Anciennement : " + prixKm);
 
                     //Modifier prixKm
-                    prixKm = Double.parseDouble(Utilitaire.regex("[ \\t]*(\\+|\\-)?[ \\t]*(\\d*\\.?\\d+(E[\\+|\\-|\\d]\\d*)?)", "Entrez le nouveau prix au kilomètre : "));
+                    prixKm = Utilitaire.lireDouble("Entrez le prix au kilomètre : ");
                 }
                 default -> {
                     break updateLoop;
