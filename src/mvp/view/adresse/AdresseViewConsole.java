@@ -33,6 +33,7 @@ public class AdresseViewConsole implements AdresseViewInterface {
 
     @Override
     public Adresse selectionner(List<Adresse> adresses) {
+
         int choix = Utilitaire.choixListe(adresses);
 
         return adresses.get(choix - 1);
@@ -185,6 +186,8 @@ public class AdresseViewConsole implements AdresseViewInterface {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de l'adresse recherché : "));
 
         Adresse adresse = presenter.readAdresse(idRech);
+
+        affMsg(adresse.toString());
 
     }
 

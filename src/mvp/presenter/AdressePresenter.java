@@ -1,6 +1,7 @@
 package mvp.presenter;
 
 import designpatterns.builder.Adresse;
+import designpatterns.builder.Client;
 import mvp.model.DAO;
 import mvp.model.taxi.TaxiModelDB;
 import mvp.view.adresse.AdresseViewInterface;
@@ -29,11 +30,11 @@ public class AdressePresenter {
     }
 
     public void addAdresse(Adresse adresse) {
-        Adresse cl = model.add(adresse);
-        if (cl == null) {
+        Adresse ad = model.add(adresse);
+        if (ad == null) {
             view.affMsg("Erreur lors de la création");
         } else {
-            view.affMsg("Création de : " + cl);
+            view.affMsg("Création de : " + ad);
         }
 
         List<Adresse> adresses = model.getAll();
@@ -78,7 +79,15 @@ public class AdressePresenter {
 
     public Adresse selectionner() {
         logger.info("Appel de la sélection");
-        Adresse adresse = view.selectionner(model.getAll());
+
+        List<Adresse> adresses = model.getAll();
+
+        if (adresses == null || adresses.isEmpty()) {
+            view.affMsg("Aucune adresse");
+            return null;
+        }
+
+        Adresse adresse = view.selectionner(adresses);
         return adresse;
     }
 }

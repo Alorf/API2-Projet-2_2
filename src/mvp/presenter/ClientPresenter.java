@@ -133,7 +133,15 @@ public class ClientPresenter {
 
     public Client selectionner() {
         logger.info("Appel de la sélection");
-        Client client = view.selectionner(model.getAll());
+
+        List<Client> clients = model.getAll();
+
+        if (clients == null || clients.isEmpty()) {
+            view.affMsg("Aucun client");
+            return null;
+        }
+
+        Client client = view.selectionner(clients);
 
         return client;
     }

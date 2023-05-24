@@ -43,7 +43,7 @@ public class ClientViewConsole implements ClientViewInterface {
 
     @Override
     public Client selectionner(List<Client> clients) {
-        //lc est vide car aucun client n'est chargé en mémoire
+
         int choix = Utilitaire.choixListe(clients);
 
         return clients.get(choix - 1);
@@ -205,6 +205,8 @@ public class ClientViewConsole implements ClientViewInterface {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
 
         Client cl = presenter.readClient(idRech);
+
+        affMsg(cl.toString());
     }
 
     private void opSpeciales() {

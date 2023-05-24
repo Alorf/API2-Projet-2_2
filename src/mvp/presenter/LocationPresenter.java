@@ -50,6 +50,11 @@ public class LocationPresenter {
         Client client = clientPresenter.selectionner();
         Adresse adresse = adressePresenter.selectionner();
 
+        if (client == null || adresse == null){
+            view.affMsg("Erreur lors de la création de la location");
+            return;
+        }
+
         location.setAdrDepart(adresse);
         location.setClient(client);
 

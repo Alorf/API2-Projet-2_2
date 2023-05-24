@@ -31,11 +31,11 @@ public class TaxiPresenter {
     }
 
     public void addTaxi(Taxi taxi) {
-        Taxi cl = model.add(taxi);
-        if (cl == null) {
+        Taxi tax = model.add(taxi);
+        if (tax == null) {
             view.affMsg("Erreur lors de la création");
         } else {
-            view.affMsg("Création de : " + cl);
+            view.affMsg("Création de : " + tax);
         }
 
         List<Taxi> taxis = model.getAll();
@@ -84,15 +84,16 @@ public class TaxiPresenter {
 
         List<Taxi> taxis = model.getAll();
 
+        if (taxis == null || taxis.isEmpty()){
+            view.affMsg("Aucun taxi");
+            return null;
+        }
+
         if (facs != null && !facs.isEmpty()){
             for (Facturation fac : facs){
                 //On retire les véhicules qui ne nous intéressent plus
                 taxis.remove(fac.getVehicule());
             }
-        }
-
-        if (taxis.isEmpty()){
-            return null;
         }
 
         Taxi taxi = view.selectionner(taxis);

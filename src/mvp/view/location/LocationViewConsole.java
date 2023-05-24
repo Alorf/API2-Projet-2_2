@@ -181,6 +181,8 @@ public class LocationViewConsole implements LocationViewInterface {
 
         Location location = presenter.readLocation(idRech);
 
+        affMsg(location.toString());
+
     }
 
     public void supprimerLocation() {
