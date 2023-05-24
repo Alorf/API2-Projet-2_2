@@ -14,8 +14,6 @@ import java.util.Set;
 
 public class ClientPresenter extends Presenter<Client> {
 
-    private static final Logger logger = LogManager.getLogger(ClientPresenter.class);
-
     public ClientPresenter(DAO<Client> model, ViewInterface<Client> view) {
         super(model, view);
     }
@@ -69,13 +67,6 @@ public class ClientPresenter extends Presenter<Client> {
         } else {
             view.affListe(ll);
         }
-    }
-
-    public Client selectionner() {
-        logger.info("Appel de la sélection");
-        Client client = view.selectionner(model.getAll());
-
-        return client;
     }
 
     public void nombreLocation(Client client) {

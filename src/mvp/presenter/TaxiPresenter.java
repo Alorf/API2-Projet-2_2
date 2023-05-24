@@ -13,8 +13,6 @@ import java.util.List;
 
 public class TaxiPresenter extends Presenter<Taxi> {
 
-    private static final Logger logger = LogManager.getLogger(TaxiPresenter.class);
-
     public TaxiPresenter(DAO<Taxi> model, ViewInterface<Taxi> view) {
         super(model, view);
     }
@@ -26,7 +24,6 @@ public class TaxiPresenter extends Presenter<Taxi> {
     }
 
     public Taxi selectionner(List<Facturation> facs) {
-        logger.info("Appel de la sélection");
 
         List<Taxi> taxis = model.getAll();
 
