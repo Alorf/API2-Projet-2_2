@@ -1,43 +1,12 @@
 package mvp.view.adresse;
 
 import designpatterns.builder.Adresse;
+import mvp.view.AbstractViewConsole;
 import utilitaire.Utilitaire;
-import mvp.presenter.AdressePresenter;
 
 import java.util.Arrays;
-import java.util.List;
 
-public class AdresseViewConsole implements AdresseViewInterface {
-    private AdressePresenter presenter;
-    private List<Adresse> la;
-
-    public AdresseViewConsole() {
-
-    }
-
-    @Override
-    public void setPresenter(AdressePresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public void setListDatas(List<Adresse> adresses) {
-        this.la = adresses;
-    }
-
-    @Override
-    public void affMsg(String msg) {
-        System.out.println("Information : " + msg);
-
-    }
-
-    @Override
-    public Adresse selectionner(List<Adresse> adresses) {
-
-        int choix = Utilitaire.choixListe(adresses);
-
-        return adresses.get(choix - 1);
-    }
+public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
 
     @Override
     public void menu() {
@@ -49,28 +18,27 @@ public class AdresseViewConsole implements AdresseViewInterface {
                 "Rechercher",
                 "Modifier",
                 "Supprimer",
-                "Tous",
                 "Finir",
         };
 
         do {
-            Utilitaire.afficherListe(la);
+            Utilitaire.afficherListe(lobjects);
 
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
             switch (choix) {
                 case 1 ->
                     //Créer une adresse
-                        creerAdresse();
+                        creer();
                 case 2 ->
                     //Rechercher une adresse
-                        rechercherAdresse();
+                        rechercher();
                 case 3 ->
                     //Modifier une adresse
-                        modifierAdresse();
+                        modifier();
                 case 4 ->
                     //Supprimer une adresse
-                        supprimerAdresse();
+                        supprimer();
                 default ->
                 //Fin
                 {
@@ -80,7 +48,7 @@ public class AdresseViewConsole implements AdresseViewInterface {
         } while (true);
     }
 
-    public void creerAdresse() {
+    public void creer() {
         int cp = Integer.parseInt(Utilitaire.regex("[0-9]{4}", "Entrez le code postal de l'adresse : ").toUpperCase());
         String localite = Utilitaire.regex("[a-zA-Z0-9]+", "Entrez la localité de l'adresse : ");
         String rue = Utilitaire.regex(".*", "Entrez la rue de l'adresse : ");
@@ -96,7 +64,7 @@ public class AdresseViewConsole implements AdresseViewInterface {
                     .setNum(num)
                     .build();
 
-            presenter.addAdresse(adresse);
+            presenter.add(adresse);
 
         } catch (Exception e) {
             affMsg("Erreur Builder : " + e);
@@ -104,10 +72,10 @@ public class AdresseViewConsole implements AdresseViewInterface {
 
     }
 
-    public void modifierAdresse() {
+    public void modifier() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de l'adresse recherché : "));
 
-        Adresse adresse = presenter.readAdresse(idRech);
+        Adresse adresse = presenter.read(idRech);
 
         if (adresse == null) {
             return;
@@ -175,25 +143,25 @@ public class AdresseViewConsole implements AdresseViewInterface {
                     .build();
 
             if (!newAdresse.equals(adresse)){
-                presenter.updateAdresse(newAdresse);
+                presenter.update(newAdresse);
             }
         } catch (Exception e) {
             affMsg("Erreur Builder : " + e);
         }
     }
 
-    public void rechercherAdresse() {
+    public void rechercher() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de l'adresse recherché : "));
 
-        Adresse adresse = presenter.readAdresse(idRech);
+        Adresse adresse = presenter.read(idRech);
 
         affMsg(adresse.toString());
 
     }
 
-    public void supprimerAdresse() {
+    public void supprimer() {
         int idAdresse = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id de l'adresse que vous souhaitez supprimer : "));
 
-        presenter.removeAdresse(idAdresse);
+        presenter.remove(idAdresse);
     }
 }

@@ -3,7 +3,7 @@ package mvp.presenter;
 import designpatterns.builder.*;
 import mvp.model.DAO;
 import mvp.model.client.ClientSpecial;
-import mvp.view.client.ClientViewInterface;
+import mvp.view.ViewInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,72 +12,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-public class ClientPresenter {
-    private DAO<Client> model;
+public class ClientPresenter extends Presenter<Client> {
 
-    private static final Logger logger = LogManager.getLogger(ClientPresenter.class);
-
-    private ClientViewInterface view;
-
-    public ClientPresenter(DAO<Client> model, ClientViewInterface view) {
-        this.model = model;
-        this.view = view;
-        this.view.setPresenter(this);
-    }
-
-    public void start() {
-        List<Client> clients = model.getAll();
-        view.setListDatas(clients);
-        view.menu();
-    }
-
-    public void addClient(Client client) {
-        Client cl = model.add(client);
-        if (cl == null) {
-            view.affMsg("Erreur lors de la création");
-        } else {
-            view.affMsg("Création de : " + cl);
-        }
-
-        List<Client> clients = model.getAll();
-        view.setListDatas(clients);
-
-    }
-
-    public Client readClient(int idRech) {
-        Client client = model.read(idRech);
-
-        if (client == null) {
-            view.affMsg("Client introuvable");
-        }
-
-        return client;
-    }
-
-    public void updateClient(Client client) {
-        boolean ok = model.update(client);
-
-        if (ok) {
-            view.affMsg("Client modifié");
-        } else {
-            view.affMsg("Client non modifié, erreur");
-        }
-
-        List<Client> clients = model.getAll();
-        view.setListDatas(clients);
-    }
-
-    public void removeClient(int idCli) {
-        boolean ok = model.remove(idCli);
-
-        if (ok) {
-            view.affMsg("Client effacé");
-        } else {
-            view.affMsg("Client non effacé, erreur");
-        }
-
-        List<Client> clients = model.getAll();
-        view.setListDatas(clients);
+    public ClientPresenter(DAO<Client> model, ViewInterface<Client> view) {
+        super(model, view);
     }
 
     public void taxiUtiliseSansDoublon(Client client) {
@@ -129,21 +67,6 @@ public class ClientPresenter {
         } else {
             view.affListe(ll);
         }
-    }
-
-    public Client selectionner() {
-        logger.info("Appel de la sélection");
-
-        List<Client> clients = model.getAll();
-
-        if (clients == null || clients.isEmpty()) {
-            view.affMsg("Aucun client");
-            return null;
-        }
-
-        Client client = view.selectionner(clients);
-
-        return client;
     }
 
     public void nombreLocation(Client client) {

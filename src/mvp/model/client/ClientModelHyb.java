@@ -6,7 +6,6 @@ import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;

@@ -1,57 +1,16 @@
 package mvp.view.taxi;
 
-import designpatterns.builder.Client;
 import designpatterns.builder.Taxi;
+import mvp.view.AbstractViewConsole;
 import utilitaire.Utilitaire;
 import mvp.presenter.TaxiPresenter;
 
-import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.List;
 
-public class TaxiViewConsole implements TaxiViewInterface {
-    private TaxiPresenter presenter;
-    private List<Taxi> lt;
-
-    public TaxiViewConsole() {
-
-    }
-
-    @Override
-    public void setPresenter(TaxiPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public void setListDatas(List<Taxi> taxis) {
-        this.lt = taxis;
-    }
-
-    @Override
-    public void affMsg(String msg) {
-        System.out.println("Information : " + msg);
-
-    }
-
-    @Override
-    public Taxi selectionner(List<Taxi> taxis) {
-
-        int choix = Utilitaire.choixListe(taxis);
-
-        return taxis.get(choix - 1);
-    }
-
-    @Override
-    public void affListe(List info) {
-        Utilitaire.afficherListe(info);
-    }
+public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
 
     @Override
     public void menu() {
-        int i = 1;
-        for (Taxi taxi : lt) {
-            System.out.println((i++) + "." + taxi);
-        }
 
         int choix;
 
@@ -65,22 +24,24 @@ public class TaxiViewConsole implements TaxiViewInterface {
         };
 
         do {
+            Utilitaire.afficherListe(lobjects);
+
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
 
             switch (choix) {
                 case 1 ->
                     //Créer un taxi
-                        creerTaxi();
+                        creer();
                 case 2 ->
                     //Rechercher un taxi
-                        rechercherTaxi();
+                        rechercher();
                 case 3 ->
                     //Modifier un taxi
-                        modifierTaxi();
+                        modifier();
                 case 4 ->
                     //Supprimer un taxi
-                        supprimerTaxi();
+                        supprimer();
                 case 5 ->
                     //Opérations spéciales
                         opSpeciales();
@@ -93,7 +54,7 @@ public class TaxiViewConsole implements TaxiViewInterface {
         } while (true);
     }
 
-    public void creerTaxi() {
+    public void creer() {
         String immatriculation = Utilitaire.regex(".*", "Entrez l'immatriculation du taxi : ").toUpperCase();
         //Normalement le regex serait 'T-[A-Z]{3}-[0-9]{3}'
         String carburant = Utilitaire.regex("[a-zA-Z0-9]+", "Entrez le carburant du taxi : ");
@@ -107,7 +68,7 @@ public class TaxiViewConsole implements TaxiViewInterface {
                     .setPrixKm(prixKm)
                     .build();
 
-            presenter.addTaxi(taxi);
+            presenter.add(taxi);
 
         } catch (Exception e) {
             affMsg("Erreur Builder : " + e);
@@ -115,10 +76,10 @@ public class TaxiViewConsole implements TaxiViewInterface {
 
     }
 
-    public void modifierTaxi() {
+    public void modifier() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du taxi recherché : "));
 
-        Taxi taxi = presenter.readTaxi(idRech);
+        Taxi taxi = presenter.read(idRech);
 
         if (taxi == null) {
             return;
@@ -180,7 +141,7 @@ public class TaxiViewConsole implements TaxiViewInterface {
                     .build();
 
             if (!newTaxi.equals(taxi)) {
-                presenter.updateTaxi(newTaxi);
+                presenter.update(newTaxi);
             }
 
         } catch (Exception e) {
@@ -189,18 +150,17 @@ public class TaxiViewConsole implements TaxiViewInterface {
 
     }
 
-    public void rechercherTaxi() {
+    public void rechercher() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du taxi recherché : "));
 
-        Taxi taxi = presenter.readTaxi(idRech);
+        Taxi taxi = presenter.read(idRech);
 
         affMsg(taxi.toString());
-
     }
 
     private void opSpeciales() {
 
-        Taxi taxi = lt.get(Utilitaire.choixListe(lt)-1);
+        Taxi taxi = lobjects.get(Utilitaire.choixListe(lobjects)-1);
 
         System.out.println("Que voulez-vous faire ?");
         String[] menu = {
@@ -216,7 +176,7 @@ public class TaxiViewConsole implements TaxiViewInterface {
             switch (choix) {
                 case 1 -> {
                     //Tous les taxis utilisés sans doublon
-                    presenter.locationsTaxi(taxi);
+                    ((TaxiPresenter) presenter).locationsTaxi(taxi);
                 }
                 default -> {
                     break special;
@@ -226,9 +186,9 @@ public class TaxiViewConsole implements TaxiViewInterface {
 
     }
 
-    public void supprimerTaxi() {
+    public void supprimer() {
         int idTaxi = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id du taxi que vous souhaitez supprimer : "));
 
-        presenter.removeTaxi(idTaxi);
+        presenter.remove(idTaxi);
     }
 }
