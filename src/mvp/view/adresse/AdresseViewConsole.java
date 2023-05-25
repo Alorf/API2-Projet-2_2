@@ -8,46 +8,6 @@ import java.util.Arrays;
 
 public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
 
-    @Override
-    public void menu() {
-
-        int choix;
-
-        String[] menu = new String[]{
-                "Créer",
-                "Rechercher",
-                "Modifier",
-                "Supprimer",
-                "Finir",
-        };
-
-        do {
-            Utilitaire.afficherListe(lobjects);
-
-            choix = Utilitaire.choixListe(Arrays.asList(menu));
-
-            switch (choix) {
-                case 1 ->
-                    //Créer une adresse
-                        creer();
-                case 2 ->
-                    //Rechercher une adresse
-                        rechercher();
-                case 3 ->
-                    //Modifier une adresse
-                        modifier();
-                case 4 ->
-                    //Supprimer une adresse
-                        supprimer();
-                default ->
-                //Fin
-                {
-                    return;
-                }
-            }
-        } while (true);
-    }
-
     public void creer() {
         int cp = Integer.parseInt(Utilitaire.regex("[0-9]{4}", "Entrez le code postal de l'adresse : ").toUpperCase());
         String localite = Utilitaire.regex("[a-zA-Z0-9]+", "Entrez la localité de l'adresse : ");

@@ -54,7 +54,6 @@ public abstract class AbstractViewConsole<T> implements ViewInterface<T> {
                 "Rechercher",
                 "Modifier",
                 "Supprimer",
-                "Tous",
                 "Finir",
         };
 
