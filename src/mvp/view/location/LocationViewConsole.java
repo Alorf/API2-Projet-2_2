@@ -67,7 +67,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> {
                     .setKmTotal(kmTotal)
                     .build(false);
 
-            presenter.add(location);
+            ((LocationPresenter) presenter).add(location);
 
         } catch (Exception e) {
             affMsg("Erreur Builder : " + e);

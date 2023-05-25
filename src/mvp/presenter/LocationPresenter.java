@@ -31,6 +31,32 @@ public class LocationPresenter extends Presenter<Location> {
     public void setTaxiPresenter(TaxiPresenter taxiPresenter) {
         this.taxiPresenter = taxiPresenter;
     }
+    @Override
+    public void add(Location location) {
+        //Fonctionnement différent du Presenter générique
+
+        Location loc;
+        Client client = clientPresenter.selectionner();
+        Adresse adresse = adressePresenter.selectionner();
+
+        location.setAdrDepart(adresse);
+        location.setClient(client);
+
+        loc = model.add(location);
+
+        if (loc == null) {
+            view.affMsg("Erreur lors de la création le la location");
+        } else {
+            view.affMsg("Création de : " + loc);
+
+            //Ajout de la facture
+            addFacturation(loc);
+        }
+
+        List<Location> locations = model.getAll();
+        view.setListDatas(locations);
+
+    }
 
     public void addFacturation(Location loc) {
         loc = read(loc.getId());
