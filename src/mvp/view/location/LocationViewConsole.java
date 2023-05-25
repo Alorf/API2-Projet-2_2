@@ -84,6 +84,10 @@ public class LocationViewConsole extends AbstractViewConsole<Location> {
             return;
         }
 
+        if (location == null) {
+            return;
+        }
+
         LocalDate date = location.getDate();
         int kmTotal = location.getKmTotal();
         Client client = location.getClient();
@@ -158,6 +162,8 @@ public class LocationViewConsole extends AbstractViewConsole<Location> {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de la location recherchée : "));
 
         Location location = presenter.read(idRech);
+
+        affMsg(location.toString());
 
         affMsg(location.toString());
 
