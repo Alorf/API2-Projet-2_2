@@ -11,10 +11,6 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
 
     @Override
     public void menu() {
-        int i = 1;
-        for (Taxi taxi : lobjects) {
-            System.out.println((i++) + "." + taxi);
-        }
 
         int choix;
 
@@ -28,6 +24,8 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
         };
 
         do {
+            Utilitaire.afficherListe(lobjects);
+
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
 
@@ -156,6 +154,8 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du taxi recherché : "));
 
         Taxi taxi = presenter.read(idRech);
+
+        affMsg(taxi.toString());
     }
 
     private void opSpeciales() {

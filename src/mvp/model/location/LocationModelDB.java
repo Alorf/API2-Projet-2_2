@@ -176,17 +176,18 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
             deleteFac.setInt(1, idLocation);
             int responseFac = deleteFac.executeUpdate();
 
-            //todo : dans un monde parfait une location implique une facture, or si probleme avec l'ajout de facture impossible de supprimer la location
-            if (responseFac != 0){
-                deleteLoc.setInt(1, idLocation);
-                int responseLoc = deleteLoc.executeUpdate();
-
-                if (responseLoc != 0) {
-                    return true;
-                }
-            }else{
-                logger.error("Record de location introuvable lors du remove (Pas de facture correspondant à cette location)");
+            if (responseFac == 0) {
+                logger.error("Erreur lors de la suppression de la facture ou pas de facture trouvée pour la location : " + idLocation);
             }
+
+            //todo : dans un monde parfait une location implique une facture, or si probleme avec l'ajout de facture impossible de supprimer la location
+            deleteLoc.setInt(1, idLocation);
+            int responseLoc = deleteLoc.executeUpdate();
+
+            if (responseLoc != 0) {
+                return true;
+            }
+
 
         } catch (SQLException e) {
             logger.error("Erreur sql lors du remove : " + e);
@@ -202,7 +203,7 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
         try (Statement req = dbConnect.createStatement()) {
             ResultSet rs = req.executeQuery(query);
 
-            while(rs.next()) {
+            while (rs.next()) {
                 int idClient = rs.getInt("id_client");
                 String mailClient = rs.getString("mail");
                 String nomClient = rs.getString("nom");
@@ -242,10 +243,9 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
                         .setClient(client)
                         .setAdrDepart(adresse)
                         .build(false);
-                //ICI LOC EST NULL VOIR CAR DATELOC EST AVANT AJD
 
                 ll.add(loc);
-            };
+            }
 
             return ll;
         } catch (SQLException e) {
@@ -267,7 +267,7 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
 
             List<Facturation> facs = new ArrayList<>();
 
-            while(rs.next()){
+            while (rs.next()) {
                 double cout = rs.getInt(1);
                 int idTaxi = rs.getInt(2);
                 String immatriculation = rs.getString(3);
@@ -320,7 +320,31 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
 
 
         } catch (SQLException e) {
-            logger.error("Erreur sql lors de addFacturations : " + e);
+            logger.error("Erreur sql lors de addFacturation : " + e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeFacturation(int idLoc, int idVehicule) {
+        String deleteFacQuery = "DELETE FROM API_FACTURE WHERE ID_LOCATION = ? AND ID_TAXI = ?";
+        try (
+                PreparedStatement deleteFac = dbConnect.prepareStatement(deleteFacQuery);
+        ) {
+            deleteFac.setInt(1, idLoc);
+            deleteFac.setInt(2, idVehicule);
+            int responseFac = deleteFac.executeUpdate();
+
+            if (responseFac == 0) {
+                logger.error("Erreur lors de la suppression de la facture ou pas de facture trouvée pour la location : " + idLoc);
+            }
+
+            if (responseFac != 0) {
+                return true;
+            }
+
+        } catch (SQLException e) {
+            logger.error("Erreur sql lors du remove : " + e);
         }
         return false;
     }
@@ -334,7 +358,7 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
             cs.registerOutParameter(1, Types.DECIMAL);
 
             cs.setInt(2, location.getId());
-            boolean response = cs.execute();
+            cs.execute();
 
             BigDecimal total = cs.getBigDecimal(1);
 

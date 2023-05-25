@@ -80,6 +80,8 @@ public class ClientViewConsole extends AbstractViewConsole<Client> {
     }
 
     public void modifier() {
+        boolean isModif = false;
+
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
 
         Client client = presenter.read(idRech);
@@ -116,24 +118,40 @@ public class ClientViewConsole extends AbstractViewConsole<Client> {
                     //Modifier mail
                     System.out.println("Anciennement : " + mail);
                     mail = Utilitaire.regex("[a-zA-Z.@]+", "Entrez le nouveau mail : ").toLowerCase();
+
+                    if (!mail.equals(client.getMail())) {
+                        isModif = true;
+                    }
                 }
                 case 2 -> {
                     //Modifier nom
                     System.out.println("Anciennement : " + nom);
 
                     nom = Utilitaire.regex("[a-zA-Z -]+", "Entrez le nouveau nom : ");
+
+                    if (!nom.equals(client.getNom())) {
+                        isModif = true;
+                    }
                 }
                 case 3 -> {
                     System.out.println("Anciennement : " + prenom);
 
                     //Modifier prenom
                     prenom = Utilitaire.regex("[a-zA-Z -]+", "Entrez le nouveau prénom : ");
+
+                    if (!prenom.equals(client.getPrenom())) {
+                        isModif = true;
+                    }
                 }
                 case 4 -> {
                     //Modifier téléphone
                     System.out.println("Anciennement : " + tel);
 
                     tel = Utilitaire.regex("[0-9/ +]+", "Entrez le nouveau numéro de téléphone du client : ");
+
+                    if (!tel.equals(client.getTel())) {
+                        isModif = true;
+                    }
                 }
                 default -> {
                     break updateLoop;
@@ -142,22 +160,25 @@ public class ClientViewConsole extends AbstractViewConsole<Client> {
 
         } while (true);
 
-        try {
+        if (isModif) {
+            try {
 
-            Client newClient = new Client.ClientBuilder()
-                    .setId(0)
-                    .setMail(mail)
-                    .setNom(nom)
-                    .setPrenom(prenom)
-                    .setTel(tel)
-                    .build();
+                Client newClient = new Client.ClientBuilder()
+                        .setId(idRech)
+                        .setMail(mail)
+                        .setNom(nom)
+                        .setPrenom(prenom)
+                        .setTel(tel)
+                        .build();
 
-            if (!newClient.equals(client)) {
+                //Le equals se base que sur le mail, donc on doit tout vérifier ici
+
+
                 presenter.update(newClient);
-            }
 
-        } catch (Exception e) {
-            affMsg("Erreur Builder : " + e);
+            } catch (Exception e) {
+                affMsg("Erreur Builder : " + e);
+            }
         }
     }
 
@@ -165,6 +186,8 @@ public class ClientViewConsole extends AbstractViewConsole<Client> {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
 
         Client cl = presenter.read(idRech);
+
+        affMsg(cl.toString());
     }
 
     private void opSpeciales() {

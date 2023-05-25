@@ -18,7 +18,6 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
                 "Rechercher",
                 "Modifier",
                 "Supprimer",
-                "Tous",
                 "Finir",
         };
 
@@ -155,6 +154,8 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de l'adresse recherché : "));
 
         Adresse adresse = presenter.read(idRech);
+
+        affMsg(adresse.toString());
 
     }
 

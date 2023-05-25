@@ -6,8 +6,6 @@ import designpatterns.builder.Taxi;
 import mvp.model.DAO;
 import mvp.model.taxi.TaxiSpecial;
 import mvp.view.ViewInterface;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 

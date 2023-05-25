@@ -2,6 +2,7 @@ package mvp.view.location;
 
 import designpatterns.builder.Adresse;
 import designpatterns.builder.Client;
+import designpatterns.builder.Facturation;
 import designpatterns.builder.Location;
 import mvp.view.AbstractViewConsole;
 import utilitaire.Utilitaire;
@@ -158,6 +159,8 @@ public class LocationViewConsole extends AbstractViewConsole<Location> {
 
         Location location = presenter.read(idRech);
 
+        affMsg(location.toString());
+
     }
 
     public void supprimer() {
@@ -174,6 +177,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> {
         System.out.println("Que voulez-vous faire ?");
         String[] menu = {
                 "Ajout d'une facturation (SGBD)",
+                "Suppression d'une facturation",
                 "Prix total d'une location (SGBD)",
                 "Quitter"
         };
@@ -188,7 +192,15 @@ public class LocationViewConsole extends AbstractViewConsole<Location> {
                 case 1 ->
                     //Ajout d'une facturation
                         ((LocationPresenter) presenter).addFacturation(loc);
-                case 2 ->
+                case 2 -> {
+                    //Suppression d'une facturation
+                    Location lo = presenter.read(loc.getId());
+                    int choixFact = Utilitaire.choixListe(lo.getFacturations());
+                    Facturation fact = lo.getFacturations().get(choixFact - 1);
+                    System.out.println(fact);
+                    ((LocationPresenter) presenter).removeFacturation(lo.getId(), fact.getVehicule().getId());
+                }
+                case 3 ->
                     //Prix total d'une location
                         ((LocationPresenter) presenter).prixTotalLocation(loc);
                 default -> {

@@ -75,7 +75,7 @@ public class Utilitaire {
             afficherListe(objs);
             choix = Integer.parseInt(regex("[0-9]+", "Choisissez un élément de la liste : "));
 
-            if (choix < 0 || choix > objs.size()) {
+            if (choix <= 0 || choix > objs.size()) {
                 System.out.println("\nChoix incorrect !\n");
             } else {
                 break;
