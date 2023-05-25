@@ -3,7 +3,7 @@ package mvp.view.taxi;
 import designpatterns.builder.Taxi;
 import mvp.view.AbstractViewConsole;
 import utilitaire.Utilitaire;
-import mvp.presenter.TaxiPresenter;
+import mvp.presenter.taxi.TaxiPresenter;
 
 import java.util.Arrays;
 

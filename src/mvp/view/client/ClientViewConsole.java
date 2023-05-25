@@ -3,7 +3,7 @@ package mvp.view.client;
 import designpatterns.builder.Client;
 import mvp.view.AbstractViewConsole;
 import utilitaire.Utilitaire;
-import mvp.presenter.ClientPresenter;
+import mvp.presenter.client.ClientPresenter;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -220,8 +220,8 @@ public class ClientViewConsole extends AbstractViewConsole<Client> {
                         ((ClientPresenter) presenter).taxiUtiliseSansDoublon(client);
                 case 2 -> {
                     //Toutes les locations entre deux dates
-                    LocalDate d1 = Utilitaire.lecDate();
-                    LocalDate d2 = Utilitaire.lecDate();
+                    LocalDate d1 = Utilitaire.lecDate("Entrez la date de début");
+                    LocalDate d2 = Utilitaire.lecDate("Entrez la date de fin");
                     ((ClientPresenter) presenter).locationEntreDeuxDates(client, d1, d2);
                 }
                 case 3 ->

@@ -1,7 +1,8 @@
-package mvp.presenter;
+package mvp.presenter.adresse;
 
 import designpatterns.builder.*;
 import mvp.model.DAO;
+import mvp.presenter.Presenter;
 import mvp.view.ViewInterface;
 
 

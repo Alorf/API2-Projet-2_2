@@ -6,7 +6,7 @@ import designpatterns.builder.Facturation;
 import designpatterns.builder.Location;
 import mvp.view.AbstractViewConsole;
 import utilitaire.Utilitaire;
-import mvp.presenter.LocationPresenter;
+import mvp.presenter.location.LocationPresenter;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -57,7 +57,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> {
     }
 
     public void creer() {
-        LocalDate date = Utilitaire.lecDate();
+        LocalDate date = Utilitaire.lecDate("Date de la location");
         int kmTotal = Integer.parseInt(Utilitaire.regex("[0-9]+", "Nombre de kilomètres : "));
 
         try {
@@ -67,7 +67,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> {
                     .setKmTotal(kmTotal)
                     .build(false);
 
-            ((LocationPresenter) presenter).add(location);
+            presenter.add(location);
 
         } catch (Exception e) {
             affMsg("Erreur Builder : " + e);
@@ -115,7 +115,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> {
 
                 case 1 -> {
                     System.out.println("Anciennement : " + date);
-                    date = Utilitaire.lecDate();
+                    date = Utilitaire.lecDate("Nouvelle date");
                 }
                 case 2 -> {
                     System.out.println("Anciennement : " + kmTotal);

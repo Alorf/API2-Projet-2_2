@@ -22,6 +22,11 @@ public abstract class Presenter<T> {
         view.menu();
     }
 
+    protected void majListe() {
+        List<T> objects = model.getAll();
+        view.setListDatas(objects);
+    }
+
     public void add(T object) {
         T newObject = model.add(object);
 
@@ -31,8 +36,7 @@ public abstract class Presenter<T> {
             view.affMsg("Création de : " + newObject);
         }
 
-        List<T> objects = model.getAll();
-        view.setListDatas(objects);
+        majListe();
     }
 
     public T read(int idRech) {
@@ -54,8 +58,7 @@ public abstract class Presenter<T> {
             view.affMsg("Elément non modifié, erreur");
         }
 
-        List<T> objects = model.getAll();
-        view.setListDatas(objects);
+        majListe();
     }
 
     public void remove(int idRemove) {
@@ -67,8 +70,7 @@ public abstract class Presenter<T> {
             view.affMsg("Elément non effacé, erreur");
         }
 
-        List<T> objects = model.getAll();
-        view.setListDatas(objects);
+        majListe();
     }
 
     public T selectionner() {

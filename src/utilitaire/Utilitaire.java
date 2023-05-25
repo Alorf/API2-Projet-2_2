@@ -22,12 +22,12 @@ public class Utilitaire {
     }
 
     //Provient de Monsieur Poriaux
-    public static LocalDate lecDate() {
+    public static LocalDate lecDate(String msg) {
 
         while (true) {
             try {
                 String splitBy = "";
-                String date = regex("^(0?[1-9]|[12][0-9]|3[01])[\\/\\s](0?[1-9]|1[0-2])[\\/\\s](\\d{4})$", "Entrez la date : ");
+                String date = regex("^(0?[1-9]|[12][0-9]|3[01])[\\/\\s](0?[1-9]|1[0-2])[\\/\\s](\\d{4})$", msg + " (jj/mm/aaaa) : ");
                 String[] jma = null;
 
                 if (date.contains("/")) {

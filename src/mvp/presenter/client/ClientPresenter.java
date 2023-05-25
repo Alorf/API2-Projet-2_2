@@ -1,23 +1,23 @@
-package mvp.presenter;
+package mvp.presenter.client;
 
 import designpatterns.builder.*;
 import mvp.model.DAO;
 import mvp.model.client.ClientSpecial;
+import mvp.presenter.Presenter;
 import mvp.view.ViewInterface;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-public class ClientPresenter extends Presenter<Client> {
+public class ClientPresenter extends Presenter<Client> implements SpecialClientPresenter {
 
     public ClientPresenter(DAO<Client> model, ViewInterface<Client> view) {
         super(model, view);
     }
 
+    @Override
     public void taxiUtiliseSansDoublon(Client client) {
         Set<Taxi> lt = ((ClientSpecial) model).taxiUtiliseSansDoublon(client);
 
@@ -28,6 +28,7 @@ public class ClientPresenter extends Presenter<Client> {
         }
     }
 
+    @Override
     public void locationEntreDeuxDates(Client client, LocalDate d1, LocalDate d2) {
 
         if (client.getLocations() == null || client.getLocations().isEmpty()) {
@@ -38,6 +39,7 @@ public class ClientPresenter extends Presenter<Client> {
         }
     }
 
+    @Override
     public void adresseLocationSansDoublon(Client client) {
         Set<Adresse> la = ((ClientSpecial) model).adresseLocationSansDoublon(client);
 
@@ -49,6 +51,7 @@ public class ClientPresenter extends Presenter<Client> {
 
     }
 
+    @Override
     public void facturations(Client client) {
         List<Facturation> lf = ((ClientSpecial) model).facturations(client);
 
@@ -59,6 +62,7 @@ public class ClientPresenter extends Presenter<Client> {
         }
     }
 
+    @Override
     public void locations(Client client) {
         List<Location> ll = ((ClientSpecial) model).locations(client);
 
@@ -69,6 +73,7 @@ public class ClientPresenter extends Presenter<Client> {
         }
     }
 
+    @Override
     public void nombreLocation(Client client) {
         if (client.getLocations() == null || client.getLocations().isEmpty()) {
             view.affMsg("Aucune location pour ce client");
@@ -80,6 +85,7 @@ public class ClientPresenter extends Presenter<Client> {
         }
     }
 
+    @Override
     public void prixTotalLocs(Client client) {
         if (client.getLocations() == null || client.getLocations().isEmpty()) {
             view.affMsg("Aucune location pour ce client");

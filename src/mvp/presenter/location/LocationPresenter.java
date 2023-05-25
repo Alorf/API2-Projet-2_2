@@ -1,4 +1,4 @@
-package mvp.presenter;
+package mvp.presenter.location;
 
 import designpatterns.builder.Adresse;
 import designpatterns.builder.Client;
@@ -6,12 +6,14 @@ import designpatterns.builder.Location;
 import designpatterns.builder.Taxi;
 import mvp.model.DAO;
 import mvp.model.location.LocationSpecial;
+import mvp.presenter.Presenter;
+import mvp.presenter.taxi.TaxiPresenter;
+import mvp.presenter.client.ClientPresenter;
 import mvp.view.ViewInterface;
 
 import java.math.BigDecimal;
-import java.util.List;
 
-public class LocationPresenter extends Presenter<Location> {
+public class LocationPresenter extends Presenter<Location> implements SpecialLocationPresenter {
     private ClientPresenter clientPresenter;
     private Presenter<Adresse> adressePresenter;
     private TaxiPresenter taxiPresenter;
@@ -20,20 +22,28 @@ public class LocationPresenter extends Presenter<Location> {
         super(model, view);
     }
 
+    @Override
     public void setClientPresenter(ClientPresenter clientPresenter) {
         this.clientPresenter = clientPresenter;
     }
 
+    @Override
     public void setAdressePresenter(Presenter<Adresse> adressePresenter) {
         this.adressePresenter = adressePresenter;
     }
 
+    @Override
     public void setTaxiPresenter(TaxiPresenter taxiPresenter) {
         this.taxiPresenter = taxiPresenter;
     }
+
     @Override
     public void add(Location location) {
-        //Fonctionnement différent du Presenter générique
+        /*
+         *  Fonctionnement différent du Presenter générique
+         *  Le super.add() ne peut pas être appelé car j'ai besoin d'une réponse positive pour ajouter une facturation
+         *  Il faut que la méthode add du presenter retourne un booléen et là on pourrait vérifier si l'ajout c'est fait correctement
+         */
 
         Location loc;
         Client client = clientPresenter.selectionner();
@@ -53,11 +63,10 @@ public class LocationPresenter extends Presenter<Location> {
             addFacturation(loc);
         }
 
-        List<Location> locations = model.getAll();
-        view.setListDatas(locations);
-
+        majListe();
     }
 
+    @Override
     public void addFacturation(Location loc) {
         loc = read(loc.getId());
         Taxi taxi = taxiPresenter.selectionner(loc.getFacturations());
@@ -76,6 +85,7 @@ public class LocationPresenter extends Presenter<Location> {
         }
     }
 
+    @Override
     public void removeFacturation(int idLoc, int idVehicule) {
         boolean ok = ((LocationSpecial) model).removeFacturation(idLoc, idVehicule);
 
@@ -86,6 +96,7 @@ public class LocationPresenter extends Presenter<Location> {
         }
     }
 
+    @Override
     public Client choixClient() {
         //Utilisée lors de l'update
         Client client = clientPresenter.selectionner();
@@ -93,6 +104,7 @@ public class LocationPresenter extends Presenter<Location> {
         return client;
     }
 
+    @Override
     public Adresse choixAdresse() {
         //Utilisée lors de l'update
         Adresse adresse = adressePresenter.selectionner();
@@ -100,6 +112,7 @@ public class LocationPresenter extends Presenter<Location> {
         return adresse;
     }
 
+    @Override
     public void prixTotalLocation(Location loc) {
         BigDecimal total = ((LocationSpecial) model).prixTotalLocation(loc);
 
