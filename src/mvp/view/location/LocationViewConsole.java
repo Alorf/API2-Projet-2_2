@@ -15,49 +15,7 @@ import java.util.List;
 public class LocationViewConsole extends AbstractViewConsole<Location> implements SpecialLocationViewInterface {
 
     @Override
-    public void menu() {
-
-        int choix;
-
-        String[] menu = new String[]{
-                "Créer",
-                "Rechercher",
-                "Modifier",
-                "Supprimer",
-                "Opérations spéciales",
-                "Finir",
-        };
-
-        do {
-            Utilitaire.afficherListe(lobjects);
-
-            choix = Utilitaire.choixListe(Arrays.asList(menu));
-
-            switch (choix) {
-                case 1 ->
-                    //Créer une location
-                        creer();
-                case 2 ->
-                    //Rechercher une location
-                        rechercher();
-                case 3 ->
-                    //Modifier une location
-                        modifier();
-                case 4 ->
-                    //Supprimer une location
-                        supprimer();
-                case 5 ->
-                    //Opérations spéciales
-                        opSpeciales();
-                default -> {
-                    //Fin
-                    return;
-                }
-            }
-        } while (true);
-    }
-
-    public void creer() {
+    protected void creer() {
         LocalDate date = Utilitaire.lecDate("Date de la location");
         int kmTotal = Integer.parseInt(Utilitaire.regex("[0-9]+", "Nombre de kilomètres : "));
 
@@ -76,7 +34,8 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
 
     }
 
-    public void modifier() {
+    @Override
+    protected void modifier() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de la location recherché : "));
 
         Location location = presenter.read(idRech);
@@ -159,7 +118,8 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
 
     }
 
-    public void rechercher() {
+    @Override
+    protected void rechercher() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de la location recherchée : "));
 
         Location location = presenter.read(idRech);
@@ -170,13 +130,15 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
 
     }
 
-    public void supprimer() {
+    @Override
+    protected void supprimer() {
         int idLocation = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id de la location que vous souhaitez supprimer : "));
 
         presenter.remove(idLocation);
     }
 
-    private void opSpeciales() {
+    @Override
+    protected void special() {
         int choixLoc = Utilitaire.choixListe(lobjects);
 
         Location loc = lobjects.get(choixLoc - 1);

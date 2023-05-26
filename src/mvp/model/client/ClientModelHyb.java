@@ -148,32 +148,37 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
             req.setInt(1, loc.getId());
             ResultSet rs = req.executeQuery();
-            rs.next();
 
             List<Facturation> facs = new ArrayList<>();
 
-            do {
-                double cout = rs.getInt(1);
-                int idTaxi = rs.getInt(2);
-                String immatriculation = rs.getString(3);
-                String carburant = rs.getString(4);
-                double prixKm = rs.getDouble(5);
+            if(rs.next()){
+                //le if permet de savoir si il y a une facturation ou pas pour une location
+                do {
 
-                Taxi taxi = new Taxi.TaxiBuilder()
-                        .setId(idTaxi)
-                        .setImmatriculation(immatriculation)
-                        .setCarburant(carburant)
-                        .setPrixKm(prixKm)
-                        .build();
 
-                Facturation fac = new Facturation.FacturationBuilder()
-                        .setCout(cout)
-                        .setVehicule(taxi)
-                        .build();
+                    double cout = rs.getInt(1);
+                    int idTaxi = rs.getInt(2);
+                    String immatriculation = rs.getString(3);
+                    String carburant = rs.getString(4);
+                    double prixKm = rs.getDouble(5);
 
-                facs.add(fac);
+                    Taxi taxi = new Taxi.TaxiBuilder()
+                            .setId(idTaxi)
+                            .setImmatriculation(immatriculation)
+                            .setCarburant(carburant)
+                            .setPrixKm(prixKm)
+                            .build();
 
-            } while (rs.next());
+                    Facturation fac = new Facturation.FacturationBuilder()
+                            .setCout(cout)
+                            .setVehicule(taxi)
+                            .build();
+
+                    facs.add(fac);
+
+                }while (rs.next());
+            }
+
 
             return facs;
         } catch (SQLException e) {
@@ -293,7 +298,9 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
         List<Facturation> facs = new ArrayList<>();
 
         for (Location location : client.getLocations()) {
-            facs.addAll(location.getFacturations());
+            if (location.getFacturations() != null && !location.getFacturations().isEmpty()){
+                facs.addAll(location.getFacturations());
+            }
         }
 
         return facs.isEmpty() ? null : facs;

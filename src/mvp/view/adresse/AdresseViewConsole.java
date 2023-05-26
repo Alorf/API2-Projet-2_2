@@ -8,6 +8,48 @@ import java.util.Arrays;
 
 public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
 
+    @Override
+    public void menu() {
+        //Redéfinition de la méthode car comportement différent (pas d'opérations spéciales)
+
+        int choix;
+
+        String[] menu = new String[]{
+                "Créer",
+                "Rechercher",
+                "Modifier",
+                "Supprimer",
+                "Finir",
+        };
+
+        do {
+            Utilitaire.afficherListe(lobjects);
+
+            choix = Utilitaire.choixListe(Arrays.asList(menu));
+
+            switch (choix) {
+                case 1 ->
+                    //Créer un object
+                        creer();
+                case 2 ->
+                    //Rechercher un object
+                        rechercher();
+                case 3 ->
+                    //Modifier un object
+                        modifier();
+                case 4 ->
+                    //Supprimer un object
+                        supprimer();
+                default ->
+                //Fin
+                {
+                    return;
+                }
+            }
+        } while (true);
+    }
+
+    @Override
     public void creer() {
         int cp = Integer.parseInt(Utilitaire.regex("[0-9]{4}", "Entrez le code postal de l'adresse : ").toUpperCase());
         String localite = Utilitaire.regex("[a-zA-Z0-9]+", "Entrez la localité de l'adresse : ");
@@ -32,6 +74,7 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
 
     }
 
+    @Override
     public void modifier() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de l'adresse recherché : "));
 
@@ -110,6 +153,7 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
         }
     }
 
+    @Override
     public void rechercher() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de l'adresse recherché : "));
 
@@ -119,9 +163,15 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
 
     }
 
+    @Override
     public void supprimer() {
         int idAdresse = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id de l'adresse que vous souhaitez supprimer : "));
 
         presenter.remove(idAdresse);
+    }
+
+    @Override
+    protected void special() {
+        //Méthode vide car elle doit être implémentée (cependant, pas d'opérations spéciales)
     }
 }

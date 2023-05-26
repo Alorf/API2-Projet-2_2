@@ -10,51 +10,7 @@ import java.util.Arrays;
 public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
 
     @Override
-    public void menu() {
-
-        int choix;
-
-        String[] menu = new String[]{
-                "Créer",
-                "Rechercher",
-                "Modifier",
-                "Supprimer",
-                "Opérations speciales",
-                "Finir",
-        };
-
-        do {
-            Utilitaire.afficherListe(lobjects);
-
-            choix = Utilitaire.choixListe(Arrays.asList(menu));
-
-
-            switch (choix) {
-                case 1 ->
-                    //Créer un taxi
-                        creer();
-                case 2 ->
-                    //Rechercher un taxi
-                        rechercher();
-                case 3 ->
-                    //Modifier un taxi
-                        modifier();
-                case 4 ->
-                    //Supprimer un taxi
-                        supprimer();
-                case 5 ->
-                    //Opérations spéciales
-                        opSpeciales();
-                default ->
-                //Fin
-                {
-                    return;
-                }
-            }
-        } while (true);
-    }
-
-    public void creer() {
+    protected void creer() {
         String immatriculation = Utilitaire.regex(".*", "Entrez l'immatriculation du taxi : ").toUpperCase();
         //Normalement le regex serait 'T-[A-Z]{3}-[0-9]{3}'
         String carburant = Utilitaire.regex("[a-zA-Z0-9]+", "Entrez le carburant du taxi : ");
@@ -76,7 +32,8 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
 
     }
 
-    public void modifier() {
+    @Override
+    protected void modifier() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du taxi recherché : "));
 
         Taxi taxi = presenter.read(idRech);
@@ -150,7 +107,8 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
 
     }
 
-    public void rechercher() {
+    @Override
+    protected void rechercher() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du taxi recherché : "));
 
         Taxi taxi = presenter.read(idRech);
@@ -158,7 +116,8 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
         affMsg(taxi.toString());
     }
 
-    private void opSpeciales() {
+    @Override
+    protected void special() {
 
         Taxi taxi = lobjects.get(Utilitaire.choixListe(lobjects)-1);
 
@@ -186,7 +145,8 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
 
     }
 
-    public void supprimer() {
+    @Override
+    protected void supprimer() {
         int idTaxi = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id du taxi que vous souhaitez supprimer : "));
 
         presenter.remove(idTaxi);

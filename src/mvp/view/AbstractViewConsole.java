@@ -23,7 +23,6 @@ public abstract class AbstractViewConsole<T> implements ViewInterface<T> {
 
     public void affMsg(String msg) {
         System.out.println("Information : " + msg);
-
     }
 
     @Override
@@ -58,6 +57,7 @@ public abstract class AbstractViewConsole<T> implements ViewInterface<T> {
                 "Rechercher",
                 "Modifier",
                 "Supprimer",
+                "Opérations spéciales",
                 "Finir",
         };
 
@@ -79,20 +79,24 @@ public abstract class AbstractViewConsole<T> implements ViewInterface<T> {
                 case 4 ->
                     //Supprimer un object
                         supprimer();
-                default ->
-                //Fin
-                {
+                case 5 ->
+                    //Opérations spéciales
+                        special();
+                default -> {
+                    //Fin
                     return;
                 }
             }
         } while (true);
     }
 
-    public abstract void creer();
+    protected abstract void creer();
 
-    public abstract void modifier();
+    protected abstract void modifier();
 
-    public abstract void rechercher();
+    protected abstract void rechercher();
 
-    public abstract void supprimer();
+    protected abstract void supprimer();
+
+    protected abstract void special();
 }

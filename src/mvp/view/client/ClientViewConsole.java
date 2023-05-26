@@ -9,53 +9,9 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class ClientViewConsole extends AbstractViewConsole<Client> {
+
     @Override
-    public void menu() {
-
-        int choix;
-
-        String[] menu = new String[]{
-                "Créer",
-                "Rechercher",
-                "Modifier",
-                "Supprimer",
-                "Opérations spéciales",
-                "Finir"
-        };
-
-        do {
-            affListe(lobjects);
-
-
-            choix = Utilitaire.choixListe(Arrays.asList(menu));
-
-
-            switch (choix) {
-                case 1 ->
-                    //Créer un client
-                        creer();
-                case 2 ->
-                    //Rechercher un client
-                        rechercher();
-                case 3 ->
-                    //Modifier un client
-                        modifier();
-                case 4 ->
-                    //Supprimer un client
-                        supprimer();
-                case 5 ->
-                    //Opérations spéciales
-                        opSpeciales();
-                default ->
-                //Fin
-                {
-                    return;
-                }
-            }
-        } while (true);
-    }
-
-    public void creer() {
+    protected void creer() {
         String mail = Utilitaire.regex("[a-zA-Z.@]+", "Entrez le mail du client : ").toLowerCase();
         String nom = Utilitaire.regex("[a-zA-Z -]+", "Entrez le nom du client : ");
         String prenom = Utilitaire.regex("[a-zA-Z -]+", "Entrez le prénom du client : ");
@@ -79,7 +35,8 @@ public class ClientViewConsole extends AbstractViewConsole<Client> {
 
     }
 
-    public void modifier() {
+    @Override
+    protected void modifier() {
         boolean isModif = false;
 
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
@@ -182,7 +139,8 @@ public class ClientViewConsole extends AbstractViewConsole<Client> {
         }
     }
 
-    public void rechercher() {
+    @Override
+    protected void rechercher() {
         int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
 
         Client cl = presenter.read(idRech);
@@ -190,7 +148,15 @@ public class ClientViewConsole extends AbstractViewConsole<Client> {
         affMsg(cl.toString());
     }
 
-    private void opSpeciales() {
+    @Override
+    protected void supprimer() {
+        int idCli = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id du client que vous souhaitez supprimer : "));
+
+        presenter.remove(idCli);
+    }
+
+    @Override
+    protected void special() {
 
         Client client = lobjects.get(Utilitaire.choixListe(lobjects) - 1);
 
@@ -245,11 +211,5 @@ public class ClientViewConsole extends AbstractViewConsole<Client> {
             }
         } while (true);
 
-    }
-
-    public void supprimer() {
-        int idCli = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id du client que vous souhaitez supprimer : "));
-
-        presenter.remove(idCli);
     }
 }
