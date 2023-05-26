@@ -1,17 +1,16 @@
 package mvp.presenter.location;
 
-import designpatterns.builder.Adresse;
-import designpatterns.builder.Client;
-import designpatterns.builder.Location;
-import designpatterns.builder.Taxi;
+import designpatterns.builder.*;
 import mvp.model.DAO;
 import mvp.model.location.LocationSpecial;
 import mvp.presenter.Presenter;
 import mvp.presenter.taxi.TaxiPresenter;
 import mvp.presenter.client.ClientPresenter;
 import mvp.view.ViewInterface;
+import mvp.view.location.SpecialLocationViewInterface;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class LocationPresenter extends Presenter<Location> implements SpecialLocationPresenter {
     private ClientPresenter clientPresenter;
@@ -67,16 +66,16 @@ public class LocationPresenter extends Presenter<Location> implements SpecialLoc
     }
 
     @Override
-    public void addFacturation(Location loc) {
-        loc = read(loc.getId());
-        Taxi taxi = taxiPresenter.selectionner(loc.getFacturations());
+    public void addFacturation(Location location) {
+        location = read(location.getId());
+        Taxi taxi = taxiPresenter.selectionner(location.getFacturations());
 
         if (taxi == null) {
             view.affMsg("Pas de taxi disponnible");
             return;
         }
 
-        boolean ok = ((LocationSpecial) model).addFacturation(loc, taxi);
+        boolean ok = ((LocationSpecial) model).addFacturation(location, taxi);
 
         if (ok) {
             view.affMsg("Facturation ajoutée");
@@ -86,8 +85,16 @@ public class LocationPresenter extends Presenter<Location> implements SpecialLoc
     }
 
     @Override
-    public void removeFacturation(int idLoc, int idVehicule) {
-        boolean ok = ((LocationSpecial) model).removeFacturation(idLoc, idVehicule);
+    public void removeFacturation(Location location) {
+        location = read(location.getId());
+        if (location.getFacturations() == null || location.getFacturations().isEmpty()) {
+            view.affMsg("Aucune facturation à supprimer");
+            return;
+        }
+
+        Facturation fact = choixFacturation(location);
+
+        boolean ok = ((LocationSpecial) model).removeFacturation(location.getId(), fact.getVehicule().getId());
 
         if (ok) {
             view.affMsg("Elément effacée");
@@ -110,6 +117,20 @@ public class LocationPresenter extends Presenter<Location> implements SpecialLoc
         Adresse adresse = adressePresenter.selectionner();
 
         return adresse;
+    }
+
+    @Override
+    public Facturation choixFacturation(Location location) {
+
+        List<Facturation> facturations = location.getFacturations();
+
+        if (facturations == null || facturations.isEmpty()) {
+            return null;
+        }
+
+        Facturation facturation = ((SpecialLocationViewInterface) view).selectionnerFacture(facturations);
+
+        return facturation;
     }
 
     @Override

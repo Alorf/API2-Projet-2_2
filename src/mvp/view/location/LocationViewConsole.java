@@ -10,8 +10,9 @@ import mvp.presenter.location.LocationPresenter;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 
-public class LocationViewConsole extends AbstractViewConsole<Location> {
+public class LocationViewConsole extends AbstractViewConsole<Location> implements SpecialLocationViewInterface {
 
     @Override
     public void menu() {
@@ -114,7 +115,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> {
             switch (choix) {
 
                 case 1 -> {
-                    System.out.println("Anciennement : " + date);
+                    System.out.println("Anciennement : " + Utilitaire.getDateFrench(date));
                     date = Utilitaire.lecDate("Nouvelle date");
                 }
                 case 2 -> {
@@ -200,11 +201,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> {
                         ((LocationPresenter) presenter).addFacturation(loc);
                 case 2 -> {
                     //Suppression d'une facturation
-                    Location lo = presenter.read(loc.getId());
-                    int choixFact = Utilitaire.choixListe(lo.getFacturations());
-                    Facturation fact = lo.getFacturations().get(choixFact - 1);
-                    System.out.println(fact);
-                    ((LocationPresenter) presenter).removeFacturation(lo.getId(), fact.getVehicule().getId());
+                    ((LocationPresenter) presenter).removeFacturation(loc);
                 }
                 case 3 ->
                     //Prix total d'une location
@@ -214,5 +211,17 @@ public class LocationViewConsole extends AbstractViewConsole<Location> {
                 }
             }
         } while (true);
+    }
+
+    @Override
+    public Facturation selectionnerFacture(List<Facturation> objects) {
+
+        if (objects == null || objects.isEmpty()) {
+            return null;
+        }
+
+        int choix = Utilitaire.choixListe(objects);
+
+        return objects.get(choix - 1);
     }
 }

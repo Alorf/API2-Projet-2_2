@@ -39,6 +39,10 @@ public abstract class AbstractViewConsole<T> implements ViewInterface<T> {
     @Override
     public T selectionner(List<T> objects) {
 
+        if (objects == null || objects.isEmpty()) {
+            return null;
+        }
+
         int choix = Utilitaire.choixListe(objects);
 
         return objects.get(choix - 1);

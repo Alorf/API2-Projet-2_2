@@ -1,5 +1,7 @@
 package designpatterns.builder;
 
+import utilitaire.Utilitaire;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +122,7 @@ public class Location {
     public String toString() {
         return "Location{" +
                 "id=" + id +
-                ", date=" + date +
+                ", date=" + Utilitaire.getDateFrench(date) +
                 ", kmTotal=" + kmTotal +
                 ", client=" + client +
                 ", adrDepart=" + adrDepart +

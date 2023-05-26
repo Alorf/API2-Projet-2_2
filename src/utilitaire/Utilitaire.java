@@ -1,7 +1,7 @@
 package utilitaire;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Utilitaire {
@@ -102,5 +102,11 @@ public class Utilitaire {
             }
 
         } while (true);
+    }
+
+    //Provient de Monsieur Poriaux
+    public static String getDateFrench(LocalDate d){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("d/MM/yyyy");
+        return dtf.format(d);
     }
 }

@@ -2,6 +2,7 @@ package mvp.presenter.location;
 
 import designpatterns.builder.Adresse;
 import designpatterns.builder.Client;
+import designpatterns.builder.Facturation;
 import designpatterns.builder.Location;
 import mvp.presenter.Presenter;
 import mvp.presenter.client.ClientPresenter;
@@ -16,13 +17,16 @@ public interface SpecialLocationPresenter {
 
     void setTaxiPresenter(TaxiPresenter taxiPresenter);
 
-    void addFacturation(Location loc);
+    void addFacturation(Location location);
 
-    void removeFacturation(int idLoc, int idVehicule);
+    void removeFacturation(Location location);
 
     Client choixClient();
 
     Adresse choixAdresse();
 
+    Facturation choixFacturation(Location location);
+
     void prixTotalLocation(Location loc);
+
 }
