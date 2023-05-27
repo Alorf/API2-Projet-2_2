@@ -2,6 +2,7 @@ package mvp.presenter.location;
 
 import designpatterns.builder.*;
 import mvp.model.DAO;
+import mvp.model.location.LocationModelDB;
 import mvp.model.location.LocationSpecial;
 import mvp.presenter.Presenter;
 import mvp.presenter.taxi.TaxiPresenter;
@@ -142,5 +143,17 @@ public class LocationPresenter extends Presenter<Location> implements SpecialLoc
         } else {
             view.affMsg("Montant total de la location : " + total + "€");
         }
+    }
+
+    public void facturations(Location loc) {
+        List<Facturation> facturations = ((LocationModelDB) model).getFacturations(loc);
+
+        if (facturations == null || facturations.isEmpty()) {
+            view.affMsg("Aucune facturation");
+        }else{
+            view.affListe(facturations);
+        }
+
+
     }
 }

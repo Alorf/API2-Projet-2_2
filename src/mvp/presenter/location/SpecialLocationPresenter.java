@@ -19,6 +19,8 @@ public interface SpecialLocationPresenter {
 
     void addFacturation(Location location);
 
+    void facturations(Location loc);
+
     void removeFacturation(Location location);
 
     Client choixClient();

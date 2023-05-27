@@ -40,7 +40,6 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
         try (PreparedStatement req1 = dbConnect.prepareStatement(ajoutLoc);
              PreparedStatement req2 = dbConnect.prepareStatement(getLocId)
         ) {
-            System.out.println(adresse.getId());
             req1.setDate(1, Date.valueOf(dateloc));
             req1.setInt(2, kmTotal);
             req1.setInt(3, adresse.getId());
@@ -146,8 +145,8 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
             req.setDate(1, Date.valueOf(locationModifie.getDate()));
             req.setInt(2, locationModifie.getKmTotal());
             req.setInt(3, locationModifie.getAdrDepart().getId());
-            req.setInt(3, locationModifie.getClient().getId());
-            req.setInt(4, locationModifie.getId());
+            req.setInt(4, locationModifie.getClient().getId());
+            req.setInt(5, locationModifie.getId());
 
             int res = req.executeUpdate();
 

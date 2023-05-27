@@ -126,8 +126,6 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
 
         affMsg(location.toString());
 
-        affMsg(location.toString());
-
     }
 
     @Override
@@ -146,6 +144,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
         System.out.println("Que voulez-vous faire ?");
         String[] menu = {
                 "Ajout d'une facturation (SGBD)",
+                "Voir les facturations",
                 "Suppression d'une facturation",
                 "Prix total d'une location (SGBD)",
                 "Quitter"
@@ -161,11 +160,13 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
                 case 1 ->
                     //Ajout d'une facturation
                         ((LocationPresenter) presenter).addFacturation(loc);
-                case 2 -> {
+                case 2 ->
                     //Suppression d'une facturation
-                    ((LocationPresenter) presenter).removeFacturation(loc);
-                }
+                        ((LocationPresenter) presenter).facturations(loc);
                 case 3 ->
+                    //Suppression d'une facturation
+                        ((LocationPresenter) presenter).removeFacturation(loc);
+                case 4 ->
                     //Prix total d'une location
                         ((LocationPresenter) presenter).prixTotalLocation(loc);
                 default -> {

@@ -10,6 +10,11 @@ import java.util.*;
 
 public class ClientViewConsole extends AbstractViewConsole<Client> {
 
+    /*
+        Ici, tout est chargé en mémoire donc je peux me permettre d'afficher les factures et les locations
+     */
+
+
     @Override
     protected void creer() {
         String mail = Utilitaire.regex("[a-zA-Z.@]+", "Entrez le mail du client : ").toLowerCase();
