@@ -17,7 +17,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
     @Override
     protected void creer() {
         LocalDate date = Utilitaire.lecDate("Date de la location");
-        int kmTotal = Integer.parseInt(Utilitaire.regex("[0-9]+", "Nombre de kilomètres : "));
+        int kmTotal = Utilitaire.lireEntier("Nombre de kilomètres : ");
 
         try {
             Location location = new Location.LocationBuilder()
@@ -36,13 +36,9 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
 
     @Override
     protected void modifier() {
-        int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de la location recherché : "));
+        int idRech = Utilitaire.lireEntier("Id de la location recherché : ");
 
         Location location = presenter.read(idRech);
-
-        if (location == null) {
-            return;
-        }
 
         if (location == null) {
             return;
@@ -79,7 +75,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
                 }
                 case 2 -> {
                     System.out.println("Anciennement : " + kmTotal);
-                    kmTotal = Integer.parseInt(Utilitaire.regex("[0-9]+", "Nouveau kilométrage"));
+                    kmTotal = Utilitaire.lireEntier("Nouveau kilométrage : ");
                 }
                 case 3 -> {
                     System.out.println("Anciennement : " + client);
@@ -120,7 +116,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
 
     @Override
     protected void rechercher() {
-        int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de la location recherchée : "));
+        int idRech = Utilitaire.lireEntier("Id de la location recherchée : ");
 
         Location location = presenter.read(idRech);
 
@@ -130,7 +126,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
 
     @Override
     protected void supprimer() {
-        int idLocation = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id de la location que vous souhaitez supprimer : "));
+        int idLocation = Utilitaire.lireEntier("Entrez l'id de la location que vous souhaitez supprimer : ");
 
         presenter.remove(idLocation);
     }

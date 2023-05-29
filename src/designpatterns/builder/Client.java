@@ -234,6 +234,7 @@ public class Client {
 
         public Client build() throws Exception{
             if (false){
+                //Vérification non demandée mais je garde le code si jamais
                 throw new Exception("Informations de construction incomplètes");
             }
 

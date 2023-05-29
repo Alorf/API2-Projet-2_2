@@ -34,8 +34,8 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
         Adresse adresse = location.getAdrDepart();
 
         String ajoutLoc = "INSERT INTO API_LOCATION(DATELOC, KMTOTAL, ID_ADRESSE, ID_CLIENT) VALUES (?, ?, ?, ?)";
-        String getLocId = "SELECT DISTINCT ID_LOCATION FROM API_LOCATION WHERE DATELOC = ? AND KMTOTAL=? AND ID_ADRESSE=? AND ID_CLIENT=?";
-        //Ici je met distinct sinon j'ai une erreur "Ensemble de résultats après la dernière ligne", le seul moyen de régler cela est de fournir une unicité entre le client et la date de location
+        String getLocId = "SELECT MAX(ID_LOCATION) FROM API_LOCATION WHERE DATELOC = ? AND KMTOTAL=? AND ID_ADRESSE=? AND ID_CLIENT=?";
+        //Ici je met max pour avoir le dernier ID sinon j'ai une erreur "Ensemble de résultats après la dernière ligne", le seul moyen de régler cela est de fournir une unicité entre le client, l'adresse et la date de location
 
         try (PreparedStatement req1 = dbConnect.prepareStatement(ajoutLoc);
              PreparedStatement req2 = dbConnect.prepareStatement(getLocId)
@@ -179,7 +179,6 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
                 logger.error("Erreur lors de la suppression de la facture ou pas de facture trouvée pour la location : " + idLocation);
             }
 
-            //todo : dans un monde parfait une location implique une facture, or si probleme avec l'ajout de facture impossible de supprimer la location
             deleteLoc.setInt(1, idLocation);
             int responseLoc = deleteLoc.executeUpdate();
 

@@ -28,7 +28,7 @@ public class Utilitaire {
             try {
                 String splitBy = "";
                 String date = regex("^(0?[1-9]|[12][0-9]|3[01])[\\/\\s](0?[1-9]|1[0-2])[\\/\\s](\\d{4})$", msg + " (jj/mm/aaaa) : ");
-                String[] jma = null;
+                String[] jma;
 
                 if (date.contains("/")) {
                     splitBy = "/";
@@ -59,10 +59,11 @@ public class Utilitaire {
 
     public static void afficherListe(Set objs) {
         if (objs != null) {
+            //Affichage avec un itérateur
             int i = 0;
             Iterator it = objs.iterator();
             while (it.hasNext()) {
-                System.out.println(++i + " " + it.next());
+                System.out.println(++i + ". " + it.next());
             }
         }
     }
@@ -73,7 +74,7 @@ public class Utilitaire {
 
         do {
             afficherListe(objs);
-            choix = Integer.parseInt(regex("[0-9]+", "Choisissez un élément de la liste : "));
+            choix = lireEntier("Choisissez un élément de la liste : ");
 
             if (choix <= 0 || choix > objs.size()) {
                 System.out.println("\nChoix incorrect !\n");
@@ -96,6 +97,23 @@ public class Utilitaire {
                 System.out.print(msg);
                 String ns = reader.nextLine();
                 n = Double.parseDouble(ns);
+                return n;
+            } catch (NumberFormatException e) {
+                System.out.println("Erreur de saisie, recommencez");
+            }
+
+        } while (true);
+    }
+
+    //Provient de Monsieur Poriaux
+    public static int lireEntier(String msg){
+        msg = msg.endsWith(" ") ? msg : msg + " ";
+        int n = 0;
+        do {
+            try {
+                System.out.print(msg);
+                String ns = reader.nextLine();
+                n = Integer.parseInt(ns);
                 return n;
             } catch (NumberFormatException e) {
                 System.out.println("Erreur de saisie, recommencez");

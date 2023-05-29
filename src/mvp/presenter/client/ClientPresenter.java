@@ -53,6 +53,7 @@ public class ClientPresenter extends Presenter<Client> implements SpecialClientP
 
     @Override
     public void facturations(Client client) {
+        //On récupère les factures de location du client
         List<Facturation> lf = ((ClientSpecial) model).facturations(client);
 
         if (lf == null || lf.isEmpty()) {
@@ -64,6 +65,7 @@ public class ClientPresenter extends Presenter<Client> implements SpecialClientP
 
     @Override
     public void locations(Client client) {
+        //On récupère les locations du client
         List<Location> ll = ((ClientSpecial) model).locations(client);
 
         if (ll == null || ll.isEmpty()) {

@@ -1,7 +1,10 @@
 package mvp.presenter;
 
 import mvp.model.DAO;
+import mvp.model.adresse.AdresseModelDB;
 import mvp.view.ViewInterface;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -9,6 +12,9 @@ public abstract class Presenter<T> {
     protected DAO<T> model;
 
     protected ViewInterface<T> view;
+
+    private static final Logger logger = LogManager.getLogger(Presenter.class);
+
 
     public Presenter(DAO<T> model, ViewInterface<T> view) {
         this.model = model;
@@ -74,6 +80,8 @@ public abstract class Presenter<T> {
     }
 
     public T selectionner() {
+        logger.info("Sélection d'un élément " + model.getClass().getSimpleName() + " dans la liste");
+
 
         List<T> objects = model.getAll();
 

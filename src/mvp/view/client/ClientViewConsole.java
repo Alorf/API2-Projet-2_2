@@ -44,7 +44,7 @@ public class ClientViewConsole extends AbstractViewConsole<Client> {
     protected void modifier() {
         boolean isModif = false;
 
-        int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
+        int idRech = Utilitaire.lireEntier("Id du client recherché : ");
 
         Client client = presenter.read(idRech);
 
@@ -146,7 +146,7 @@ public class ClientViewConsole extends AbstractViewConsole<Client> {
 
     @Override
     protected void rechercher() {
-        int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du client recherché : "));
+        int idRech = Utilitaire.lireEntier("Id du client recherché : ");
 
         Client cl = presenter.read(idRech);
 
@@ -155,7 +155,7 @@ public class ClientViewConsole extends AbstractViewConsole<Client> {
 
     @Override
     protected void supprimer() {
-        int idCli = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id du client que vous souhaitez supprimer : "));
+        int idCli = Utilitaire.lireEntier("Entrez l'id du client que vous souhaitez supprimer : ");
 
         presenter.remove(idCli);
     }

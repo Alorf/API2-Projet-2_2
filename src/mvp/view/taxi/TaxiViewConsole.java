@@ -34,7 +34,7 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
 
     @Override
     protected void modifier() {
-        int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du taxi recherché : "));
+        int idRech = Utilitaire.lireEntier("Id du taxi recherché : ");
 
         Taxi taxi = presenter.read(idRech);
 
@@ -109,7 +109,7 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
 
     @Override
     protected void rechercher() {
-        int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id du taxi recherché : "));
+        int idRech = Utilitaire.lireEntier("Id du taxi recherché : ");
 
         Taxi taxi = presenter.read(idRech);
 
@@ -133,10 +133,9 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
             switch (choix) {
-                case 1 -> {
+                case 1 ->
                     //Tous les taxis utilisés sans doublon
                     ((TaxiPresenter) presenter).locationsTaxi(taxi);
-                }
                 default -> {
                     break special;
                 }
@@ -147,7 +146,7 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
 
     @Override
     protected void supprimer() {
-        int idTaxi = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id du taxi que vous souhaitez supprimer : "));
+        int idTaxi = Utilitaire.lireEntier("Entrez l'id du taxi que vous souhaitez supprimer : ");
 
         presenter.remove(idTaxi);
     }

@@ -122,6 +122,7 @@ public class LocationPresenter extends Presenter<Location> implements SpecialLoc
 
     @Override
     public Facturation choixFacturation(Location location) {
+        //Opération spéciale dans les locations
 
         List<Facturation> facturations = location.getFacturations();
 
@@ -143,6 +144,7 @@ public class LocationPresenter extends Presenter<Location> implements SpecialLoc
         } else {
             view.affMsg("Montant total de la location : " + total + "€");
         }
+
     }
 
     public void facturations(Location loc) {
@@ -150,10 +152,9 @@ public class LocationPresenter extends Presenter<Location> implements SpecialLoc
 
         if (facturations == null || facturations.isEmpty()) {
             view.affMsg("Aucune facturation");
-        }else{
+        } else {
             view.affListe(facturations);
         }
-
 
     }
 }

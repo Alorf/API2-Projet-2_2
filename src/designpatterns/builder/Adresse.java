@@ -176,7 +176,7 @@ public class Adresse {
 
         public Adresse build() throws Exception{
             if (false){
-                //todo : faire le if
+                //Vérification non demandée mais je garde le code si jamais
                 throw new Exception("Informations de construction incomplètes");
             }
 

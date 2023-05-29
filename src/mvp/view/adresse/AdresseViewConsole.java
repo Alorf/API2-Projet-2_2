@@ -51,7 +51,7 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
 
     @Override
     public void creer() {
-        int cp = Integer.parseInt(Utilitaire.regex("[0-9]{4}", "Entrez le code postal de l'adresse : ").toUpperCase());
+        int cp = Integer.parseInt(Utilitaire.regex("[0-9]{4}", "Entrez le code postal de l'adresse : "));
         String localite = Utilitaire.regex("[a-zA-Z0-9]+", "Entrez la localité de l'adresse : ");
         String rue = Utilitaire.regex(".*", "Entrez la rue de l'adresse : ");
         String num = Utilitaire.regex("[a-zA-Z0-9 ]+", "Entrez le numéro de l'adresse : ");
@@ -76,7 +76,7 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
 
     @Override
     public void modifier() {
-        int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de l'adresse recherché : "));
+        int idRech = Utilitaire.lireEntier("Id de l'adresse recherché : ");
 
         Adresse adresse = presenter.read(idRech);
 
@@ -108,7 +108,7 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
                 case 1 -> {
                     //Modifier cp
                     System.out.println("Anciennement : " + cp);
-                    cp = Integer.parseInt(Utilitaire.regex("[0-9 ]{4}", "Entrez le nouveau code postal : "));
+                    cp = Integer.parseInt(Utilitaire.regex("[0-9]{4}", "Entrez le nouveau code postal : "));
                 }
                 case 2 -> {
                     //Modifier localite
@@ -120,7 +120,7 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
                     System.out.println("Anciennement : " + rue);
 
                     //Modifier rue
-                    rue = Utilitaire.regex("[a-zA-Z]+", "Entrez la nouvelle rue : ");
+                    rue = Utilitaire.regex("[a-zA-Z ]+", "Entrez la nouvelle rue : ");
                 }
                 case 4 -> {
                     System.out.println("Anciennement : " + num);
@@ -155,7 +155,7 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
 
     @Override
     public void rechercher() {
-        int idRech = Integer.parseInt(Utilitaire.regex("[0-9]+", "Id de l'adresse recherché : "));
+        int idRech = Utilitaire.lireEntier("Id de l'adresse recherché : ");
 
         Adresse adresse = presenter.read(idRech);
 
@@ -165,13 +165,13 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
 
     @Override
     public void supprimer() {
-        int idAdresse = Integer.parseInt(Utilitaire.regex("[0-9]+", "Entrez l'id de l'adresse que vous souhaitez supprimer : "));
+        int idAdresse = Utilitaire.lireEntier("Entrez l'id de l'adresse que vous souhaitez supprimer : ");
 
         presenter.remove(idAdresse);
     }
 
     @Override
     protected void special() {
-        //Méthode vide car elle doit être implémentée (cependant, pas d'opérations spéciales)
+        //Méthode vide car elle doit être implémentée (cependant, pas d'opérations spéciales existante pour le moment)
     }
 }
