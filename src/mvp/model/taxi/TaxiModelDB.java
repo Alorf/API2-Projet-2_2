@@ -265,14 +265,14 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
             }
 
             if (!trouve) {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors de distanceParcouru");
             } else {
                 return distance;
             }
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de distanceParcouru : " + e);
         } catch (Exception e) {
-            logger.error("Erreur Builder : " + e);
+            logger.error("Erreur Builder lors de distanceParcouru : " + e);
         }
 
         return -1;

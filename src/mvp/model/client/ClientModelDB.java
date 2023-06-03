@@ -302,14 +302,14 @@ public class ClientModelDB implements DAO<Client>, ClientSpecial {
             }
 
             if (!trouve) {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors de taxiUtiliseSansDoublon");
             } else {
                 return lt;
             }
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de taxiUtiliseSansDoublon : " + e);
         } catch (Exception e) {
-            logger.error("Erreur Builder : " + e);
+            logger.error("Erreur Builder lors de taxiUtiliseSansDoublon : " + e);
         }
 
         return lt;
@@ -361,14 +361,14 @@ public class ClientModelDB implements DAO<Client>, ClientSpecial {
             }
 
             if (!trouve) {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors de locationEntreDeuxDates");
             } else {
                 return ll;
             }
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de locationEntreDeuxDates : " + e);
         } catch (Exception e) {
-            logger.error("Erreur Builder : " + e);
+            logger.error("Erreur Builder lors de locationEntreDeuxDates : " + e);
         }
 
         return ll;
@@ -407,14 +407,14 @@ public class ClientModelDB implements DAO<Client>, ClientSpecial {
             }
 
             if (!trouve) {
-                logger.error("Record introuvable");
+                logger.error("Record introuvable lors de adresseLocationSansDoublon");
             } else {
                 return la;
             }
         } catch (SQLException e) {
-            logger.error("Erreur sql : " + e);
+            logger.error("Erreur sql lors de adresseLocationSansDoublon : " + e);
         } catch (Exception e) {
-            logger.error("Erreur Builder : " + e);
+            logger.error("Erreur Builder lors de adresseLocationSansDoublon : " + e);
         }
 
         return la;
