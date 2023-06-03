@@ -46,14 +46,13 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
             cs.registerOutParameter(5, Types.INTEGER);
 
-            int response = cs.executeUpdate();
+            cs.executeUpdate();
 
-            if (response != 0) {
-                int idCli = cs.getInt(5);
-                client.setId(idCli);
+            int idCli = cs.getInt(5);
+            client.setId(idCli);
 
-                return client;
-            }
+            return client;
+
 
         } catch (SQLException e) {
             logger.error("Erreur sql lors de l'ajout : " + e);
@@ -142,7 +141,7 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
     }
 
-    public List<Facturation> getFacturations(Location loc) {
+    private List<Facturation> getFacturations(Location loc) {
         String query = "SELECT * FROM API_FACTURESLOCATION WHERE ID_LOCATION = ?";
 
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
@@ -151,7 +150,7 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
             List<Facturation> facs = new ArrayList<>();
 
-            if(rs.next()){
+            if (rs.next()) {
                 //le if permet de savoir si il y a une facturation ou pas pour une location
                 do {
 
@@ -176,7 +175,7 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
 
                     facs.add(fac);
 
-                }while (rs.next());
+                } while (rs.next());
             }
 
 
@@ -292,13 +291,17 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
         return client.getLocations();
     }
 
+    @Override
     public List<Facturation> facturations(Client client) {
-        //todo : bouger la méthode vers la classe client ?
+        /*
+            bouger la méthode vers la classe client ?
+            Non car je ne considère pas cela comme une opération spéciale mais une information
+         */
 
         List<Facturation> facs = new ArrayList<>();
 
         for (Location location : client.getLocations()) {
-            if (location.getFacturations() != null && !location.getFacturations().isEmpty()){
+            if (location.getFacturations() != null && !location.getFacturations().isEmpty()) {
                 facs.addAll(location.getFacturations());
             }
         }
@@ -315,7 +318,7 @@ public class ClientModelHyb implements DAO<Client>, ClientSpecial {
             cs.registerOutParameter(1, Types.INTEGER);
 
             cs.setString(2, client.getMail());
-            boolean response = cs.execute();
+            cs.execute();
 
             int nbre = cs.getInt(1);
 

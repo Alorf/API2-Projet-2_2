@@ -145,7 +145,7 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
                     .setNum(num)
                     .build();
 
-            if (!newAdresse.equals(adresse)){
+            if (!newAdresse.equals(adresse)) {
                 presenter.update(newAdresse);
             }
         } catch (Exception e) {

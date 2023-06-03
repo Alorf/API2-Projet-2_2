@@ -1,8 +1,6 @@
 package mvp.model.client;
 
 
-
-
 import designpatterns.builder.*;
 
 import java.math.BigDecimal;
@@ -25,4 +23,5 @@ public interface ClientSpecial {
     int nombreLocation(Client client);
 
     BigDecimal prixTotalLocs(Client client);
+
 }

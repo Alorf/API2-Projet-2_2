@@ -114,7 +114,7 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
 
             if (res != 0) {
                 return true;
-            }else{
+            } else {
                 logger.error("Record introuvable lors de l'update");
             }
         } catch (SQLException e) {
@@ -190,10 +190,10 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
             cs.setString(2, taxi.getImmatriculation());
             cs.execute();
 
-            ResultSet rs = ((OracleCallableStatement)cs).getCursor(1);
+            ResultSet rs = ((OracleCallableStatement) cs).getCursor(1);
             List<Location> locations = new ArrayList<>();
 
-            while (rs.next()){
+            while (rs.next()) {
                 int idClient = rs.getInt("id_client");
                 String mailClient = rs.getString("mail");
                 String nomClient = rs.getString("nom");

@@ -1,7 +1,6 @@
 package mvp;
 
 
-
 import designpatterns.builder.Adresse;
 import designpatterns.builder.Client;
 import designpatterns.builder.Location;

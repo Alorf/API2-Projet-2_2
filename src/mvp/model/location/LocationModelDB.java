@@ -28,41 +28,37 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
 
     @Override
     public Location add(Location location) {
+        /*Appel procédure embarquée
+        Cette procédure me permet de récupéré le bon ID d'une location
+        En effet, si l'utilisateur fait 2x une location avec des information identiques dans la même journée, cela renvoie plusieurs ligne
+        Ici je suis sur et certains de récupérer le bon ID
+         */
+
         LocalDate dateloc = location.getDate();
         int kmTotal = location.getKmTotal();
         Client client = location.getClient();
         Adresse adresse = location.getAdrDepart();
 
-        String ajoutLoc = "INSERT INTO API_LOCATION(DATELOC, KMTOTAL, ID_ADRESSE, ID_CLIENT) VALUES (?, ?, ?, ?)";
-        String getLocId = "SELECT MAX(ID_LOCATION) FROM API_LOCATION WHERE DATELOC = ? AND KMTOTAL=? AND ID_ADRESSE=? AND ID_CLIENT=?";
-        //Ici je met max pour avoir le dernier ID sinon j'ai une erreur "Ensemble de résultats après la dernière ligne", le seul moyen de régler cela est de fournir une unicité entre le client, l'adresse et la date de location
+        String ajoutLoc = "CALL API_PROC_CREATE_LOCATION(?, ?, ?, ?, ?)";
 
-        try (PreparedStatement req1 = dbConnect.prepareStatement(ajoutLoc);
-             PreparedStatement req2 = dbConnect.prepareStatement(getLocId)
-        ) {
-            req1.setDate(1, Date.valueOf(dateloc));
-            req1.setInt(2, kmTotal);
-            req1.setInt(3, adresse.getId());
-            req1.setInt(4, client.getId());
+        try (CallableStatement cs = dbConnect.prepareCall(ajoutLoc)) {
+            cs.setDate(1, Date.valueOf(dateloc));
+            cs.setInt(2, kmTotal);
+            cs.setInt(3, adresse.getId());
+            cs.setInt(4, client.getId());
 
-            int response = req1.executeUpdate();
+            cs.registerOutParameter(5, Types.INTEGER);
 
-            if (response == 1) {
-                req2.setDate(1, Date.valueOf(dateloc));
-                req2.setInt(2, kmTotal);
-                req2.setInt(3, adresse.getId());
-                req2.setInt(4, client.getId());
-                ResultSet rs = req2.executeQuery();
+            cs.executeUpdate();
 
-                if (rs.next()) {
-                    int idLoc = rs.getInt(1);
-                    location.setId(idLoc);
-                    return location;
-                }
-            }
+            int idLoc = cs.getInt(5);
+            location.setId(idLoc);
+
+            return location;
+
 
         } catch (SQLException e) {
-            logger.error("Erreur sql lors de l'ajout: " + e);
+            logger.error("Erreur sql lors de l'ajout : " + e);
         }
 
         return null;
@@ -176,7 +172,7 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
             int responseFac = deleteFac.executeUpdate();
 
             if (responseFac == 0) {
-                logger.error("Erreur lors de la suppression de la facture ou pas de facture trouvée pour la location : " + idLocation);
+                logger.info("Pas de facturations trouvées pour la location : " + idLocation);
             }
 
             deleteLoc.setInt(1, idLocation);
@@ -327,7 +323,7 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
     public boolean removeFacturation(int idLoc, int idVehicule) {
         String deleteFacQuery = "DELETE FROM API_FACTURE WHERE ID_LOCATION = ? AND ID_TAXI = ?";
         try (
-                PreparedStatement deleteFac = dbConnect.prepareStatement(deleteFacQuery);
+                PreparedStatement deleteFac = dbConnect.prepareStatement(deleteFacQuery)
         ) {
             deleteFac.setInt(1, idLoc);
             deleteFac.setInt(2, idVehicule);

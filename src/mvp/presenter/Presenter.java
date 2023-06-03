@@ -13,7 +13,7 @@ public abstract class Presenter<T> {
 
     protected ViewInterface<T> view;
 
-    private static final Logger logger = LogManager.getLogger(Presenter.class);
+    protected static final Logger logger = LogManager.getLogger(Presenter.class);
 
 
     public Presenter(DAO<T> model, ViewInterface<T> view) {

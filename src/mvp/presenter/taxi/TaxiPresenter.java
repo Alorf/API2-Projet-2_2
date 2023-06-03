@@ -18,6 +18,7 @@ public class TaxiPresenter extends Presenter<Taxi> implements SpecialTaxiPresent
 
     @Override
     public Taxi selectionner(List<Facturation> facs) {
+        logger.info("Sélection d'un élément " + model.getClass().getSimpleName() + " dans la liste");
 
         List<Taxi> taxis = model.getAll();
 

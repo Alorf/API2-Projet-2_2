@@ -1,7 +1,6 @@
 package mvp.model;
 
 
-
 import java.util.List;
 
 public interface DAO<T> {
