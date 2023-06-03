@@ -126,4 +126,9 @@ public class Taxi extends Element{
                 ", prixKm=" + prixKm +
                 '}';
     }
+
+    @Override
+    public int nombreVehicule() {
+        return 0;
+    }
 }

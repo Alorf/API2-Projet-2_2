@@ -8,6 +8,8 @@ import mvp.presenter.Presenter;
 import mvp.presenter.client.ClientPresenter;
 import mvp.presenter.taxi.TaxiPresenter;
 
+import java.time.LocalDate;
+
 
 public interface SpecialLocationPresenter {
 
@@ -31,4 +33,5 @@ public interface SpecialLocationPresenter {
 
     void prixTotalLocation(Location loc);
 
+    void locationsDate(LocalDate date);
 }

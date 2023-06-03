@@ -20,11 +20,13 @@ public class TestComposite {
         c2.getElements().add(c1);
         c3.getElements().add(c2);
 
-        System.out.println(c1);
+        System.out.println(c1); // id 1 -> 2 véhicules
         System.out.println("------------------------");
-        System.out.println(c2);
+        System.out.println(c2); // id 2 -> 2 véhicules
         System.out.println("------------------------");
-        System.out.println(c3);
+        System.out.println(c3.nombreVehicule());
+        System.out.println(c3); // id 3 -> 1 véhicules
+        // Total de 5 véhicules
         //Le c3 a rappeller 2x la classe Catégorie donc 1 \n en normal et 2 \n en plus
     }
 }

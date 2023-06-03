@@ -28,6 +28,8 @@ public class Utilitaire {
             try {
                 String splitBy = "";
                 String date = regex("^(0?[1-9]|[12][0-9]|3[01])[\\/\\s](0?[1-9]|1[0-2])[\\/\\s](\\d{4})$", msg + " (jj/mm/aaaa) : ");
+                //https://regex101.com/library
+
                 String[] jma;
 
                 if (date.contains("/")) {

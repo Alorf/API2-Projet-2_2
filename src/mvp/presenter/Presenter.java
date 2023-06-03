@@ -1,7 +1,6 @@
 package mvp.presenter;
 
 import mvp.model.DAO;
-import mvp.model.adresse.AdresseModelDB;
 import mvp.view.ViewInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,7 +58,7 @@ public abstract class Presenter<T> {
         boolean ok = model.update(object);
 
         if (ok) {
-            view.affMsg("Elément modifié");
+            view.affMsg("Elément modifié : " + object);
         } else {
             view.affMsg("Elément non modifié, erreur");
         }
@@ -71,7 +70,7 @@ public abstract class Presenter<T> {
         boolean ok = model.remove(idRemove);
 
         if (ok) {
-            view.affMsg("Elément effacée");
+            view.affMsg("Elément effacée : id " + idRemove);
         } else {
             view.affMsg("Elément non effacé, erreur");
         }

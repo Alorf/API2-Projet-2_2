@@ -7,6 +7,7 @@ import mvp.presenter.Presenter;
 import mvp.view.ViewInterface;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -97,7 +98,7 @@ public class ClientPresenter extends Presenter<Client> implements SpecialClientP
             if (rep == null) {
                 view.affMsg("Pas de cout total disponnible");
             } else {
-                view.affMsg("Total des factures de " + client.getNom() + " : " + rep + "€");
+                view.affMsg("Total des factures de \"" + client.getNom() + " " + client.getPrenom() + "\" : " + rep.setScale(2, RoundingMode.HALF_EVEN) + "€");
             }
         }
     }

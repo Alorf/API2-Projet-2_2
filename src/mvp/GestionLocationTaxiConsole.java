@@ -7,6 +7,7 @@ import designpatterns.builder.Location;
 import designpatterns.builder.Taxi;
 import mvp.model.DAO;
 import mvp.model.adresse.AdresseModelDB;
+import mvp.model.client.ClientModelDB;
 import mvp.model.client.ClientModelHyb;
 import mvp.model.location.LocationModelDB;
 import mvp.model.taxi.TaxiModelDB;

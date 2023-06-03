@@ -16,6 +16,12 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
 
     @Override
     protected void creer() {
+        String[] menu = {
+          "Oui",
+          "Non"
+        };
+        int choix;
+
         LocalDate date = Utilitaire.lecDate("Date de la location");
         int kmTotal = Utilitaire.lireEntier("Nombre de kilomètres : ");
 
@@ -27,6 +33,12 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
                     .build(false);
 
             presenter.add(location);
+
+            do {
+                ((LocationPresenter) presenter).addFacturation(location);
+                System.out.printf("Souhaitez-vous continuer ?");
+                choix = Utilitaire.choixListe(Arrays.asList(menu));
+            }while (choix == 1);
 
         } catch (Exception e) {
             affMsg("Erreur Builder : " + e);
@@ -139,6 +151,7 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
 
         System.out.println("Que voulez-vous faire ?");
         String[] menu = {
+                "Toutes les location à une date précise",
                 "Ajout d'une facturation (SGBD)",
                 "Voir les facturations",
                 "Suppression d'une facturation",
@@ -153,16 +166,21 @@ public class LocationViewConsole extends AbstractViewConsole<Location> implement
             choix = Utilitaire.choixListe(Arrays.asList(menu));
 
             switch (choix) {
-                case 1 ->
+                case 1 -> {
+                    //Toutes les location à une date précise"
+                    LocalDate date = Utilitaire.lecDate("Entrez une date");
+                    ((LocationPresenter) presenter).locationsDate(date);
+                }
+                case 2 ->
                     //Ajout d'une facturation
                         ((LocationPresenter) presenter).addFacturation(loc);
-                case 2 ->
-                    //Suppression d'une facturation
-                        ((LocationPresenter) presenter).facturations(loc);
                 case 3 ->
                     //Suppression d'une facturation
-                        ((LocationPresenter) presenter).removeFacturation(loc);
+                        ((LocationPresenter) presenter).facturations(loc);
                 case 4 ->
+                    //Suppression d'une facturation
+                        ((LocationPresenter) presenter).removeFacturation(loc);
+                case 5 ->
                     //Prix total d'une location
                         ((LocationPresenter) presenter).prixTotalLocation(loc);
                 default -> {

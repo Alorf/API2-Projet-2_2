@@ -1,6 +1,8 @@
 package mvp.model.adresse;
 
 import designpatterns.builder.Adresse;
+import designpatterns.builder.Client;
+import designpatterns.builder.Location;
 import mvp.model.DAO;
 import myconnections.DBConnection;
 import org.apache.logging.log4j.LogManager;
@@ -10,10 +12,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdresseModelDB implements DAO<Adresse> {
+public class AdresseModelDB implements DAO<Adresse>, AdresseSpecial {
 
     private Connection dbConnect;
 
@@ -185,6 +188,61 @@ public class AdresseModelDB implements DAO<Adresse> {
             logger.error("Erreur sql lors du getAll : " + e);
         } catch (Exception e) {
             logger.error("Erreur AdresseBuilder lors du getAll : " + e);
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<Location> locationParAdresse(Adresse adresse) {
+        List<Location> locs = new ArrayList<>();
+        String query = "SELECT * FROM API_LOCATIONPARADRESSE WHERE ID_ADRESSE = ?";
+
+        try (PreparedStatement req = dbConnect.prepareStatement(query)) {
+            req.setInt(1, adresse.getId());
+
+            ResultSet rs = req.executeQuery();
+            boolean trouve = false;
+            while (rs.next()) {
+                trouve = true;
+                int idClient = rs.getInt("id_client");
+                String mailClient = rs.getString("mail");
+                String nomClient = rs.getString("nom");
+                String prenomClient = rs.getString("prenom");
+                String telClient = rs.getString("tel");
+
+                int idLoc = rs.getInt("id_location");
+                LocalDate dateloc = rs.getDate("dateloc").toLocalDate();
+                int kmTotal = rs.getInt("kmtotal");
+
+                Client client = new Client.ClientBuilder()
+                        .setId(idClient)
+                        .setMail(mailClient)
+                        .setNom(nomClient)
+                        .setPrenom(prenomClient)
+                        .setTel(telClient)
+                        .build();
+
+                Location loc = new Location.LocationBuilder()
+                        .setId(idLoc)
+                        .setDate(dateloc)
+                        .setKmTotal(kmTotal)
+                        .setClient(client)
+                        .setAdrDepart(adresse)
+                        .build(false);
+
+                locs.add(loc);
+            }
+
+            if (!trouve) {
+                logger.error("Record introuvable");
+            } else{
+                return locs;
+            }
+        } catch (SQLException e) {
+            logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur Builder : " + e);
         }
 
         return null;

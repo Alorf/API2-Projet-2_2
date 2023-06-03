@@ -299,7 +299,6 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
     public boolean addFacturation(Location loc, Taxi taxi) {
         //Utilisation du trigger de SGBD (7) pour calculer le cout de la location ainsi que la procédure d'ajout de facture
         // Si un taxi est utilisé plus de 10x dans la journée, il ne sera pas disponible pour la location
-        //String query = "INSERT INTO  API_FACTURE(id_location, id_taxi) values(?,?)";
         String query = "CALL api_proc_insert_fac(?, ?, ?)";
         try (CallableStatement cs = dbConnect.prepareCall(query)) {
             cs.setInt(1, taxi.getId());
@@ -360,6 +359,69 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
 
         } catch (SQLException e) {
             logger.error("Erreur sql lors de prixTotalLocation : " + e);
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<Location> locationsDate(LocalDate date) {
+        List<Location> locs = new ArrayList<>();
+
+        String query = "SELECT * FROM API_LOCATIONCLIENTADRESSE WHERE DATELOC = ?";
+        try (PreparedStatement req = dbConnect.prepareStatement(query)) {
+            req.setDate(1, Date.valueOf(date));
+            ResultSet rs = req.executeQuery();
+
+            while (rs.next()) {
+                int idClient = rs.getInt("id_client");
+                String mailClient = rs.getString("mail");
+                String nomClient = rs.getString("nom");
+                String prenomClient = rs.getString("prenom");
+                String telClient = rs.getString("tel");
+
+                int idLoc = rs.getInt("id_location");
+                LocalDate dateloc = rs.getDate("dateloc").toLocalDate();
+                int kmTotal = rs.getInt("kmtotal");
+
+                int idAdresse = rs.getInt("id_adresse");
+                int cpAdresse = rs.getInt("cp");
+                String localiteAdresse = rs.getString("localite");
+                String rueAdresse = rs.getString("rue");
+                String numAdresse = rs.getString("num");
+
+                Client client = new Client.ClientBuilder()
+                        .setId(idClient)
+                        .setMail(mailClient)
+                        .setNom(nomClient)
+                        .setPrenom(prenomClient)
+                        .setTel(telClient)
+                        .build();
+
+                Adresse adresse = new Adresse.AdresseBuilder()
+                        .setId(idAdresse)
+                        .setCp(cpAdresse)
+                        .setLocalite(localiteAdresse)
+                        .setRue(rueAdresse)
+                        .setNum(numAdresse)
+                        .build();
+
+                Location loc = new Location.LocationBuilder()
+                        .setId(idLoc)
+                        .setDate(dateloc)
+                        .setKmTotal(kmTotal)
+                        .setClient(client)
+                        .setAdrDepart(adresse)
+                        .build(false);
+
+                locs.add(loc);
+            }
+
+            return locs;
+        } catch (SQLException e) {
+            logger.error("Erreur sql lors du locationsDate : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur Builder lors du locationsDate : " + e);
         }
 
         return null;

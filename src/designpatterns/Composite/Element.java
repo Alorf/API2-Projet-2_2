@@ -9,4 +9,6 @@ public abstract class Element {
     public int getId() {
         return id;
     }
+
+    public abstract int nombreVehicule();
 }

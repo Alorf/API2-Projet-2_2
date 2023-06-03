@@ -124,6 +124,7 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
         System.out.println("Que voulez-vous faire ?");
         String[] menu = {
                 "Les locations de ce taxi (SGBD)",
+                "Distances parcouru par ce taxi",
                 "Sortir"
         };
         int choix;
@@ -135,7 +136,10 @@ public class TaxiViewConsole extends AbstractViewConsole<Taxi> {
             switch (choix) {
                 case 1 ->
                     //Tous les taxis utilisés sans doublon
-                    ((TaxiPresenter) presenter).locationsTaxi(taxi);
+                        ((TaxiPresenter) presenter).locationsTaxi(taxi);
+                case 2 ->
+                    //Distance parcouru
+                        ((TaxiPresenter) presenter).distanceParcouru(taxi);
                 default -> {
                     break special;
                 }

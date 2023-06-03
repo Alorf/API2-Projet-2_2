@@ -47,4 +47,15 @@ public class TaxiPresenter extends Presenter<Taxi> implements SpecialTaxiPresent
             view.affListe(locations);
         }
     }
+
+    @Override
+    public void distanceParcouru(Taxi taxi) {
+        int distance = ((TaxiSpecial) model).distanceParcouru(taxi);
+
+        if (distance == -1){
+            view.affMsg("Ce taxi n'a pas encore parcouru de distance");
+        } else{
+            view.affMsg("Ce taxi à parcouru " + distance + " km");
+        }
+    }
 }

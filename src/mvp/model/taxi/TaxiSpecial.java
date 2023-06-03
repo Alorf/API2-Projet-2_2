@@ -9,4 +9,6 @@ public interface TaxiSpecial {
 
     List<Location> locationTaxi(Taxi taxi);
 
+    int distanceParcouru(Taxi taxi);
+
 }

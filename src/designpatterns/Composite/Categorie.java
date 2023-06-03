@@ -21,11 +21,24 @@ public class Categorie extends Element {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\nCategorie{" + "id=" + id + ", nom=" + nom + "}\n");
+        sb.append("\nCategorie{" + "id=" + id + ", nom=" + nom + "} ").append(nombreVehicule()).append(" véhicules \n");
         for (Element e : elements) {
-            sb.append(e.toString() + "\n");
-            //Si catégorie, alors il va rappeller le toString de la catégorie => récursivité donc beaucoup de retour a la ligne...
+            sb.append(e.toString());
+            //Si catégorie, alors il va rappeller le toString de la catégorie => récursivité
         }
         return sb.toString();
     }
+
+    @Override
+    public int nombreVehicule() {
+        int nbr = 0;
+        for (Element e : elements){
+            if (e instanceof Taxi){
+                nbr++;
+            }
+        }
+        return nbr;
+    }
+
+
 }

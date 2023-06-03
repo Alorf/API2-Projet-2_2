@@ -1,53 +1,13 @@
 package mvp.view.adresse;
 
 import designpatterns.builder.Adresse;
+import mvp.presenter.adresse.AdressePresenter;
 import mvp.view.AbstractViewConsole;
 import utilitaire.Utilitaire;
 
 import java.util.Arrays;
 
 public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
-
-    @Override
-    public void menu() {
-        //Redéfinition de la méthode car comportement différent (pas d'opérations spéciales)
-
-        int choix;
-
-        String[] menu = new String[]{
-                "Créer",
-                "Rechercher",
-                "Modifier",
-                "Supprimer",
-                "Finir",
-        };
-
-        do {
-            Utilitaire.afficherListe(lobjects);
-
-            choix = Utilitaire.choixListe(Arrays.asList(menu));
-
-            switch (choix) {
-                case 1 ->
-                    //Créer un object
-                        creer();
-                case 2 ->
-                    //Rechercher un object
-                        rechercher();
-                case 3 ->
-                    //Modifier un object
-                        modifier();
-                case 4 ->
-                    //Supprimer un object
-                        supprimer();
-                default ->
-                //Fin
-                {
-                    return;
-                }
-            }
-        } while (true);
-    }
 
     @Override
     public void creer() {
@@ -172,6 +132,30 @@ public class AdresseViewConsole extends AbstractViewConsole<Adresse> {
 
     @Override
     protected void special() {
-        //Méthode vide car elle doit être implémentée (cependant, pas d'opérations spéciales existante pour le moment)
+        int choixAd = Utilitaire.choixListe(lobjects);
+
+        Adresse adresse = lobjects.get(choixAd - 1);
+
+        System.out.println("Que voulez-vous faire ?");
+        String[] menu = {
+                "Les locations pour cette adresse",
+                "Quitter"
+        };
+
+        int choix;
+
+        special:
+        do {
+            choix = Utilitaire.choixListe(Arrays.asList(menu));
+
+            switch (choix) {
+                case 1 ->
+                    //Les locations pour cette adresse
+                        ((AdressePresenter) presenter).locationParAdresse(adresse);
+                default -> {
+                    break special;
+                }
+            }
+        } while (true);
     }
 }

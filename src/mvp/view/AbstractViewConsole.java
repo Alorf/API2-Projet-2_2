@@ -58,6 +58,7 @@ public abstract class AbstractViewConsole<T> implements ViewInterface<T> {
                 "Modifier",
                 "Supprimer",
                 "Opérations spéciales",
+                "Tout afficher",
                 "Finir",
         };
 
@@ -82,6 +83,9 @@ public abstract class AbstractViewConsole<T> implements ViewInterface<T> {
                 case 5 ->
                     //Opérations spéciales
                         special();
+                case 6 ->
+                    //Tout afficher
+                        all();
                 default -> {
                     //Fin
                     return;
@@ -99,4 +103,10 @@ public abstract class AbstractViewConsole<T> implements ViewInterface<T> {
     protected abstract void supprimer();
 
     protected abstract void special();
+
+    protected void all(){
+        System.out.println("-----------------------------------------");
+        Utilitaire.afficherListe(lobjects);
+        System.out.println("-----------------------------------------");
+    }
 }

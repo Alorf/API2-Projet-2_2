@@ -2,7 +2,6 @@ package mvp.presenter.location;
 
 import designpatterns.builder.*;
 import mvp.model.DAO;
-import mvp.model.location.LocationModelDB;
 import mvp.model.location.LocationSpecial;
 import mvp.presenter.Presenter;
 import mvp.presenter.taxi.TaxiPresenter;
@@ -11,6 +10,7 @@ import mvp.view.ViewInterface;
 import mvp.view.location.SpecialLocationViewInterface;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public class LocationPresenter extends Presenter<Location> implements SpecialLocationPresenter {
@@ -39,31 +39,14 @@ public class LocationPresenter extends Presenter<Location> implements SpecialLoc
 
     @Override
     public void add(Location location) {
-        /*
-         *  Fonctionnement différent du Presenter générique
-         *  Le super.add() ne peut pas être appelé car j'ai besoin d'une réponse positive pour ajouter une facturation
-         *  Il faut que la méthode add du presenter retourne un booléen et là on pourrait vérifier si l'ajout c'est fait correctement
-         */
 
-        Location loc;
         Client client = clientPresenter.selectionner();
         Adresse adresse = adressePresenter.selectionner();
 
         location.setAdrDepart(adresse);
         location.setClient(client);
 
-        loc = model.add(location);
-
-        if (loc == null) {
-            view.affMsg("Erreur lors de la création le la location");
-        } else {
-            view.affMsg("Création de : " + loc);
-
-            //Ajout de la facture
-            addFacturation(loc);
-        }
-
-        majListe();
+        super.add(location);
     }
 
     @Override
@@ -98,7 +81,7 @@ public class LocationPresenter extends Presenter<Location> implements SpecialLoc
         boolean ok = ((LocationSpecial) model).removeFacturation(location.getId(), fact.getVehicule().getId());
 
         if (ok) {
-            view.affMsg("Elément effacée");
+            view.affMsg("Elément effacé : " + fact);
         } else {
             view.affMsg("Elément non effacé, erreur");
         }
@@ -147,8 +130,19 @@ public class LocationPresenter extends Presenter<Location> implements SpecialLoc
 
     }
 
+    @Override
+    public void locationsDate(LocalDate date) {
+        List<Location> locs = ((LocationSpecial) model).locationsDate(date);
+
+        if (locs == null || locs.isEmpty()){
+            view.affMsg("Aucune location pour cette date");
+        } else{
+            view.affListe(locs);
+        }
+    }
+
     public void facturations(Location loc) {
-        List<Facturation> facturations = ((LocationModelDB) model).getFacturations(loc);
+        List<Facturation> facturations = ((LocationSpecial) model).getFacturations(loc);
 
         if (facturations == null || facturations.isEmpty()) {
             view.affMsg("Aucune facturation");

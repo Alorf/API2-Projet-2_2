@@ -5,6 +5,7 @@ import designpatterns.builder.Location;
 import designpatterns.builder.Taxi;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface LocationSpecial {
@@ -16,5 +17,7 @@ public interface LocationSpecial {
     List<Facturation> getFacturations(Location loc);
 
     BigDecimal prixTotalLocation(Location location);
+
+    List<Location> locationsDate(LocalDate date);
 
 }

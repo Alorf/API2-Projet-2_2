@@ -248,4 +248,33 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
 
         return null;
     }
+
+    @Override
+    public int distanceParcouru(Taxi taxi) {
+        int distance = 0;
+        String query = "SELECT * FROM API_KMPARTAXI WHERE ID_TAXI = ?";
+
+        try (PreparedStatement req = dbConnect.prepareStatement(query)) {
+            req.setInt(1, taxi.getId());
+
+            ResultSet rs = req.executeQuery();
+            boolean trouve = false;
+            while (rs.next()) {
+                trouve = true;
+                distance = rs.getInt(3);
+            }
+
+            if (!trouve) {
+                logger.error("Record introuvable");
+            } else {
+                return distance;
+            }
+        } catch (SQLException e) {
+            logger.error("Erreur sql : " + e);
+        } catch (Exception e) {
+            logger.error("Erreur Builder : " + e);
+        }
+
+        return -1;
+    }
 }
