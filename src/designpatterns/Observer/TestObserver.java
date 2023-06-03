@@ -9,6 +9,7 @@ public class TestObserver {
         Client c2 = new Client(2, "test@gmail.com", "Pastice", "Richard", "478555555");
 
         t1.addObserver(c1);
+        t2.addObserver(c1);
         t2.addObserver(c2);
 
         t1.setPrixKm(12);
