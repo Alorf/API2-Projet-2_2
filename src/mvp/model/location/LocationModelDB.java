@@ -194,8 +194,8 @@ public class LocationModelDB implements DAO<Location>, LocationSpecial {
     public List<Location> getAll() {
         List<Location> ll = new ArrayList<>();
         String query = "SELECT * FROM API_LOCATIONCLIENTADRESSE WHERE ID_LOCATION IS NOT NULL";
-        try (Statement req = dbConnect.createStatement()) {
-            ResultSet rs = req.executeQuery(query);
+        try (PreparedStatement req = dbConnect.prepareStatement(query)) {
+            ResultSet rs = req.executeQuery();
 
             while (rs.next()) {
                 int idClient = rs.getInt("id_client");

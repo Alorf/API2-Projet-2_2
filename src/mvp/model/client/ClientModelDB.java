@@ -243,7 +243,7 @@ public class ClientModelDB implements DAO<Client>, ClientSpecial {
         List<Client> lc = new ArrayList<>();
         String query = "SELECT * FROM API_TCLIENT ORDER BY ID_CLIENT";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
-            ResultSet rs = req.executeQuery(query);
+            ResultSet rs = req.executeQuery();
 
             while (rs.next()) {
                 int idCli = rs.getInt(1);

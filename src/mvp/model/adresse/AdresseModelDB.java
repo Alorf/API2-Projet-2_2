@@ -163,7 +163,7 @@ public class AdresseModelDB implements DAO<Adresse>, AdresseSpecial {
         List<Adresse> la = new ArrayList<>();
         String query = "SELECT * FROM API_ADRESSE ORDER BY ID_ADRESSE";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
-            ResultSet rs = req.executeQuery(query);
+            ResultSet rs = req.executeQuery();
 
             while (rs.next()) {
                 int idAdresse = rs.getInt(1);

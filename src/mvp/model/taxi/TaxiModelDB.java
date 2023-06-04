@@ -151,7 +151,7 @@ public class TaxiModelDB implements DAO<Taxi>, TaxiSpecial {
         List<Taxi> lt = new ArrayList<>();
         String query = "SELECT * FROM API_TAXI ORDER BY ID_TAXI";
         try (PreparedStatement req = dbConnect.prepareStatement(query)) {
-            ResultSet rs = req.executeQuery(query);
+            ResultSet rs = req.executeQuery();
 
             while (rs.next()) {
                 int idTax = rs.getInt(1);
